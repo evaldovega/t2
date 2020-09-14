@@ -1,0 +1,63 @@
+{
+  "name": "Claka",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "android:apk": "cd android && ./gradlew assembleRelease"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/native": "^5.2.4",
+    "@react-navigation/stack": "^5.2.19",
+    "react": "16.11.0",
+    "react-native": "0.62.2",
+    "react-native-chart-kit": "^5.5.0",
+    "react-native-gesture-handler": "^1.6.1",
+    "react-native-iphone-x-helper": "^1.2.1",
+    "react-native-reanimated": "^1.8.0",
+    "react-native-safe-area-context": "^0.7.3",
+    "react-native-scaling-drawer": "^1.0.1",
+    "react-native-screens": "^2.7.0",
+    "react-native-snap-carousel": "^3.9.0",
+    "react-native-svg": "^12.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/runtime": "^7.6.2",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "@types/jest": "^25.2.1",
+    "@types/react": "^16.9.34",
+    "@types/react-native": "^0.62.7",
+    "@types/react-native-snap-carousel": "^3.8.1",
+    "@types/react-test-renderer": "^16.9.2",
+    "babel-jest": "^24.9.0",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "eslint": "^6.5.1",
+    "husky": "^4.2.3",
+    "jest": "^24.9.0",
+    "lint-staged": "^10.0.9",
+    "metro-react-native-babel-preset": "^0.58.0",
+    "prettier": "^2.0.2",
+    "react-test-renderer": "16.11.0",
+    "typescript": "^3.8.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
