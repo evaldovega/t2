@@ -22,9 +22,9 @@ export const sliderWidth = viewportWidth;
 export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 const data = [
-    {color: '#00C48C', Svg: SvgIntro1},
-    {color: '#0F4C81', Svg: SvgIntro2},
-    {color: '#6979F8', Svg: SvgIntro3}];
+    {color: '#00C48C', Svg: SvgIntro1, Titulo:"Conéctate y gana", Texto:"Conéctate y gana vendiendo seguros con Servi"},
+    {color: '#0F4C81', Svg: SvgIntro2, Titulo:"Sin horarios", Texto:"Actívate cuando quieras"},
+    {color: '#6979F8', Svg: SvgIntro3, Titulo:"Gana", Texto:"Genera ingresos y cumple tus metas"}];
 
 const Walkthroughs = memo(() => {
     const {navigate} = useNavigation();
@@ -39,10 +39,8 @@ const Walkthroughs = memo(() => {
         return (
             <View style={[styles.item, {backgroundColor: item.color}]}>
                 <Svg style={styles.svgIntro}/>
-                <Text style={styles.title}>How Does An Screen Work</Text>
-                <Text style={styles.des}>Shure's Music Adapter (MPA) is our favorite iPhone solution, since it lets you
-                    use the headphones
-                    you're</Text>
+                <Text style={styles.title}>{item.Titulo}</Text>
+                <Text style={styles.des}>{item.Texto}</Text>
             </View>
         )
     }, []);
@@ -53,7 +51,7 @@ const Walkthroughs = memo(() => {
             <View style={styles.header}>
                 <SvgLogo/>
                 <Pagination
-                    dotsLength={4}
+                    dotsLength={3}
                     activeDotIndex={indexActive}
                     dotStyle={styles.dotStyle}
                     inactiveDotStyle={styles.inactiveDotStyle}
@@ -76,7 +74,7 @@ const Walkthroughs = memo(() => {
             </View>
 
             <TouchableOpacity style={styles.btnSignIn} onPress={onPress}>
-                <Text style={styles.txtSignIn}>Sign In with Apple ID</Text>
+                <Text style={styles.txtSignIn}>¡Vende ya!</Text>
             </TouchableOpacity>
 
         </View>

@@ -45,11 +45,11 @@ const MainNavigation = memo(() => {
     }, []);
 
     return (
-        <ScalingDrawer
+        /* <ScalingDrawer
             ref={drawer}
             content={<LeftMenu onClose={onClose} onOpen={onOpen}/>}
             {...defaultScalingDrawerConfig}
-        >
+        >*/
             <NavigationContainer
                 // @ts-ignore
                 ref={navigationRef}>
@@ -68,7 +68,7 @@ const MainNavigation = memo(() => {
                     <Screen name={ROUTERS.Notification} component={Notification} options={optionNavigator}/>
                 </Navigator>
             </NavigationContainer>
-        </ScalingDrawer>
+        /*</ScalingDrawer>*/
 
     );
 });

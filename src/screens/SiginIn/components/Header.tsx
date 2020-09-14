@@ -9,8 +9,8 @@ const Header = memo(() => {
     return (
         <View style={styles.container}>
             <SvgLogo/>
-            <Text style={styles.txtWelcome}>Welcome</Text>
-            <Text style={styles.txtTo}>to Claka</Text>
+            <Text style={styles.txtWelcome}>¡Hola!</Text>
+            <Text style={styles.txtTo}>Inicia en Servi</Text>
             <View style={styles.circle}/>
             <SvgPerson style={styles.svgPerson}/>
         </View>

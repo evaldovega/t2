@@ -1,50 +1,215 @@
 import React, {memo, useCallback} from 'react';
 import {useNavigation} from "@react-navigation/native";
-import {View, StyleSheet, Text, TouchableOpacity} from "react-native";
+import {View, StyleSheet, Text, Alert, TouchableOpacity} from "react-native";
 import SvgLogo from "svgs/forgotPass/SvgLogo";
 import SvgClose from "svgs/forgotPass/SvgClose";
 import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper";
 import SvgLogoKey from "svgs/forgotPass/SvgLogoKey";
 import {Lato, Montserrat} from "utils/fonts";
+import Input from "screens/SiginIn/components/Input";
+import { SERVER_ADDRESS } from 'constants';
+import Loader from "components/Loader"
 
-const ForgotPass = memo(() => {
-    const navigation = useNavigation();
+class ForgotPass extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            mail: "",
+            loading:false,
+            mailborderColor: '#EAE8EA',
+            errorMsgMail: "",
+            msg: "",
+            codeSent: false,
+            codeInput: "",
+            errorMsgCode: "",
+            codeborderColor: '#EAE8EA',
+            msgCode: "",
+            codeValidated: false,
+            msgCodeValidated: "",
+            errorPass1: "",
+            errorPass2: "",
+            password1:"",
+            password2:"",
+            password1BorderColor: '#EAE8EA',
+            password2BorderColor: '#EAE8EA',
+            msgPassword: ""
+        }
+    }
 
-    const onPressForgot = useCallback(()=>{
-      navigation.goBack();
-    },[])
+    onPressForgot = () =>{
+        this.props.navigation.goBack()
+    }
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <SvgLogo/>
-                <TouchableOpacity onPress={onPressForgot}>
-                    <SvgClose/>
-                </TouchableOpacity>
-            </View>
-            <SvgLogoKey style={styles.logo}/>
-            <Text style={styles.title}>Forgot Password?</Text>
-            <Text style={styles.des}>
-                Do not worry! We will help you recover{'\n'}your password 🔑
-            </Text>
-            <View style={[styles.box, {marginTop: 40}]}>
-                <Text style={styles.titleBox}>Send Your Email ✉️</Text>
-                <Text style={styles.desBox}>We will send new passwor your email:</Text>
-                <Text style={styles.valueBox}>t***9@gmail.com</Text>
-            </View>
-            <View style={[styles.box, {marginTop: 24}]}>
-                <Text style={styles.titleBox}>Send Your Phone Number 📲️</Text>
-                <Text style={styles.desBox}>
-                    We will send new passwor your{'\n'}
-                    phone number:<Text style={styles.valueBox}> +8*******90</Text>
+    onPressRecovery = () => {
+        if(this.state.mail == ""){
+            this.setState({mailborderColor: "red", errorMsgMail: "ERROR"})
+            return
+        }
+
+        this.setState({loading:true})
+        fetch(SERVER_ADDRESS+"recovery/", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                'email': this.state.mail,
+            })
+        }).then(r => r.json()).then(response => {
+            console.log(response)
+            if(response.status == "OK"){
+                this.setState({codeSent:true, msg: "Se ha enviado un código a tu correo electrónico"})
+            }else if(response.non_field_errors){
+                try{
+                    this.setState({codeSent:false, msg: response.non_field_errors[0]})
+                }catch(err){
+                    console.log(err)
+                }
+            }
+        }).catch((err) => {
+            this.setState({msg: err.toString()})
+        }).finally(() => {
+            this.setState({loading:false})
+            setTimeout(() => {
+                Alert.alert(this.state.msg,"")
+            }, 100)
+        })
+    }
+
+    onCodeInput = () => {
+        if(this.state.codeInput == ""){
+            this.setState({codeborderColor: "red", errorMsgCode: "ERROR"})
+            return
+        }
+        this.setState({loading:true})
+        fetch(SERVER_ADDRESS + "recovery/validate_token/", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                'token': this.state.codeInput,
+            })
+        }).then(r => r.json()).then(response => {
+            console.log(response)
+            if(response.status == "OK"){
+                this.setState({msgCodeValidated: "Código válido", codeValidated: true})
+            }else if(response.status == "notfound"){
+                this.setState({msgCodeValidated: "Código inválido", codeValidated: false})
+            }else if(response.non_field_errors){
+                try{
+                    this.setState({msgCodeValidated: response.non_field_errors[0]})
+                }catch(err){
+                    console.log(err.toString())
+                }
+            }
+        }).catch((err) => {
+            this.setState({msgCodeValidated: err.toString()})
+        }).finally(() => {
+            this.setState({loading:false})
+            setTimeout(() => {
+                Alert.alert(this.state.msgCodeValidated,"")
+            }, 100)
+        })
+    }
+
+    onChangePassword = () => {
+        this.setState({pass1borderColor:"", errorPass1:"", pass2borderColor:"", errorPass2:""})
+        if(this.state.password1 == ""){
+            this.setState({pass1borderColor: "red", errorPass1: "ERROR"})
+            return
+        }
+        if(this.state.password2 == ""){
+            this.setState({pass2borderColor: "red", errorPass2: "ERROR"})
+            return
+        }
+        
+        if(this.state.password1 != this.state.password2){
+            Alert.alert("Las contraseñas no coinciden", "")
+            return
+        }
+
+        this.setState({loading:true})
+        fetch(SERVER_ADDRESS+"recovery/confirm/", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                'token': this.state.codeInput,
+                'password': this.state.password1
+            })
+        }).then(r => r.json()).then(response => {
+            if(response.status == "OK"){
+                this.setState({msgPassword: "Contraseña cambiada con éxito"})
+                this.props.navigation.pop()
+            }else{
+                this.setState({msgPassword: "Algo anda mal"})
+                console.log(response)
+            }
+        }).catch((err) => {
+            this.setState({msgPassword: err.toString()})
+        }).finally(() => {
+            this.setState({loading:false})
+            setTimeout(() => {
+                Alert.alert(this.state.msgPassword,"")
+            }, 100)
+        })
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <Loader loading={this.state.loading}></Loader>
+                <View style={styles.header}>
+                    <SvgLogo/>
+                    <TouchableOpacity onPress={this.onPressForgot}>
+                        <SvgClose/>
+                    </TouchableOpacity>
+                </View>
+                <SvgLogoKey style={styles.logo}/>
+                <Text style={styles.title}>Olvidaste tu contraseña?</Text>
+                <Text style={styles.des}>
+                    {this.state.codeSent == false ? "No te preocupes! Te ayudaremos a \n reestablecer tu contraseña" : this.state.codeValidated == false ? "Ingresa el código enviado a tu \n correo electrónico": "Ingresa tu nueva contraseña"}
                 </Text>
+                { this.state.codeSent == false && this.state.codeValidated == false ? 
+                    <View>
+                        <Input mt={40} pass={false} errorMsg={this.state.errorMsgMail} borderColor={this.state.mailborderColor} placeholder={'Correo electrónico'} value={this.state.mail} onChangeText={m => this.setState({mail:m})} />
+                        <View style={styles.containerSignIn}>
+                            <TouchableOpacity style={styles.btnSignIn} onPress={this.onPressRecovery}>
+                                <Text style={styles.txtSignIn}>Recuperar contraseña</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                : this.state.codeValidated == false ?
+                    <View>
+                        <Input mt={40} pass={false} styleInput={{fontFamily:"Montserrat-Black",fontSize:22,textAlign:"center"}} errorMsg={this.state.errorMsgCode} borderColor={this.state.codeborderColor} placeholder={'Ingresa el código'} value={this.state.codeInput} onChangeText={code => this.setState({codeInput:code})} />
+                        <View style={styles.containerSignIn}>
+                            <TouchableOpacity style={styles.btnSignIn} onPress={this.onCodeInput}>
+                                <Text style={styles.txtSignIn}>Validar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    :
+                    <View>
+                        <Input mt={40} pass={true} errorMsg={this.state.errorPass1} borderColor={this.state.password1BorderColor} placeholder={'Contraseña'} value={this.state.password1} onChangeText={pass1 => this.setState({password1:pass1})} />
+                        <Input mt={40} pass={true} errorMsg={this.state.errorPass2} borderColor={this.state.password2BorderColor} placeholder={'Confirma la contraseña'} value={this.state.password2} onChangeText={pass2 => this.setState({password2:pass2})} />
+                        <View style={styles.containerSignIn}>
+                            <TouchableOpacity style={styles.btnSignIn} onPress={this.onChangePassword}>
+                                <Text style={styles.txtSignIn}>Cambiar contraseña</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                }
+                
             </View>
-            <TouchableOpacity style={styles.btnSignUp}>
-                <Text style={styles.txtSignUp}>Don’t Have Account? Sign UP</Text>
-            </TouchableOpacity>
-        </View>
-    )
-});
+        )
+    }
+}
 
 export default ForgotPass;
 
@@ -52,6 +217,31 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF'
+    },
+    containerShow: {
+        opacity: 1
+    },
+    containerHide: {
+        opacity: 0
+    },
+    containerSignIn: {
+        flexDirection: 'row',
+        marginHorizontal: 40,
+        marginTop: 24
+    },
+    btnSignIn: {
+        backgroundColor: '#0F4C81',
+        borderRadius: 24,
+        flex: 1,
+        height: 48,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    txtSignIn: {
+        fontFamily: Montserrat,
+        fontWeight: '600',
+        color: '#FFF',
+        fontSize: 17
     },
     header: {
         flexDirection: 'row',

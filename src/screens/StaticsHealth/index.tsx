@@ -17,7 +17,7 @@ const StaticsHealth = memo(() => {
     const navigation = useNavigation();
 
     const onPressMenu = useCallback(()=>{
-      // navigation.openDrawer();
+    //   navigation.openDrawer();
     })
 
     return (

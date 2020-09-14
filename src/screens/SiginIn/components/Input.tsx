@@ -1,5 +1,5 @@
 import React, {memo, useCallback, useState} from "react";
-import {StyleSheet, TextInput, TouchableOpacity, View} from "react-native";
+import {StyleSheet, TextInput, Text, TouchableOpacity, View} from "react-native";
 import {Lato} from "utils/fonts";
 import SvgEyes from "svgs/signIn/SvgEyes";
 
@@ -21,16 +21,23 @@ const Input = memo((props: Props) => {
     }, []);
 
     return (
-        <View style={[styles.container, {marginTop: props.mt}]}>
-            <TextInput
-                style={styles.input}
-                placeholder={props.placeholder}
-                placeholderTextColor={'#ABA4AC'}
-                secureTextEntry={secure}
-            />
-            {props.pass && <TouchableOpacity onPressIn={onPressIn} onPressOut={onPressOut}>
-              <SvgEyes/>
-            </TouchableOpacity>}
+        <View>
+            <View style={[styles.container, {marginTop: props.mt, borderColor:props.borderColor}]}>
+                <TextInput
+                    style={[styles.input, props.styleInput]}
+                    placeholder={props.placeholder}
+                    placeholderTextColor={'#ABA4AC'}
+                    secureTextEntry={secure}
+                    value={props.value}
+                    onChangeText={props.onChangeText}
+                    autoCapitalize={false}
+
+                />
+                {props.pass && <TouchableOpacity onPressIn={onPressIn} onPressOut={onPressOut}>
+                <SvgEyes/>
+                </TouchableOpacity>}
+            </View>
+            {props.errorMsg != "" ? <Text style={[styles.textAlert]}>Este campo es requerido</Text> : null}
         </View>
     )
 });
@@ -47,6 +54,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 16
+    },
+    textAlert: {
+        marginHorizontal: 40,
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        color: "red"
     },
     input: {
         flex: 1,

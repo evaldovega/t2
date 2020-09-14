@@ -1,63 +1,117 @@
-import React, {memo, useCallback } from 'react';
-import {View, StyleSheet, TouchableOpacity, Text} from "react-native";
-import {useNavigation} from "@react-navigation/native";
+import React, {memo, useCallback, useState, useEffect } from 'react';
+import {View, StyleSheet, TouchableOpacity, Text, Alert} from "react-native";
 import Header from "screens/SiginIn/components/Header";
 import Input from "screens/SiginIn/components/Input";
 import {Montserrat} from "utils/fonts";
 import SvgFaceId from "svgs/signIn/SvgFaceId";
 import {getBottomSpace} from "react-native-iphone-x-helper";
 import {ROUTERS} from "utils/navigation";
+import {SERVER_ADDRESS} from "constants"
+import Loader from "components/Loader"
 
-const SignIn = memo(() => {
-    const {navigate} = useNavigation();
+class SignIn extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            u: "",
+            k: "",
+            msg:"",
+            loading:false,
+            userborderColor: '#EAE8EA',
+            passborderColor: '#EAE8EA',
+            errorMsgUser: "",
+            errorMsgPass: ""
+        }
+    }
 
-    const onPressSignIn = useCallback(()=>{
-      navigate(ROUTERS.Dashboard);
-    },[])
+    onPressSignIn = () => {
+        this.setState({errorMsgUser: "", errorMsgPass: "", userborderColor:'#EAE8EA', passborderColor: '#EAE8EA'})
+        if(this.state.u == ""){
+            this.setState({userborderColor: "red", errorMsgUser: "ERROR"})
+            return
+        }
+        if(this.state.k == ""){
+            this.setState({passborderColor: "red", errorMsgPass: "ERROR"})
+            return
+        }
 
-    const onPressForgot = useCallback(()=>{
-      navigate(ROUTERS.ForgotPassword);
-    },[])
+        this.setState({loading:true})
+        fetch(SERVER_ADDRESS+"login/", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                'username': this.state.u,
+                'password': this.state.k
+            })
+        }).then(r=>r.json()).then(response => {
+            if(response.token) {
+                this.setState({'msg': "Bienvenido"})
+            }else{
+                if(response.non_field_errors){
+                    try{
+                        this.setState({'msg': response.non_field_errors[0]})
+                    }catch(e){
+                        console.log(e)
+                    }
+                }
+            }
+        }).catch((error) => {
+            this.setState({'msg': error.toString()})
+        }).finally(() => {
+            this.setState({loading:false})
+            setTimeout(() => {
+                Alert.alert(this.state.msg,"")
+            }, 100)
+        })
+    }
 
-    return (
-        <View style={styles.container}>
-            <Header/>
-            <Input mt={40} placeholder={'Username'}/>
-            <Input mt={16} pass={true} placeholder={'Password'}/>
-            <View style={styles.containerSignIn}>
-                <TouchableOpacity style={styles.btnSignIn} onPress={onPressSignIn}>
-                    <Text style={styles.txtSignIn}>SIGN IN</Text>
+    onPressForgot = () => {
+        // this.state.navigate(ROUTERS.ForgotPassword);
+        this.props.navigation.navigate(ROUTERS.ForgotPassword)
+    }
+
+    onPressRegister = () => {
+        this.props.navigation.navigate(ROUTERS.Profile)
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <Header/>
+                <Loader loading={this.state.loading}></Loader>
+                <Input mt={40} pass={false} errorMsg={this.state.errorMsgUser} borderColor={this.state.userborderColor} placeholder={'Usuario'} value={this.state.u} onChangeText={t=>this.setState({u:t})} />
+                <Input mt={16} pass={true} errorMsg={this.state.errorMsgPass} borderColor={this.state.passborderColor} placeholder={'Contraseña'} value={this.state.k} onChangeText={p=>this.setState({k:p})} />
+                <View style={styles.containerSignIn}>
+                    <TouchableOpacity style={styles.btnSignIn} onPress={this.onPressSignIn}>
+                        <Text style={styles.txtSignIn}>Iniciar sesión</Text>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity style={styles.btnForgot} onPress={this.onPressForgot}>
+                    <Text style={styles.txtForgot}>¿Olvidaste tu contraseña?</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btnFaceId} onPress={onPressSignIn}>
-                    <SvgFaceId/>
+
+                <View style={styles.containerOr}>
+                    <View style={styles.line}/>
+                    <Text style={styles.txtOr}>o</Text>
+                    <View style={styles.line}/>
+                </View>
+
+                <TouchableOpacity style={styles.btnSignFb} onPress={this.onPressRegister}>
+                    <Text style={styles.txtSignInFb}>Regístrate</Text>
                 </TouchableOpacity>
+
+                { /*
+                <TouchableOpacity style={styles.btnSignInGoogle}>
+                    <Text style={styles.txtSignInFb}>Sign In With Google</Text>
+                </TouchableOpacity>
+                */ }
             </View>
-            <TouchableOpacity style={styles.btnForgot} onPress={onPressForgot}>
-                <Text style={styles.txtForgot}>Forgot password?</Text>
-            </TouchableOpacity>
-
-            <View style={styles.containerOr}>
-                <View style={styles.line}/>
-                <Text style={styles.txtOr}>or</Text>
-                <View style={styles.line}/>
-            </View>
-
-            <TouchableOpacity style={styles.btnSignFb} onPress={onPressSignIn}>
-                <Text style={styles.txtSignInFb}>Sign In With Facebook</Text>
-            </TouchableOpacity>
-
-            { /*
-            <TouchableOpacity style={styles.btnSignInGoogle}>
-                <Text style={styles.txtSignInFb}>Sign In With Google</Text>
-            </TouchableOpacity>
-            */ }
-
-            <TouchableOpacity style={styles.btnSignUp}>
-                <Text style={styles.txtSignUp}>Don’t Have Account? Sign UP</Text>
-            </TouchableOpacity>
-        </View>
-    )
-});
+        )
+    }
+}
 
 export default SignIn;
 
@@ -134,8 +188,7 @@ const styles = StyleSheet.create({
     txtSignInFb: {
         fontWeight: '600',
         fontSize: 17,
-        color: '#FFF',
-        textTransform: 'uppercase'
+        color: '#FFF'
     },
     btnSignInGoogle: {
         marginHorizontal: 40,
