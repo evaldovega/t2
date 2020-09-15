@@ -13,6 +13,7 @@ const ROUTERS = {
     Profile: 'Profile',
     Notification: 'Notification',
     Dashboard: 'Dashboard',
+    SignUp: 'SignUp',
 };
 
 export {Stack, NavigationContainer, Navigator, Screen, ROUTERS};

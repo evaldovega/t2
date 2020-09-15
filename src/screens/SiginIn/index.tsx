@@ -74,7 +74,7 @@ class SignIn extends React.Component {
     }
 
     onPressRegister = () => {
-        this.props.navigation.navigate(ROUTERS.Profile)
+        this.props.navigation.navigate(ROUTERS.SignUp)
     }
 
     render() {

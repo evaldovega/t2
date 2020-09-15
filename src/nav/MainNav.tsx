@@ -10,6 +10,7 @@ import SignIn from "screens/SiginIn";
 import StaticsHealth from "screens/StaticsHealth";
 import Profile from "screens/Profile";
 import Notification from "screens/Notification";
+import SignUp from "screens/SignUp";
 import LeftMenu from "screens/LeftMenu";
 import {Platform} from "react-native";
 
@@ -66,6 +67,7 @@ const MainNavigation = memo(() => {
                     <Screen name={ROUTERS.Dashboard} component={StaticsHealth} options={optionNavigator}/>
                     <Screen name={ROUTERS.Profile} component={Profile} options={optionNavigator}/>
                     <Screen name={ROUTERS.Notification} component={Notification} options={optionNavigator}/>
+                    <Screen name={ROUTERS.SignUp} component={SignUp} options={optionNavigator}/>
                 </Navigator>
             </NavigationContainer>
         /*</ScalingDrawer>*/
