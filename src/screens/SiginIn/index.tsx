@@ -49,6 +49,7 @@ class SignIn extends React.Component {
         }).then(r=>r.json()).then(response => {
             if(response.token) {
                 this.setState({'msg': "Bienvenido"})
+                this.props.navigation.navigate(ROUTERS.Dashboard)
             }else{
                 if(response.non_field_errors){
                     try{
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
         marginTop: 24
     },
     btnSignIn: {
-        backgroundColor: '#0F4C81',
+        backgroundColor: '#102e4d',
         borderRadius: 24,
         flex: 1,
         height: 48,
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 40,
         height: 48,
         borderRadius: 24,
-        backgroundColor: '#6979F8',
+        backgroundColor: '#209a91',
         marginTop: 16,
         justifyContent: 'center',
         alignItems: 'center'

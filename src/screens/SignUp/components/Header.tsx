@@ -1,18 +1,20 @@
 import React, {memo} from 'react';
-import {StyleSheet, Text, View} from "react-native";
+import {StyleSheet, Text, View, Image} from "react-native";
 import SvgLogo from "svgs/signIn/SvgLogo";
 import {Montserrat} from "utils/fonts";
 import SvgPerson from "svgs/signIn/SvgPerson";
 import {getStatusBarHeight} from "react-native-iphone-x-helper";
+import { COLORS } from 'constants';
 
 const Header = memo(() => {
     return (
         <View style={styles.container}>
-            <SvgLogo/>
+            <Image style={styles.logo} source={require('utils/images/ISO.png')}></Image>
             <Text style={styles.txtWelcome}>¡Hola!</Text>
-            <Text style={styles.txtTo}>Crea tu cuenta en Servi</Text>
-            <View style={styles.circle}/>
-            <SvgPerson style={styles.svgPerson}/>
+            <Text style={styles.txtTo}>Crea tu cuenta {'\n'}en Servi</Text>
+            {/* <View style={styles.circle}/> */}
+            {/* <SvgPerson style={styles.svgPerson}/> */}
+            <Image style={styles.image} source={require('screens/SignUp/components/HeaderImage.png')}></Image>
         </View>
     )
 });
@@ -28,14 +30,25 @@ const styles = StyleSheet.create({
     },
     txtWelcome: {
         fontSize: 32,
-        color: '#1A051D',
+        color: COLORS.PRIMARY_COLOR,
         fontWeight: '600',
         fontFamily: Montserrat,
-        marginTop: 40
+        marginTop: 30
+    },
+    logo: {
+        width: 60,
+        height: 60
+    },
+    image: {
+        width: 240,
+        height: 240,
+        position: 'absolute',
+        right: -60,
+        top: -10
     },
     txtTo: {
         fontSize: 24,
-        color: '#1A051D',
+        color: COLORS.PRIMARY_COLOR_DARK_1,
         fontWeight: '500',
         fontFamily: Montserrat
     },

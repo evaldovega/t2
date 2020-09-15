@@ -1,5 +1,5 @@
 import React, {memo, useCallback, useState} from 'react';
-import {Dimensions, StyleSheet, TouchableOpacity, View, Text, StatusBar} from 'react-native';
+import {Dimensions, StyleSheet, TouchableOpacity, View, Text, StatusBar, Image} from 'react-native';
 import SvgLogo from "svgs/walkthroughs/SvgLogo";
 import Carousel, {Pagination} from "react-native-snap-carousel";
 import {useNavigation} from "@react-navigation/native";
@@ -38,7 +38,8 @@ const Walkthroughs = memo(() => {
         const Svg = item.Svg;
         return (
             <View style={[styles.item, {backgroundColor: item.color}]}>
-                <Svg style={styles.svgIntro}/>
+                {/* <Svg style={styles.svgIntro}/> */}
+                <Image style={styles.sliderImage} source={require('screens/Walkthroughs/images/IMG-01.png')}></Image>
                 <Text style={styles.title}>{item.Titulo}</Text>
                 <Text style={styles.des}>{item.Texto}</Text>
             </View>
@@ -49,7 +50,7 @@ const Walkthroughs = memo(() => {
         <View style={styles.container}>
             <StatusBar translucent={true} backgroundColor={'transparent'} barStyle={'dark-content'}/>
             <View style={styles.header}>
-                <SvgLogo/>
+                <Image style={styles.logo} source={require('utils/images/LOGO.png')}></Image>
                 <Pagination
                     dotsLength={3}
                     activeDotIndex={indexActive}
@@ -91,8 +92,16 @@ const styles = StyleSheet.create({
         padding: 0,
         margin: 0
     },
+    logo: {
+        width: 200,
+        height: 60
+    },
     sliderContentContainer: {
         paddingVertical: 10, // for custom animation
+    },
+    sliderImage: {
+        width: 279,
+        height: 324
     },
     dotStyle: {
         width: 8,
@@ -129,7 +138,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     btnSignIn: {
-        backgroundColor: '#1A051D',
+        backgroundColor: '#102e4d',
         borderRadius: 24,
         marginHorizontal: 45,
         height: 48,

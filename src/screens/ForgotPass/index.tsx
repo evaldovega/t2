@@ -1,13 +1,13 @@
 import React, {memo, useCallback} from 'react';
 import {useNavigation} from "@react-navigation/native";
-import {View, StyleSheet, Text, Alert, TouchableOpacity} from "react-native";
+import {View, StyleSheet, Text, Alert, TouchableOpacity, Image} from "react-native";
 import SvgLogo from "svgs/forgotPass/SvgLogo";
 import SvgClose from "svgs/forgotPass/SvgClose";
 import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper";
 import SvgLogoKey from "svgs/forgotPass/SvgLogoKey";
 import {Lato, Montserrat} from "utils/fonts";
 import Input from "screens/SiginIn/components/Input";
-import { SERVER_ADDRESS } from 'constants';
+import { SERVER_ADDRESS, COLORS } from 'constants';
 import Loader from "components/Loader"
 
 class ForgotPass extends React.Component {
@@ -165,12 +165,12 @@ class ForgotPass extends React.Component {
             <View style={styles.container}>
                 <Loader loading={this.state.loading}></Loader>
                 <View style={styles.header}>
-                    <SvgLogo/>
+                <Image style={styles.logo} source={require('utils/images/ISO.png')}></Image>
                     <TouchableOpacity onPress={this.onPressForgot}>
-                        <SvgClose/>
+                        <SvgClose />
                     </TouchableOpacity>
                 </View>
-                <SvgLogoKey style={styles.logo}/>
+                <Image style={styles.forgotImage} source={require('screens/ForgotPass/ForgotPassImage.png')}></Image>
                 <Text style={styles.title}>Olvidaste tu contraseña?</Text>
                 <Text style={styles.des}>
                     {this.state.codeSent == false ? "No te preocupes! Te ayudaremos a \n reestablecer tu contraseña" : this.state.codeValidated == false ? "Ingresa el código enviado a tu \n correo electrónico": "Ingresa tu nueva contraseña"}
@@ -229,8 +229,13 @@ const styles = StyleSheet.create({
         marginHorizontal: 40,
         marginTop: 24
     },
+    forgotImage: {
+        width:223,
+        height:195,
+        alignSelf: 'center',
+    },
     btnSignIn: {
-        backgroundColor: '#0F4C81',
+        backgroundColor: COLORS.SECONDARY_COLOR,
         borderRadius: 24,
         flex: 1,
         height: 48,
@@ -253,7 +258,9 @@ const styles = StyleSheet.create({
     },
     logo: {
         marginTop: 32,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        width: 60,
+        height: 60
     },
     title: {
         color: '#1A051D',
