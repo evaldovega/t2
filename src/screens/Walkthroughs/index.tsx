@@ -87,7 +87,7 @@ export default Walkthroughs;
 const styles = StyleSheet.create({
     slider: {
         marginTop: 15,
-        height: '70%',
+        height: '100%',
         overflow: 'visible', // for custom animations
         padding: 0,
         margin: 0
@@ -100,8 +100,10 @@ const styles = StyleSheet.create({
         paddingVertical: 10, // for custom animation
     },
     sliderImage: {
-        width: 279,
-        height: 324
+        alignSelf:'center',
+        width: '70%',
+        height: undefined,
+        aspectRatio:1/1
     },
     dotStyle: {
         width: 8,
