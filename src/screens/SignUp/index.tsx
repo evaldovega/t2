@@ -11,6 +11,7 @@ import Loader from "components/Loader"
 import ModalFilterPicker from 'react-native-modal-filter-picker';
 import DatePicker from 'react-native-datepicker'
 import ModalWebView from 'components/ModalWebView';
+import ModalPrompt from 'components/ModalPrompt';
 
 
 class SignUp extends React.Component {
@@ -23,36 +24,31 @@ class SignUp extends React.Component {
             isCodeSent: false,
             aceptacionContrato: false,
             aceptacionCodigoEnviado: false,
+            aceptacionContratoUser: false,
+            msgAlertCode: "",
             msgAlert: "",
+
             firstname: "",
-            firstnameErrors: "",
-            firstnameBorderColor: '#EAE8EA',
+            firstnameErrors: false,
             lastname: "",
-            lastnameErrors: "",
-            lastnameBorderColor: '#EAE8EA',
+            lastnameErrors: false,
             mail: "",
-            mailErrors: "",
-            mailBorderColor: '#EAE8EA',
+            mailErrors: false,
             password1: "",
-            password1Errors: "",
-            password1BorderColor: '#EAE8EA',
+            password1Errors: false,
             password2: "",
-            password2Errors: "",
-            password2BorderColor: '#EAE8EA',
+            password2Errors: false,
 
             date: "2020-09-15",
             show: false,
 
             numWhatsapp:"",
-            numWhatsappErrors: "",
-            numWhatsappBorderColor: '#EAE8EA',
+            numWhatsappErrors: false,
             direccion: "",
-            direccionErrors: "",
-            direccionBorderColor: '#EAE8EA',
+            direccionErrors: false,
             fechaNac: "",
             numDocumento:"",
-            numDocumentoErrors:"",
-            numDocumentoBorderColor: '#EAE8EA',
+            numDocumentoErrors:false,
             
             visibleMpio: false,
             pickedMpio: null,
@@ -71,6 +67,13 @@ class SignUp extends React.Component {
             optsDepartamentos: [],
             optsMunicipios: [],
             optsTiposDocs: [],
+
+            inputCodeRegistration:"",
+            inputCodeRegistrationError: false,
+            inputCodeRegistrationMsgAlert: "",
+            contratoValidationVisible: false,
+            contratoValidated: false,
+            textResponseCodeValidation: "",
         }
     }
 
@@ -94,9 +97,6 @@ class SignUp extends React.Component {
         fetch(SERVER_ADDRESS+"api/config/contrato/").then(r=>r.json()).then(response => {
             this.setState({contratoContent: response[0].contenido_contrato})
         })
-        Alert.prompt('Aceptación de contrato de carrotaje', "Hemos enviado un código al correo electrónico que has indicado. Por favor ingrésalo para verificar tu aceptación", text=>{
-            console.log(text)
-        })
     }
 
     onSwitchAcceptChange = () => {
@@ -105,7 +105,12 @@ class SignUp extends React.Component {
     onSwitchAcceptContratoChange = () => {
         // Enviar codigo de aprobacion
         if(!this.state.aceptacionContrato){
-            fetch(SERVER_ADDRESS+"", {
+            if(this.state.mail == ""){
+                Alert.alert("Debe ingresar un correo electrónico válido", "")
+                return
+            }
+            this.setState({contratoValidationVisible: true})
+            fetch(SERVER_ADDRESS+"api/usuarios/registro/token/", {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -115,15 +120,73 @@ class SignUp extends React.Component {
                     'email': this.state.mail
                 })
             }).then(r => r.json()).then(response => {
-
+                if(response.activo){
+                    // this.setState({contratoValidationVisible: true})
+                }else{
+                    if(response.non_field_errors){
+                        try{
+                            this.setState({msgAlertCode: response.non_field_errors[0]})
+                        }catch(e){
+                            console.log(e)
+                        }
+                    }
+                }
             }).catch((err) => {
                 console.log(err.toString())
             }).finally(() => {
 
             })
         }
+    }
 
-        this.setState({aceptacionContrato: !this.state.aceptacionContrato})
+    validateCodeRegistration = () => {
+        this.setState({inputCodeRegistrationError: false, inputCodeRegistrationMsgAlert:""})
+        if(this.state.inputCodeRegistration == ""){
+            this.setState({inputCodeRegistrationError: true})
+            return
+        }
+        this.setState({loading: true})
+        fetch(SERVER_ADDRESS+"api/usuarios/registro/token/validate/", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                'token': this.state.inputCodeRegistration
+            })
+        }).then(r=> r.json()).then(response => {
+            switch(response.status){
+                case "OK":
+                    this.setState({loading: false, contratoValidated: true, aceptacionContrato: true})
+                    break
+                case "novalido":
+                    this.setState({inputCodeRegistrationMsgAlert: "El código no es válido"})
+                    break
+                case "expired":
+                    this.setState({inputCodeRegistrationMsgAlert: "El código ha expirado"})
+                    break
+                case "used":
+                    this.setState({inputCodeRegistrationMsgAlert: "Este código ha sido usado"})
+                    break
+                default:
+                    this.setState({inputCodeRegistrationMsgAlert: "El código no es válido"})
+            }
+        }).catch((err) => {
+            console.log(err.toString())
+        }).finally(() => {
+            this.setState({loading: false})
+            setTimeout(() => {
+                if(this.state.inputCodeRegistrationMsgAlert != ""){
+                    Alert.alert(this.state.inputCodeRegistrationMsgAlert,"")
+                }
+            }, 100)
+            if(this.state.contratoValidated){
+                setTimeout(() => {
+                    this.setState({contratoValidationVisible:false})
+                }, 2000)
+            }
+        })
     }
 
     onPressBack = () => {
@@ -226,42 +289,25 @@ class SignUp extends React.Component {
     }
 
     onPressRegister = () => {
-        this.setState({
-            firstname: "",
-            firstnameErrors: "",
-            firstnameBorderColor: '#EAE8EA',
-            lastname: "",
-            lastnameErrors: "",
-            lastnameBorderColor: '#EAE8EA',
-            mail: "",
-            mailErrors: "",
-            mailBorderColor: '#EAE8EA',
-            password1: "",
-            password1Errors: "",
-            password1BorderColor: '#EAE8EA',
-            password2: "",
-            password2Errors: "",
-            password2BorderColor: '#EAE8EA',
-        })
 
         if(this.state.firstname == ""){
-            this.setState({firstnameErrors: "ERRORS", firstnameBorderColor: "red"})
+            this.setState({firstnameErrors: true})
             return
         }
         if(this.state.lastname == ""){
-            this.setState({lastnameErrors: "ERRORS", lastnameBorderColor: "red"})
+            this.setState({lastnameErrors: true})
             return
         }
         if(this.state.mail == ""){
-            this.setState({mailErrors: "ERRORS", mailBorderColor: "red"})
+            this.setState({mailErrors: true})
             return
         }
         if(this.state.password1 == ""){
-            this.setState({password1Errors: "ERRORS", password1BorderColor: "red"})
+            this.setState({password1Errors: true})
             return
         }
         if(this.state.password2 == ""){
-            this.setState({password2Errors: "ERRORS", password2BorderColor: "red"})
+            this.setState({password2Errors: true})
             return
         }
 
@@ -269,6 +315,44 @@ class SignUp extends React.Component {
             Alert.alert("Las contraseñas no coinciden", "")
             return
         }
+
+        if(this.state.pickedGenero == null){
+            return
+        }
+
+        if(this.state.numWhatsapp == ""){
+            this.setState({numWhatsappErrors: true})
+            return
+        }
+
+        if(this.state.pickedDepto == null){
+            return
+        }
+        if(this.state.pickedMpio == null){
+            return
+        }
+        if(this.state.direccion == ""){
+            this.setState({direccionErrors: true})
+            return
+        }
+        if(this.state.fechaNac == ""){
+            return
+        }
+        if(this.state.pickedTDoc == null){
+            return
+        }
+        if(this.state.numDocumento == ""){
+            this.setState({numDocumentoErrors: true})
+            return
+        }
+        if(!this.state.isEnabled){
+            return
+        }
+        if(!this.state.aceptacionContrato){
+            return
+        }
+        
+
 
         this.setState({loading:true})
         fetch(SERVER_ADDRESS+"api/usuarios/", {
@@ -278,10 +362,21 @@ class SignUp extends React.Component {
                 'content-type': 'application/json'
             },
             body: JSON.stringify({
-                first_name: this.state.firstname,
-                last_name: this.state.lastname,
-                email:this.state.mail,
-                password: this.state.password1
+                user:{
+                    first_name: this.state.firstname,
+                    last_name: this.state.lastname,
+                    email:this.state.mail,
+                    password: this.state.password1,
+                },
+                numero_whatsapp: this.state.numWhatsapp,
+                genero: this.state.pickedGenero.key,
+                departamento: this.state.pickedDepto.key,
+                municipio: this.state.pickedMpio.key,
+                direccion: this.state.direccion,
+                fecha_nacimiento: this.state.fechaNac,
+                tipo_documento_identidad: this.state.pickedTDoc.key,
+                num_documento_identidad: this.state.numDocumento,
+                contrato_aprobado: this.state.aceptacionContrato
             })
         }).then(r => r.json()).then(response => {
             this.setState({msgAlert: "Usuario registrado"})
@@ -292,6 +387,11 @@ class SignUp extends React.Component {
             setTimeout(() => {
                 Alert.alert(this.state.msgAlert,"")
             }, 100)
+            if(this.state.msgAlert == "Usuario registrado"){
+                setTimeout(() => {
+                    this.props.navigation.pop();    
+                }, 1500);
+            }
         })
 
     }
@@ -304,15 +404,16 @@ class SignUp extends React.Component {
             <View style={styles.container}>
                 
                 <ModalWebView visible={this.state.contratoVisualizacion} html={this.state.contratoContent} cancelButtonText="Volver" onClose={this.cerrarContrato}></ModalWebView>
+                <ModalPrompt visible={this.state.contratoValidationVisible} mt={16} valid={this.state.contratoValidated} actionDisabled={this.state.contratoValidated} error={this.state.inputCodeRegistrationError} textMessage={this.state.textResponseCodeValidation} value={this.state.inputCodeRegistration} onChangeText={i=>this.setState({inputCodeRegistration: i})} onCodeValidation={this.validateCodeRegistration}></ModalPrompt>
                 <ScrollView>
                     <View>
                         <Header/>
                         <Loader loading={this.state.loading}></Loader>
-                        <Input mt={60} pass={false} errorMsg={this.state.firstnameErrors} borderColor={this.state.firstnameBorderColor} placeholder={'Nombres'} value={this.state.firstname} onChangeText={firstName=>this.setState({firstname:firstName})} />
-                        <Input mt={16} pass={false} errorMsg={this.state.lastnameErrors} borderColor={this.state.lastnameBorderColor} placeholder={'Apellidos'} value={this.state.lastname} onChangeText={lastName=>this.setState({lastname:lastName})} />
-                        <Input mt={16} pass={false} errorMsg={this.state.mailErrors} borderColor={this.state.mailBorderColor} placeholder={'Correo electrónico'} value={this.state.mail} onChangeText={email=>this.setState({mail:email})} />
-                        <Input mt={16} pass={true} errorMsg={this.state.password1Errors} borderColor={this.state.password1BorderColor} placeholder={'Contraseña'} value={this.state.password1} onChangeText={p1=>this.setState({password1:p1})} />
-                        <Input mt={16} pass={true} errorMsg={this.state.password2Errors} borderColor={this.state.password2BorderColor} placeholder={'Confirma tu contraseña'} value={this.state.password2} onChangeText={p2=>this.setState({password2:p2})} />
+                        <Input mt={60} pass={false} error={this.state.firstnameErrors} placeholder={'Nombres'} value={this.state.firstname} onChangeText={firstName=>this.setState({firstname:firstName})} />
+                        <Input mt={16} pass={false} error={this.state.lastnameErrors} placeholder={'Apellidos'} value={this.state.lastname} onChangeText={lastName=>this.setState({lastname:lastName})} />
+                        <Input mt={16} pass={false} error={this.state.mailErrors} placeholder={'Correo electrónico'} value={this.state.mail} onChangeText={email=>this.setState({mail:email})} />
+                        <Input mt={16} pass={true} error={this.state.password1Errors} placeholder={'Contraseña'} value={this.state.password1} onChangeText={p1=>this.setState({password1:p1})} />
+                        <Input mt={16} pass={true} error={this.state.password2Errors} placeholder={'Confirma tu contraseña'} value={this.state.password2} onChangeText={p2=>this.setState({password2:p2})} />
                         
                         <View style={[styles.line, {marginTop:20}]}></View>
                         <View style={styles.containerSignIn}>
@@ -320,9 +421,9 @@ class SignUp extends React.Component {
                         </View>
                         
                         {/* Formulario complementario */}
-                        <Input mt={30} pass={false} placeholder={'Número de WhatsApp'} errorMsg={this.state.numWhatsappErrors} borderColor={this.state.numWhatsappBorderColor} value={this.state.firstname} onChangeText={whatsapp=>this.setState({numWhatsapp:whatsapp})} />
+                        <Input mt={30} pass={false} placeholder={'Número de WhatsApp'} error={this.state.numWhatsappErrors} value={this.state.numWhatsapp} onChangeText={whatsapp=>this.setState({numWhatsapp:whatsapp})} />
                         
-                        <View style={styles.containerDropdown}>
+                        <View style={[styles.containerDropdown, this.state.pickedGenero ? null : styles.errorDropDown]}>
                             <TouchableOpacity style={styles.btnInputSelect} onPress={this.generoOnShow}>
                                 <Text>{this.state.pickedGenero ? this.state.pickedGenero.label : "Seleccionar género" }</Text>
                             </TouchableOpacity>     
@@ -362,11 +463,12 @@ class SignUp extends React.Component {
                         <View style={styles.inputDatePickerContainer}>
                             <DatePicker
                                 style={styles.inputDatePicker}
+                                date={this.state.fechaNac}
                                 mode="date"
                                 placeholder="Fecha de nacimiento"
                                 format="YYYY-MM-DD"
-                                minDate="2016-05-01"
-                                maxDate="2016-06-01"
+                                minDate="1990-01-01"
+                                maxDate="2040-06-01"
                                 confirmBtnText="Confirm"
                                 cancelBtnText="Cancel"
                                 showIcon={false}
@@ -378,7 +480,7 @@ class SignUp extends React.Component {
                                         alignItems:'flex-start'
                                     }
                                 }}
-                                onDateChange={(date) => {this.setState({date: date})}}
+                                onDateChange={(date) => {this.setState({fechaNac: date})}}
                             />
                         </View>
 
@@ -426,13 +528,14 @@ class SignUp extends React.Component {
                                 trackColor={{ false: COLORS.PRIMARY_COLOR, true: COLORS.SECONDARY_COLOR_LIGHTER }}
                                 thumbColor={this.state.aceptacionContrato ? COLORS.SECONDARY_COLOR : "#f4f3f4"}
                                 ios_backgroundColor="#3e3e3e"
+                                disabled={this.state.aceptacionContrato}
                                 onValueChange={this.onSwitchAcceptContratoChange}
                                 value={this.state.aceptacionContrato}
                             />
                         </View>
 
                         <View style={styles.containerSignIn}>
-                            <TouchableOpacity style={ this.state.isEnabled ? styles.btnSignIn : styles.btnSignInDisabled} disabled={!this.state.isEnabled} onPress={this.onPressRegister}>
+                            <TouchableOpacity style={ this.state.isEnabled && this.state.aceptacionContrato ? styles.btnSignIn : styles.btnSignInDisabled} disabled={this.state.isEnabled && this.state.aceptacionContrato ? false : true} onPress={this.onPressRegister}>
                                 <Text style={styles.txtSignIn}>Continuar</Text>
                             </TouchableOpacity>
                         </View>
@@ -480,6 +583,9 @@ const styles = StyleSheet.create({
     link: {
         color: COLORS.PRIMARY_COLOR
     },
+    errorDropDown: {
+        borderColor: 'red',
+    },
     btnSignIn: {
         backgroundColor: COLORS.SECONDARY_COLOR,
         borderRadius: 24,
@@ -515,7 +621,7 @@ const styles = StyleSheet.create({
         height: 48,
     },
     btnSignInDisabled: {
-        backgroundColor: '#415b71',
+        backgroundColor: COLORS.SECONDARY_COLOR_MUTED,
         borderRadius: 24,
         flex: 1,
         height: 48,
