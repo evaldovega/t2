@@ -6,7 +6,8 @@ import SvgEyes from "svgs/signIn/SvgEyes";
 interface Props {
     mt?: number;
     pass?: boolean;
-    placeholder:string
+    placeholder:string;
+    error?:boolean;
 }
 
 const Input = memo((props: Props) => {
@@ -22,22 +23,42 @@ const Input = memo((props: Props) => {
 
     return (
         <View>
-            <View style={[styles.container, {marginTop: props.mt, borderColor:props.borderColor}]}>
-                <TextInput
-                    style={[styles.input, props.styleInput]}
-                    placeholder={props.placeholder}
-                    placeholderTextColor={'#ABA4AC'}
-                    secureTextEntry={secure}
-                    value={props.value}
-                    onChangeText={props.onChangeText}
-                    autoCapitalize={false}
+            { props.error ? 
+                <View>
+                    <View style={[styles.container, {marginTop: props.mt, borderColor:'red'}]}>
+                        <TextInput
+                            style={[styles.input, props.styleInput]}
+                            placeholder={props.placeholder}
+                            placeholderTextColor={'#ABA4AC'}
+                            secureTextEntry={secure}
+                            value={props.value}
+                            onChangeText={props.onChangeText}
+                            autoCapitalize={false}
 
-                />
-                {props.pass && <TouchableOpacity onPressIn={onPressIn} onPressOut={onPressOut}>
-                <SvgEyes/>
-                </TouchableOpacity>}
-            </View>
-            {props.errorMsg != "" ? <Text style={[styles.textAlert]}>Este campo es requerido</Text> : null}
+                        />
+                        {props.pass && <TouchableOpacity onPressIn={onPressIn} onPressOut={onPressOut}>
+                        <SvgEyes/>
+                        </TouchableOpacity>}
+                    </View>
+                    <Text style={[styles.textAlert]}>Este campo es requerido</Text>
+                </View>
+            :
+                <View style={[styles.container, {marginTop: props.mt}]}>
+                    <TextInput
+                        style={[styles.input, props.styleInput]}
+                        placeholder={props.placeholder}
+                        placeholderTextColor={'#ABA4AC'}
+                        secureTextEntry={secure}
+                        value={props.value}
+                        onChangeText={props.onChangeText}
+                        autoCapitalize={false}
+
+                    />
+                    {props.pass && <TouchableOpacity onPressIn={onPressIn} onPressOut={onPressOut}>
+                    <SvgEyes/>
+                    </TouchableOpacity>}
+                </View>
+            }
         </View>
     )
 });
