@@ -13,8 +13,8 @@ class SignIn extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            u: "",
-            k: "",
+            u: "admin",
+            k: "administrador",
             msg:"",
             loading:false,
             userborderColor: '#EAE8EA',
@@ -49,7 +49,7 @@ class SignIn extends React.Component {
         }).then(r=>r.json()).then(response => {
             if(response.token) {
                 this.setState({'msg': "Bienvenido"})
-                this.props.navigation.navigate(ROUTERS.Dashboard)
+                this.props.navigation.navigate('Master')
             }else{
                 if(response.non_field_errors){
                     try{

@@ -7,6 +7,7 @@ const Navigator = Stack.Navigator;
 const Screen = Stack.Screen;
 
 const ROUTERS = {
+    Master:'Master',
     Onboarding: 'Onboarding',
     SignIn: 'SignIn',
     ForgotPassword: 'ForgotPassword',
