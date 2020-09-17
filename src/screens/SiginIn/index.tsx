@@ -8,6 +8,7 @@ import {getBottomSpace} from "react-native-iphone-x-helper";
 import {ROUTERS} from "utils/navigation";
 import {SERVER_ADDRESS} from "constants"
 import Loader from "components/Loader"
+import SInfo from 'react-native-sensitive-info'
 
 class SignIn extends React.Component {
     constructor(props) {
@@ -48,7 +49,10 @@ class SignIn extends React.Component {
             })
         }).then(r=>r.json()).then(response => {
             if(response.token) {
-                this.setState({'msg': "Bienvenido"})
+                SInfo.setItem('auth-token', response.token, {
+                    sharedPreferencesName: 'ServiSharedPreferences',
+                    keychainService: 'ServiKeyChain'
+                });
                 this.props.navigation.navigate(ROUTERS.Dashboard)
             }else{
                 if(response.non_field_errors){
