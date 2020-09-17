@@ -60,7 +60,9 @@ class Actividad extends React.Component {
     console.log('Componente creado actividad ', actividad_index);
   }
 
-  componentDidUpdate() {}
+  componentWillReceiveProps() {
+    console.log('**********PROPIEDADES*************');
+  }
 
   marcarLeida = () => {
     let nuevo_estado = this.props.data.visualizado
@@ -77,7 +79,7 @@ class Actividad extends React.Component {
     let html = `
             <html lang='es'>
                 <head>
-                    <meta name='viewport' content='width=device-width,user-scale=no'/>
+                    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
                     <style>
                     p{
                         textAlign:'justify'
@@ -98,8 +100,7 @@ class Actividad extends React.Component {
         `;
     return (
       <WebView
-        scalesPageToFit
-        automaticallyAdjustContentInsets={false}
+        showsVerticalScrollIndicator={false}
         originWhitelist={['*']}
         source={{html: html}}></WebView>
     );
@@ -147,7 +148,6 @@ class Actividad extends React.Component {
 
   render() {
     const {data} = this.props;
-    console.log('Tipo actividad ' + data.tipo);
     return (
       <View style={styles.container}>
         <View style={styleHeader.wrapper}>

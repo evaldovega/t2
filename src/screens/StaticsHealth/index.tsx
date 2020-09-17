@@ -43,6 +43,8 @@ const StaticsHealth = memo(() => {
                 })}
                 <SvgHover style={styles.svgHover}/>
             </View>
+
+            
             <ScrollView
                 showsVerticalScrollIndicator={false}
             >

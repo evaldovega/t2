@@ -35,8 +35,8 @@ class CapacitacionListado extends React.Component {
   componentDidMount() {
     this.props.cargar();
   }
-  detalle(item, key) {
-    this.props.navigation.push('CapacitacionDetalle', {item: item, key: key});
+  detalle(item) {
+    this.props.navigation.push('CapacitacionDetalle', {item: item});
   }
   renderCapacitaciones() {
     if (this.props.listado.length == 0) {
@@ -50,7 +50,7 @@ class CapacitacionListado extends React.Component {
           <Paragraph>{l.descripcion}</Paragraph>
         </Card.Content>
         <Card.Actions>
-          <Button onPress={() => this.detalle(l, k)}>Realizar</Button>
+          <Button onPress={() => this.detalle(l)}>Realizar</Button>
         </Card.Actions>
       </Card>
     ));

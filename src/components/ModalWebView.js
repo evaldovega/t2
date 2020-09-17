@@ -15,6 +15,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {COLORS} from 'constants';
 import SvgBack from 'svgs/profile/SvgBack';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+import {FAB, Title} from 'react-native-paper';
 
 const {width, heigth} = Dimensions.get('screen');
 const ModalWebView = (props) => {
@@ -26,18 +27,25 @@ const ModalWebView = (props) => {
       visible={visible}
       onRequestClose={() => {
         console.log('close modal');
+        props.onClose();
       }}>
       <View style={styles.modalBackground}>
-        <TouchableOpacity
-          style={styles.back}
-          onPress={() => {
-            props.onClose();
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 32,
+            marginBottom: 32,
           }}>
-          <View>
-            <SvgBack />
-          </View>
-          <Text style={{color: COLORS.PRIMARY_COLOR}}>Volver</Text>
-        </TouchableOpacity>
+          <FAB
+            style={{backgroundColor: COLORS.PRIMARY_COLOR, marginRight: 16}}
+            icon="arrow-left"
+            color="#ffff"
+            onPress={() => props.onClose()}
+          />
+          <Title>Volver</Title>
+        </View>
+
         <WebView
           originWhitelist={['*']}
           source={{
@@ -47,6 +55,7 @@ const ModalWebView = (props) => {
                     <style>
                         body {
                             padding:12px 32px 32px;
+                            margin:0 auto;
                         }
                     </style>
                 </head>
@@ -67,6 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingTop: 64,
     flex: 1,
+    flexDirection: 'column',
   },
   activityIndicatorWrapper: {
     backgroundColor: '#FFFFFF',
@@ -96,6 +106,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingBottom: 32,
+    zIndex: 99,
   },
 });
 

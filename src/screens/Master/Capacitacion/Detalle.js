@@ -53,10 +53,10 @@ class CapacitacionDetalle extends React.Component {
       useNativeDriver: true,
     }).start();
   }
-  actividad = (seccion_index, actividad_index) => {
+  actividad = (seccion_id, actividad_id) => {
     this.props.navigation.push('Actividad', {
-      seccion_index: seccion_index,
-      actividad_index: actividad_index,
+      seccion_index: seccion_id,
+      actividad_index: actividad_id,
     });
   };
   getTransform = () => {
@@ -65,7 +65,7 @@ class CapacitacionDetalle extends React.Component {
     };
     return withAnchorPoint(transform, {x: 0, y: 0.5}, {width: 32, height: 32});
   };
-  renderActividades = (seccion_index, actividades) => {
+  renderActividades = (id_seccion, actividades) => {
     if (actividades.length == 0) {
       return <Text>No hay actividades</Text>;
     }
@@ -73,7 +73,7 @@ class CapacitacionDetalle extends React.Component {
       return (
         <TouchableNativeFeedback
           key={key}
-          onPress={() => this.actividad(seccion_index, key)}>
+          onPress={() => this.actividad(id_seccion, a.id)}>
           <View
             style={{
               flexDirection: 'row',
@@ -116,7 +116,7 @@ class CapacitacionDetalle extends React.Component {
         <View key={key} style={{flexDirection: 'column'}}>
           <Text style={[styleText.h2]}>{s.titulo}</Text>
           <View style={{marginBottom: 24}}>
-            {this.renderActividades(key, s.actividades)}
+            {this.renderActividades(s.id, s.actividades)}
           </View>
         </View>
       );
