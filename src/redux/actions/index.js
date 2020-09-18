@@ -91,10 +91,17 @@ export const actividadMarcarLeida = (
   };
 };
 
-export const actividadSeleccionarOpcion = (index_pregunta, opcion) => {
+export const actividadSeleccionarOpcion = (
+  seccion_id,
+  actividad_id,
+  index_pregunta,
+  opcion,
+) => {
   return (dispatch) => {
     dispatch({
       type: ACTION_ACTIVIDAD_SELECCIONAR_OPCION,
+      seccion_id: seccion_id,
+      actividad_id: actividad_id,
       index_pregunta: index_pregunta,
       opcion: opcion,
     });

@@ -46,11 +46,15 @@ export default Capacitacion = (state = initialState, action) => {
         draft.actividad_seleccionada.visualizado = action.estado;
         break;
       case ACTION_ACTIVIDAD_SELECCIONAR_OPCION:
-        return produce(state, (draft) => {
-          draft.actividad_seleccionada.preguntas[
-            action.index_pregunta
-          ].seleccionada = action.opcion;
-        });
+        draft.secciones
+          .find((s) => s.id == action.seccion_id)
+          .actividades.find((a) => a.id == action.actividad_id)
+          .preguntas.find((p) => p.id == action.index_pregunta).seleccionada =
+          action.opcion;
+        draft.actividad_seleccionada.preguntas.find(
+          (p) => p.id == action.index_pregunta,
+        ).seleccionada = action.opcion;
+        //draft.secciones.find(s=>s.id==action.seccion_id).preguntas.find(a=>a.id==action.index_pregunta).seleccionada=action.opcion
         break;
     }
   });

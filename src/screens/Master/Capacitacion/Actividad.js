@@ -54,14 +54,12 @@ const styles = StyleSheet.create({
 });
 
 class Actividad extends React.Component {
+  state = {seccion_id: '', actividad_id: ''};
+
   componentDidMount() {
     const {seccion_index, actividad_index} = this.props.route.params;
+    this.setState({seccion_id: seccion_index, actividad_id: actividad_index});
     this.props.cargar(seccion_index, actividad_index);
-    console.log('Componente creado actividad ', actividad_index);
-  }
-
-  componentWillReceiveProps() {
-    console.log('**********PROPIEDADES*************');
   }
 
   marcarLeida = () => {
@@ -110,7 +108,14 @@ class Actividad extends React.Component {
     return (
       <TouchableOpacity
         key={index_opcion}
-        onPress={() => this.props.seleccionarOpcion(index_pregunta, opcion.id)}>
+        onPress={() =>
+          this.props.seleccionarOpcion(
+            this.state.seccion_id,
+            this.state.actividad_id,
+            pregunta.id,
+            opcion.id,
+          )
+        }>
         <View style={styles.checkboxContainer}>
           <Checkbox
             status={
@@ -148,6 +153,7 @@ class Actividad extends React.Component {
 
   render() {
     const {data} = this.props;
+    console.log(data.preguntas);
     return (
       <View style={styles.container}>
         <View style={styleHeader.wrapper}>
@@ -160,35 +166,33 @@ class Actividad extends React.Component {
           <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
         </View>
 
-        <ScrollView>
-          <View style={styles.container}>
-            <View style={{paddingHorizontal: 20}}>
-              <Text
-                style={[styleText.h1, {marginBottom: 20, textAlign: 'center'}]}>
-                {data.titulo}
-              </Text>
-              {data.tipo == 'lectura' ? (
-                <View
-                  style={{
-                    marginBottom: 20,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    alignSelf: 'flex-end',
-                  }}>
-                  <Text style={styleText.small}>Marcar como leido</Text>
-                  <Switch
-                    value={data.visualizado}
-                    onValueChange={() => this.marcarLeida()}></Switch>
-                </View>
-              ) : null}
-            </View>
-
-            <View style={styles.content}>
-              {this.renderLectura(data)}
-              {this.renderCuestionario(data)}
-            </View>
+        <View style={styles.container}>
+          <View style={{paddingHorizontal: 20}}>
+            <Text
+              style={[styleText.h1, {marginBottom: 20, textAlign: 'center'}]}>
+              {data.titulo}
+            </Text>
+            {data.tipo == 'lectura' ? (
+              <View
+                style={{
+                  marginBottom: 20,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  alignSelf: 'flex-end',
+                }}>
+                <Text style={styleText.small}>Marcar como leido</Text>
+                <Switch
+                  value={data.visualizado}
+                  onValueChange={() => this.marcarLeida()}></Switch>
+              </View>
+            ) : null}
           </View>
-        </ScrollView>
+
+          <View style={styles.content}>
+            {this.renderLectura(data)}
+            {this.renderCuestionario(data)}
+          </View>
+        </View>
       </View>
     );
   }
@@ -207,8 +211,15 @@ const mapToActions = (dispatch) => {
     marcarLeida: (seccion_index, actividad_index, estado) => {
       dispatch(actividadMarcarLeida(seccion_index, actividad_index, estado));
     },
-    seleccionarOpcion: (index_pregunta, opcion) => {
-      dispatch(actividadSeleccionarOpcion(index_pregunta, opcion));
+    seleccionarOpcion: (seccion_id, actividad_id, index_pregunta, opcion) => {
+      dispatch(
+        actividadSeleccionarOpcion(
+          seccion_id,
+          actividad_id,
+          index_pregunta,
+          opcion,
+        ),
+      );
     },
   };
 };
