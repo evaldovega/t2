@@ -4,6 +4,7 @@ import {Dimensions} from 'react-native'
 import Dashboard from './Dashboard'
 import Profile from './Profile'
 import CapacitacionListado from './Capacitacion/Listado'
+import Lead from './Client/Lead'
 
 
 const Drawer =   createDrawerNavigator()
@@ -27,6 +28,7 @@ export default class Master extends React.Component{
                 <Drawer.Screen name='Profile' component={Profile} />
                 <Drawer.Screen name='Dashboard' component={Dashboard} />
                 <Drawer.Screen name='Capacitaciones' component={CapacitacionListado}/>
+                <Drawer.Screen name='Clientes Potenciales' component={Lead}/>
             </Drawer.Navigator>
         )
     }

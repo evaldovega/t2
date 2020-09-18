@@ -52,10 +52,13 @@ const styleHeader = StyleSheet.create({
     backgroundColor: COLORS.PRIMARY_COLOR,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
+    paddingHorizontal: 24,
     height: 96,
     paddingTop: getStatusBarHeight(),
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    zIndex: 99,
   },
   title: {
     fontFamily: 'Montserrat-Regular',
@@ -63,16 +66,9 @@ const styleHeader = StyleSheet.create({
     color: '#fff',
   },
   btnLeft: {
-    position: 'absolute',
-    bottom: 20,
-    left: 16,
     zIndex: 1,
   },
-  btnRight: {
-    position: 'absolute',
-    bottom: 20,
-    right: 16,
-  },
+  btnRight: {},
 });
 
 export {styleText, styelCard, styleHeader};

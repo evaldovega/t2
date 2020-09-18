@@ -3,12 +3,17 @@ import {
   ACTION_CAMBIAR_NOMBRE_USUARIO,
   ACTION_CAPACITACIONES_CARGANDO,
   ACTION_CAPACITACIONES_CARGADAS,
+  ACTION_CAPACITACIONES_ERROR,
   ACTION_CAPACITACION_CARGANDO,
   ACTION_CAPACITACION_CARGADA,
   ACTION_CAPACITACION_OBTENER_ACTIVIDAD,
   ACTION_ACTIVIDAD_MARCAR_LEIDA,
+  ACTION_ACTIVIDAD_MARCANDO_LEIDA,
   ACTION_ACTIVIDAD_SELECCIONAR_OPCION,
+  ACTION_CAPACITACION_ERROR,
 } from '../Constantes';
+
+import {Token} from '../Utils';
 
 import {SERVER_ADDRESS} from '../../constants';
 
@@ -20,9 +25,14 @@ export const usuarioCambiarNombre = (nombre) => {
 };
 
 export const capacitacionesCargar = () => {
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch({type: ACTION_CAPACITACIONES_CARGANDO});
-    fetch(SERVER_ADDRESS + 'api/capacitaciones/')
+    let token = await Token();
+    fetch(SERVER_ADDRESS + 'api/capacitaciones/', {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    })
       .then((r) => r.json())
       .then((data) => {
         console.log(data);
@@ -30,14 +40,18 @@ export const capacitacionesCargar = () => {
       })
       .catch((error) => {
         console.log(error);
+        dispatch({type: ACTION_CAPACITACIONES_ERROR});
       });
   };
 };
 
 export const capacitacionDetalleCargar = (id) => {
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch({type: ACTION_CAPACITACION_CARGANDO});
-    fetch(SERVER_ADDRESS + 'api/capacitaciones/' + id + '/')
+    let token = await Token();
+    fetch(SERVER_ADDRESS + 'api/capacitaciones/' + id + '/', {
+      headers: {Authorization: 'token ' + token},
+    })
       .then((r) => r.json())
       .then((data) => {
         if (data.video_introduccion) {
@@ -76,25 +90,55 @@ export const capacitacionDetalleObtenerActividad = (
     });
   };
 };
+
 export const actividadMarcarLeida = (
   seccion_index,
   actividad_index,
   estado,
 ) => {
-  return (dispatch) => {
-    dispatch({
-      type: ACTION_ACTIVIDAD_MARCAR_LEIDA,
-      seccion_index,
-      actividad_index,
-      estado,
-    });
+  return async (dispatch) => {
+    dispatch({type: ACTION_ACTIVIDAD_MARCANDO_LEIDA});
+    let token = await Token();
+    console.log('Marcar visualizada token ', token);
+    fetch(
+      SERVER_ADDRESS + 'api/actividades/' + actividad_index + '/visualizar/',
+      {
+        method: 'GET',
+        headers: {
+          Authorization: 'token ' + token,
+          Accept: 'application/json',
+          'content-type': 'application/json',
+        },
+      },
+    )
+      .then((r) => r.json())
+      .then((data) => {
+        dispatch({
+          type: ACTION_ACTIVIDAD_MARCAR_LEIDA,
+          seccion_index,
+          actividad_index,
+          estado,
+        });
+      })
+      .catch((error) => {
+        console.log('Error marcando visualizada');
+        console.log(error);
+        dispatch({type: ACTION_CAPACITACION_ERROR});
+      });
   };
 };
 
-export const actividadSeleccionarOpcion = (index_pregunta, opcion) => {
+export const actividadSeleccionarOpcion = (
+  seccion_id,
+  actividad_id,
+  index_pregunta,
+  opcion,
+) => {
   return (dispatch) => {
     dispatch({
       type: ACTION_ACTIVIDAD_SELECCIONAR_OPCION,
+      seccion_id: seccion_id,
+      actividad_id: actividad_id,
       index_pregunta: index_pregunta,
       opcion: opcion,
     });
