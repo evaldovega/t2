@@ -1,6 +1,7 @@
 import {
   ACTION_CAPACITACIONES_CARGANDO,
   ACTION_CAPACITACIONES_CARGADAS,
+  ACTION_CAPACITACIONES_ERROR,
 } from '../Constantes';
 const initialState = {
   cargando: false,
@@ -13,7 +14,8 @@ export default Capacitaciones = (state = initialState, action) => {
       return {...state, cargando: true};
     case ACTION_CAPACITACIONES_CARGADAS:
       return {...state, listado: action.listado, cargando: false};
-
+    case ACTION_CAPACITACIONES_ERROR:
+      return {...state, cargando: false};
     default:
       return state;
   }

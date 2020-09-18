@@ -79,6 +79,8 @@ target 'Claka' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
+  pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
+
   target 'ClakaTests' do
     inherit! :complete
     # Pods for testing
