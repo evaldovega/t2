@@ -12,13 +12,10 @@ import {
   Easing,
 } from 'react-native';
 import {withAnchorPoint} from 'react-native-anchor-point';
-import SvgBack from 'svgs/profile/SvgBack';
 import {WebView} from 'react-native-webview';
 import YoutubePlayer, {getYoutubeMeta} from 'react-native-youtube-iframe';
-import {Checkbox, Button, Switch, FAB} from 'react-native-paper';
-
-import ArrowRight from 'svgs/ArrowRight';
-import ArrowLeft from 'svgs/ArrowLeft';
+import {Checkbox, Button, Switch, FAB, Title} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 import Loader from 'components/Loader';
 const {width, height} = Dimensions.get('screen');
@@ -182,21 +179,23 @@ class Actividad extends React.Component {
     });
 
     return (
-      <ScrollView>
-        <View
-          style={{
-            flex: 1,
-            padding: 20,
-            backgroundColor: 'white',
-            borderTopRightRadius: 20,
-            borderTopLeftRadius: 20,
-          }}>
-          {preguntas}
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+          borderTopRightRadius: 20,
+          borderTopLeftRadius: 20,
+        }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{flex: 1, padding: 32}}>{preguntas}</View>
+        </ScrollView>
+
+        <View style={{padding: 16}}>
           <Button mode="contained" color={COLORS.PRIMARY_COLOR} dark={true}>
             Enviar Respuestas
           </Button>
         </View>
-      </ScrollView>
+      </View>
     );
   };
 
@@ -282,8 +281,9 @@ class Actividad extends React.Component {
         <View style={styleHeader.wrapper}>
           <TouchableOpacity
             style={styleHeader.btnLeft}
+            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
             onPress={() => this.props.navigation.pop()}>
-            <ArrowLeft width={24} height={24} color={'#ffff'} />
+            <Icon name="arrowleft" color="white" size={24} />
           </TouchableOpacity>
           <Text style={[styleHeader.title]}>Actividad</Text>
           <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
@@ -301,14 +301,11 @@ class Actividad extends React.Component {
             <View
               style={{
                 paddingHorizontal: 20,
+                marginBottom: 20,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                alignItems: 'center',
               }}>
-              <Text
-                style={[styleText.h1, {marginBottom: 20, textAlign: 'center'}]}>
-                {data.titulo}
-              </Text>
+              <Title style={[styleText.h1, {flex: 1}]}>{data.titulo}</Title>
               {data.tipo == 'video' && this.state.video_cover != '' ? (
                 <FAB
                   icon={this.state.estado_video == 'playing' ? 'pause' : 'play'}
@@ -319,7 +316,6 @@ class Actividad extends React.Component {
               {data.tipo == 'lectura' ? (
                 <View
                   style={{
-                    marginBottom: 20,
                     flexDirection: 'row',
                     alignItems: 'center',
                     alignSelf: 'flex-end',

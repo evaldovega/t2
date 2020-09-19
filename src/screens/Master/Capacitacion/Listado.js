@@ -9,19 +9,21 @@ import {
   Image,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+import Icon from 'react-native-vector-icons/Entypo';
 import {Montserrat} from 'utils/fonts';
-import SvgOption from 'svgs/staticsHealth/SvgOptions';
-import SvgSetting from 'svgs/staticsHealth/SvgSetting';
-import SvgHover from 'svgs/staticsHealth/SvgHover';
-import SvgGlueco from 'svgs/staticsHealth/SvgGlueco';
-import SvgEdit from 'svgs/staticsHealth/SvgEdit';
-import SvgWeight from 'svgs/staticsHealth/SvgWeight';
-
-import {Avatar, Button, Card, Title, Paragraph} from 'react-native-paper';
+import {
+  Avatar,
+  Button,
+  Card,
+  Title,
+  Paragraph,
+  ProgressBar,
+  Colors,
+} from 'react-native-paper';
 
 import Loader from 'components/Loader';
 import {COLORS} from 'constants';
-import {styelCard} from 'styles';
+import {styelCard, styleHeader} from 'styles';
 const dataTime = ['DAYS', 'WEEKS', 'MONTHS', 'YEARS'];
 
 import {connect} from 'react-redux';
@@ -40,10 +42,16 @@ class CapacitacionListado extends React.Component {
   }
   renderCapacitaciones() {
     if (this.props.listado.length == 0) {
-      return;
+      return <Text>No hay capacitaciones</Text>;
     }
     return this.props.listado.map((l, k) => (
-      <Card style={{marginTop: 16}}>
+      <Card
+        elevation={0}
+        style={{marginTop: 16, borderRadius: 16, overflow: 'hidden'}}>
+        <ProgressBar
+          progress={parseFloat(l.progreso) / 100}
+          color={Colors.amber600}
+        />
         <Card.Cover source={{uri: l.imagen_portada}} />
         <Card.Content>
           <Title>{l.tiutlo}</Title>
@@ -64,14 +72,17 @@ class CapacitacionListado extends React.Component {
           barStyle={'light-content'}
         />
         <Loader loading={this.props.cargando} />
-        <View style={styles.header}>
-          <Text style={styles.title}>Capacitaciones {this.props.cargando}</Text>
-          <TouchableOpacity style={styles.btnClose} onPress={this.onPressMenu}>
-            <SvgOption />
+        <View style={styleHeader.wrapper}>
+          <TouchableOpacity
+            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
+            style={styleHeader.btnLeft}
+            onPress={this.onPressMenu}>
+            <Icon name="menu" size={24} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btnOption}>
-            <SvgSetting />
-          </TouchableOpacity>
+          <Text style={styleHeader.title}>
+            Capacitaciones {this.props.cargando}
+          </Text>
+          <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -103,31 +114,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F8F9',
-  },
-  header: {
-    backgroundColor: COLORS.PRIMARY_COLOR,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    height: 96,
-    paddingTop: getStatusBarHeight(),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontFamily: Montserrat,
-    fontSize: 17,
-    color: '#fff',
-  },
-  btnClose: {
-    position: 'absolute',
-    bottom: 20,
-    left: 16,
-    zIndex: 1,
-  },
-  btnOption: {
-    position: 'absolute',
-    bottom: 20,
-    right: 16,
   },
   containerTime: {
     flexDirection: 'row',

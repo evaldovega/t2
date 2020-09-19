@@ -23,6 +23,7 @@ import {Platform} from "react-native";
 
 import {Provider} from 'react-redux'
 import configureStore from '../redux/configuracion'
+import { COLORS } from 'constants';
 
 
 
@@ -39,8 +40,8 @@ const theme = {
     roundness: 2,
     colors: {
       ...DefaultTheme.colors,
-      primary: '#6979F8',
-      accent: '#f1c40f',
+      primary: COLORS.PRIMARY_COLOR,
+      accent: COLORS.ACCENT,
     },
   };
 

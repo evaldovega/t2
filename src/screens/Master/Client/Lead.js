@@ -10,7 +10,10 @@ import {
   PermissionsAndroid,
   Platform,
   Alert,
+  VirtualizedList,
+  SafeAreaView,
 } from 'react-native';
+
 import {
   Modal,
   Avatar,
@@ -21,6 +24,7 @@ import {
   List,
   Provider,
 } from 'react-native-paper';
+
 import Contacts from 'react-native-contacts';
 import Icon from 'react-native-vector-icons/Entypo';
 import {styleHeader} from 'styles';
@@ -55,7 +59,7 @@ class Lead extends React.Component {
       Contacts.getAll((err, contacts) => {
         contacts = contacts.map((c) => {
           return {
-            idRecord: c.recordID,
+            recordID: c.recordID,
             nombre: c.givenName + ' ' + c.middleName,
             foto: c.thumbnailPath,
             telefonos: c.phoneNumbers,
@@ -65,7 +69,7 @@ class Lead extends React.Component {
         this.setState({
           contacts: contacts,
           contact_q: '',
-          contacts_filter: [],
+          contacts_filter: contacts,
           mostrar_contactos: true,
         });
       });
@@ -81,63 +85,47 @@ class Lead extends React.Component {
     );
     this.setState({contacts_filter: filtered});
   };
-  renderContacto = () => {
-    if (this.state.contacts.length == 0) {
-      return;
-    }
-    const contact = this.state.contacts[this.state.visualizar_contacto];
+
+  getItem = (data, index) => {
+    return this.state.contacts_filter[index];
+  };
+  getItemCount = () => {
+    return this.state.contacts_filter.length;
+  };
+
+  Item = ({foto, nombre, empresa}) => {
     return (
       <View
         style={{
-          margin: 32,
-          borderRadius: 32,
-          paddingBottom: 32,
-          backgroundColor: 'white',
-          overflow: 'hidden',
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 16,
+          paddingVertical: 16,
         }}>
-        <Searchbar
-          placeholder="Buscar..."
-          style={{elevation: 0}}
-          value={this.state.contact_q}
-          onChangeText={this.filterContacts}
-        />
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          style={{maxHeight: 400}}>
-          <View style={{padding: 32}}>
-            {this.state.contacts_filter.map((c) => {
-              return (
-                <List.Item
-                  title={c.nombre}
-                  left={(props) => (
-                    <Avatar.Image {...props} source={{uri: c.foto}} />
-                  )}
-                  description={c.empresa}
-                />
-              );
-            })}
-          </View>
-        </ScrollView>
+        <Avatar.Image source={{uri: foto}} style={{marginRight: 8}} />
+        <View style={{flex: 1}}>
+          <Title>{nombre}</Title>
+          <Paragraph>
+            {}
+            {empresa}
+          </Paragraph>
+        </View>
       </View>
     );
   };
+
+  onPressMenu = () => {
+    this.props.navigation.openDrawer();
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        <Modal
-          style={{flex: 1}}
-          visible={this.state.mostrar_contactos}
-          onDismiss={() => {
-            this.setState({mostrar_contactos: false});
-          }}>
-          {this.renderContacto()}
-        </Modal>
         <StatusBar
           translucent={true}
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-
         <View style={styleHeader.wrapper}>
           <TouchableOpacity
             style={styleHeader.btnLeft}
@@ -153,6 +141,16 @@ class Lead extends React.Component {
             <Icon name="v-card" color="white" size={24} />
           </TouchableOpacity>
         </View>
+        <SafeAreaView style={{flex: 1}}>
+          <VirtualizedList
+            data={this.state.contacts_filter}
+            initialNumToRender={10}
+            renderItem={({item}) => this.Item(item)}
+            keyExtractor={(item) => item.recordID}
+            getItemCount={this.getItemCount}
+            getItem={this.getItem}
+          />
+        </SafeAreaView>
       </View>
     );
   }

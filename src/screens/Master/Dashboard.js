@@ -9,17 +9,16 @@ import {
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Montserrat} from 'utils/fonts';
-import SvgOption from 'svgs/staticsHealth/SvgOptions';
-import SvgSetting from 'svgs/staticsHealth/SvgSetting';
 import SvgHover from 'svgs/staticsHealth/SvgHover';
 import SvgGlueco from 'svgs/staticsHealth/SvgGlueco';
 import SvgEdit from 'svgs/staticsHealth/SvgEdit';
 import SvgWeight from 'svgs/staticsHealth/SvgWeight';
 import Chart from 'screens/StaticsHealth/components/Chart';
 const dataTime = ['DAYS', 'WEEKS', 'MONTHS', 'YEARS'];
-
+import {styleHeader} from 'styles';
 import {connect} from 'react-redux';
 import {usuarioCambiarNombre} from '../../redux/actions';
+import Icon from 'react-native-vector-icons/Entypo';
 
 class Dashboard extends React.Component {
   onPressMenu = () => {
@@ -36,17 +35,17 @@ class Dashboard extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-        <View style={styles.header}>
-          <Text style={styles.title}>Dashboard</Text>
-          <TouchableOpacity style={styles.btnClose} onPress={this.onPressMenu}>
-            <SvgOption />
+        <View style={styleHeader.wrapper}>
+          <TouchableOpacity
+            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
+            style={styleHeader.btnLeft}
+            onPress={this.onPressMenu}>
+            <Icon name="menu" size={24} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btnOption}>
-            <SvgSetting />
-          </TouchableOpacity>
+          <Text style={styleHeader.title}>Dashboard</Text>
+          <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
         </View>
 
-        <Text>{this.props.usuario.nombre}</Text>
         <View style={styles.containerTime}>
           {dataTime.map((item) => {
             return (

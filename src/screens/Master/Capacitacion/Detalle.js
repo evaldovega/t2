@@ -24,6 +24,7 @@ import Check from 'svgs/Check';
 import Loader from 'components/Loader';
 import {COLORS} from 'constants';
 import {styelCard} from 'styles';
+import Icon from 'react-native-vector-icons/AntDesign';
 const dataTime = ['DAYS', 'WEEKS', 'MONTHS', 'YEARS'];
 
 const {width, height} = Dimensions.get('screen');
@@ -80,6 +81,8 @@ class CapacitacionDetalle extends React.Component {
               justifyContent: 'space-around',
               alignItems: 'center',
               paddingVertical: 16,
+              paddingHorizontal: 32,
+              marginLeft: -32,
             }}>
             <Animated.View style={this.getTransform()}>
               <FAB
@@ -100,7 +103,7 @@ class CapacitacionDetalle extends React.Component {
             </View>
 
             <View>
-              <ArrowRight width={24} height={24} />
+              <Icon name="right" size={24} />
             </View>
           </View>
         </TouchableNativeFeedback>
@@ -148,8 +151,11 @@ class CapacitacionDetalle extends React.Component {
         {/*<Loader loading={this.props.cargando}/>*/}
         <View style={styles.header}>
           <Text style={styles.titleHeader}>Detalle Capacitación</Text>
-          <TouchableOpacity style={styles.btnClose} onPress={this.onPressMenu}>
-            <ArrowLeft width={24} height={24} color={'#ffff'} />
+          <TouchableOpacity
+            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
+            style={styles.btnClose}
+            onPress={this.onPressMenu}>
+            <Icon name="arrowleft" color="white" size={24} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.btnOption}></TouchableOpacity>
         </View>
