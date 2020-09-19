@@ -19,8 +19,9 @@ import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
 
 import SvgOption from 'svgs/staticsHealth/SvgOptions';
-import SvgBack from 'svgs/profile/SvgBack';
 import SvgNoti from 'svgs/profile/SvgNoti';
+
+import Icon from 'react-native-vector-icons/Entypo';
 
 import {connect} from 'react-redux';
 import {usuarioCambiarNombre} from '../../redux/actions';
@@ -52,7 +53,7 @@ class Profile extends React.Component {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.back} onPress={this.onPressMenu}>
-          <SvgOption />
+          <Icon name="menu" size={24} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.noti}>
           <SvgNoti />

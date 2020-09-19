@@ -14,20 +14,28 @@ import {
 import {withAnchorPoint} from 'react-native-anchor-point';
 import {WebView} from 'react-native-webview';
 import YoutubePlayer, {getYoutubeMeta} from 'react-native-youtube-iframe';
-import {Checkbox, Button, Switch, FAB, Title} from 'react-native-paper';
+import {
+  Checkbox,
+  Button,
+  Switch,
+  FAB,
+  Title,
+  Paragraph,
+} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
-
 import Loader from 'components/Loader';
 const {width, height} = Dimensions.get('screen');
-import {styleText, styleHeader} from 'styles';
+import {styleText, styleHeader, styleButton} from 'styles';
 import {connect} from 'react-redux';
 import {
   capacitacionDetalleObtenerActividad,
   actividadMarcarLeida,
   actividadSeleccionarOpcion,
+  actividadEnviarCuestionario,
 } from '../../../redux/actions';
 import {COLORS} from 'constants';
 import Check from 'svgs/Check';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -37,13 +45,12 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: '#FFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderRadius: 24,
     paddingBottom: 20,
     paddingTop: 0,
     paddingHorizontal: 0,
     overflow: 'hidden',
-    minHeight: height,
+    marginBottom: 32,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -73,7 +80,7 @@ class Actividad extends React.Component {
     this.props.cargar(seccion_index, actividad_index);
     Animated.timing(this.state.opacidad, {
       toValue: 1,
-      duration: 2000,
+      duration: 1000,
       easing: Easing.cubic,
       useNativeDriver: true,
     }).start(() => {
@@ -128,9 +135,12 @@ class Actividad extends React.Component {
         style={{
           flex: 1,
           padding: 20,
+          marginHorizontal: 8,
           backgroundColor: 'white',
           borderTopRightRadius: 20,
           borderTopLeftRadius: 20,
+          shadowColor: 'rgba(0,0,0,.5)',
+          elevation: 5,
         }}>
         <WebView
           showsVerticalScrollIndicator={true}
@@ -165,6 +175,21 @@ class Actividad extends React.Component {
     );
   };
 
+  enviarCuestionario = () => {
+    let data = [],
+      error = false;
+    for (let p of this.props.data.preguntas) {
+      if (!p.seleccionada) {
+        Alert.alert('Conteste todas las preguntas', p.pregunta);
+        error = true;
+        break;
+      }
+      data.push({pregunta: p.id, respuesta: p.seleccionada});
+    }
+
+    this.props.enviarCuestionario(this.state.actividad_id, data);
+  };
+
   renderCuestionario = (data) => {
     if (data.tipo != 'cuestionario') {
       return;
@@ -172,8 +197,26 @@ class Actividad extends React.Component {
     const preguntas = data.preguntas.map((p, k) => {
       return (
         <View key={k}>
-          <Text style={[styleText.h2, {marginBottom: 20}]}>{p.pregunta}</Text>
+          <Text
+            style={[
+              styleText.h2,
+              {
+                fontWeight: 'bold',
+                color: COLORS.PRIMARY_COLOR,
+                marginBottom: 20,
+              },
+            ]}>
+            {p.pregunta}
+          </Text>
           {p.opciones.map((o, k2) => this.renderOpcion(o, p, k, k2))}
+          {p.error && p.error != '' ? (
+            <View style={{flexDirection: 'row'}}>
+              <Icon name="closecircle" size={18} color="red" />
+              <Text style={{marginLeft: 8, color: 'red', fontWeight: 'bold'}}>
+                {p.error}
+              </Text>
+            </View>
+          ) : null}
         </View>
       );
     });
@@ -183,17 +226,23 @@ class Actividad extends React.Component {
         style={{
           flex: 1,
           backgroundColor: 'white',
-          borderTopRightRadius: 20,
-          borderTopLeftRadius: 20,
+          marginHorizontal: 8,
+          borderRadius: 20,
+          paddingBottom: 16,
+          shadowColor: 'rgba(0,0,0,.5)',
+          elevation: 5,
+          marginBottom: 32,
         }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{flex: 1, padding: 32}}>{preguntas}</View>
         </ScrollView>
 
         <View style={{padding: 16}}>
-          <Button mode="contained" color={COLORS.PRIMARY_COLOR} dark={true}>
-            Enviar Respuestas
-          </Button>
+          <TouchableOpacity
+            style={styleButton.wrapper}
+            onPress={this.enviarCuestionario}>
+            <Text style={styleButton.text}>Enviar Respuestas</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -226,6 +275,7 @@ class Actividad extends React.Component {
         style={{
           marginTop: -20,
           overflow: 'hidden',
+          marginHorizontal: 8,
           borderBottomLeftRadius: 20,
           borderBottomRightRadius: 20,
           height: 250,
@@ -274,8 +324,9 @@ class Actividad extends React.Component {
   };
 
   render() {
-    const {data} = this.props;
+    const {data, cargando} = this.props;
     console.log(data.preguntas);
+
     return (
       <View style={styles.container}>
         <View style={styleHeader.wrapper}>
@@ -285,7 +336,9 @@ class Actividad extends React.Component {
             onPress={() => this.props.navigation.pop()}>
             <Icon name="arrowleft" color="white" size={24} />
           </TouchableOpacity>
-          <Text style={[styleHeader.title]}>Actividad</Text>
+          <Text style={[styleHeader.title, {textTransform: 'capitalize'}]}>
+            {data.tipo}
+          </Text>
           <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
         </View>
 
@@ -301,11 +354,22 @@ class Actividad extends React.Component {
             <View
               style={{
                 paddingHorizontal: 20,
+                paddingTop: 20,
                 marginBottom: 20,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
+                alignItems: 'flex-start',
               }}>
-              <Title style={[styleText.h1, {flex: 1}]}>{data.titulo}</Title>
+              <Title style={[{flex: 1}]}>{data.titulo}</Title>
+
+              {data.tipo == 'cuestionario' ? (
+                <View style={{}}>
+                  <Paragraph>
+                    Intentos {data.intentos_user}/{data.intentos}
+                  </Paragraph>
+                  <Paragraph>Calificacion {data.calificacion}</Paragraph>
+                </View>
+              ) : null}
               {data.tipo == 'video' && this.state.video_cover != '' ? (
                 <FAB
                   icon={this.state.estado_video == 'playing' ? 'pause' : 'play'}
@@ -340,6 +404,7 @@ class Actividad extends React.Component {
 const mapToState = (state) => {
   return {
     data: state.Capacitacion.actividad_seleccionada,
+    cargando: state.Capacitacion.cargando,
   };
 };
 const mapToActions = (dispatch) => {
@@ -359,6 +424,9 @@ const mapToActions = (dispatch) => {
           opcion,
         ),
       );
+    },
+    enviarCuestionario: (actividad, data) => {
+      dispatch(actividadEnviarCuestionario(actividad, data));
     },
   };
 };

@@ -11,6 +11,10 @@ import {
   ACTION_ACTIVIDAD_MARCANDO_LEIDA,
   ACTION_ACTIVIDAD_SELECCIONAR_OPCION,
   ACTION_CAPACITACION_ERROR,
+  ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO,
+  ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_ERROR,
+  ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_OK,
+  ACTION_ACTIVIDAD_MARCAR_ERROR_PREGUNTA,
 } from '../Constantes';
 
 import {Token} from '../Utils';
@@ -141,6 +145,65 @@ export const actividadSeleccionarOpcion = (
       actividad_id: actividad_id,
       index_pregunta: index_pregunta,
       opcion: opcion,
+    });
+    dispatch({
+      type: ACTION_ACTIVIDAD_MARCAR_ERROR_PREGUNTA,
+      pregunta_id: index_pregunta,
+      error: '',
+    });
+  };
+};
+
+export const actividadEnviarCuestionario = (actividad_id, data) => {
+  return async (dispatch) => {
+    dispatch({type: ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO});
+    let token = await Token();
+    fetch(SERVER_ADDRESS + 'api/actividades/' + actividad_id + '/guardar/', {
+      method: 'POST',
+      headers: {
+        Authorization: 'token ' + token,
+        Accept: 'application/json',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((r) => r.json())
+      .then((r) => {
+        console.log('Resultados cuestionario');
+        console.log(r);
+        if (r.errores) {
+          console.log('Marcar errores');
+          r.errores.forEach((r) => {
+            console.log('Pregunta ', r, ' errada ');
+            dispatch({
+              type: ACTION_ACTIVIDAD_MARCAR_ERROR_PREGUNTA,
+              pregunta_id: r,
+              error: 'Respuesta incorrecta',
+            });
+          });
+        }
+        dispatch({
+          type: ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_OK,
+          calificacion: r.calificacion,
+        });
+      })
+      .catch((error) => {
+        console.log('Error enviando cuestonario');
+        console.log(error);
+        dispatch({
+          type: ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_ERROR,
+          error: error.toString(),
+        });
+      });
+  };
+};
+
+export const preguntaMarcarError = (pregunta_id, error) => {
+  return (dispatch) => {
+    dispatch({
+      type: ACTION_ACTIVIDAD_MARCAR_ERROR_PREGUNTA,
+      pregunta_id: pregunta_id,
+      error: error,
     });
   };
 };

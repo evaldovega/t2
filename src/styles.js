@@ -71,4 +71,20 @@ const styleHeader = StyleSheet.create({
   btnRight: {},
 });
 
-export {styleText, styelCard, styleHeader};
+const styleButton = StyleSheet.create({
+  wrapper: {
+    marginHorizontal: 40,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: COLORS.PRIMARY_COLOR,
+    marginTop: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontWeight: '600',
+    fontSize: 17,
+    color: '#FFF',
+  },
+});
+export {styleText, styelCard, styleHeader, styleButton};
