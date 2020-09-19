@@ -231,6 +231,7 @@ class Actividad extends React.Component {
           borderBottomRightRadius: 20,
           height: 250,
         }}>
+        {/*
         <View
           style={{
             zIndex: 4,
@@ -240,7 +241,7 @@ class Actividad extends React.Component {
             width: '100%',
             height: 250,
             backgroundColor: 'transparent',
-          }}></View>
+          }}></View>*/}
 
         {this.state.estado_video != 'playing' &&
         this.state.video_cover != '' ? (
@@ -264,7 +265,7 @@ class Actividad extends React.Component {
           videoId={data.enlace_externo.split('?v=')[1]}
           initialPlayerParams={{
             rel: false,
-            controls: false,
+            controls: true,
             modestbranding: true,
           }}
           onChangeState={this.onStateChange}
@@ -279,12 +280,12 @@ class Actividad extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styleHeader.wrapper}>
-          <Text style={[styleHeader.title]}>Actividad</Text>
           <TouchableOpacity
             style={styleHeader.btnLeft}
             onPress={() => this.props.navigation.pop()}>
             <ArrowLeft width={24} height={24} color={'#ffff'} />
           </TouchableOpacity>
+          <Text style={[styleHeader.title]}>Actividad</Text>
           <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
         </View>
 
