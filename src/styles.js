@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {COLORS} from 'constants';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const styelCard = StyleSheet.create({
   wrapper: {
@@ -106,6 +107,12 @@ const styleInput = StyleSheet.create({
     flex: 1,
     padding: 0,
     margin: 0,
+  },
+  error: {
+    fontSize: 12,
+    color: 'red',
+    paddingHorizontal: 16,
+    marginTop: 4,
   },
 });
 export {styleText, styelCard, styleHeader, styleButton, styleInput};
