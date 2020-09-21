@@ -15,6 +15,7 @@ import {withAnchorPoint} from 'react-native-anchor-point';
 import {WebView} from 'react-native-webview';
 import YoutubePlayer, {getYoutubeMeta} from 'react-native-youtube-iframe';
 import {
+  Card,
   Checkbox,
   Button,
   Switch,
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
 
 class Actividad extends React.Component {
   state = {
+    capacitacion_id: '',
     seccion_id: '',
     actividad_id: '',
     estado_video: '',
@@ -75,8 +77,16 @@ class Actividad extends React.Component {
   }
 
   componentDidMount() {
-    const {seccion_index, actividad_index} = this.props.route.params;
-    this.setState({seccion_id: seccion_index, actividad_id: actividad_index});
+    const {
+      capacitacion_id,
+      seccion_index,
+      actividad_index,
+    } = this.props.route.params;
+    this.setState({
+      seccion_id: seccion_index,
+      actividad_id: actividad_index,
+      capacitacion_id: capacitacion_id,
+    });
     this.props.cargar(seccion_index, actividad_index);
     Animated.timing(this.state.opacidad, {
       toValue: 1,
@@ -94,6 +104,18 @@ class Actividad extends React.Component {
       getYoutubeMeta(data.enlace_externo.split('?v=')[1]).then((meta) => {
         this.setState({video_cover: meta.thumbnail_url});
       });
+    }
+    console.log('ERRROR ', this.props.error);
+    if (this.props.error != '' && this.props.error != prev.error) {
+      Alert.alert('Algo anda mal', this.props.error);
+    }
+
+    if (
+      this.props.cuestionario_aprobado != prev.cuestionario_aprobado &&
+      this.props.cuestionario_aprobado
+    ) {
+      Alert.alert('Felicitaciones', 'Actividad completada correctamente');
+      this.props.navigation.pop();
     }
   }
 
@@ -187,7 +209,12 @@ class Actividad extends React.Component {
       data.push({pregunta: p.id, respuesta: p.seleccionada});
     }
 
-    this.props.enviarCuestionario(this.state.actividad_id, data);
+    this.props.enviarCuestionario(
+      this.state.capacitacion_id,
+      this.state.seccion_id,
+      this.state.actividad_id,
+      data,
+    );
   };
 
   renderCuestionario = (data) => {
@@ -196,28 +223,33 @@ class Actividad extends React.Component {
     }
     const preguntas = data.preguntas.map((p, k) => {
       return (
-        <View key={k}>
-          <Text
-            style={[
-              styleText.h2,
-              {
-                fontWeight: 'bold',
-                color: COLORS.PRIMARY_COLOR,
-                marginBottom: 20,
-              },
-            ]}>
-            {p.pregunta}
-          </Text>
-          {p.opciones.map((o, k2) => this.renderOpcion(o, p, k, k2))}
-          {p.error && p.error != '' ? (
-            <View style={{flexDirection: 'row'}}>
-              <Icon name="closecircle" size={18} color="red" />
-              <Text style={{marginLeft: 8, color: 'red', fontWeight: 'bold'}}>
-                {p.error}
-              </Text>
-            </View>
-          ) : null}
-        </View>
+        <Card
+          key={k}
+          style={{borderRadius: 16, marginBottom: 16}}
+          elevation={4}>
+          <Card.Content>
+            <Title
+              style={[
+                styleText.h2,
+                {
+                  fontWeight: 'bold',
+                  color: COLORS.PRIMARY_COLOR,
+                  marginBottom: 20,
+                },
+              ]}>
+              {p.pregunta}
+            </Title>
+            {p.opciones.map((o, k2) => this.renderOpcion(o, p, k, k2))}
+            {p.error && p.error != '' ? (
+              <View style={{flexDirection: 'row'}}>
+                <Icon name="closecircle" size={18} color="red" />
+                <Text style={{marginLeft: 8, color: 'red', fontWeight: 'bold'}}>
+                  {p.error}
+                </Text>
+              </View>
+            ) : null}
+          </Card.Content>
+        </Card>
       );
     });
 
@@ -225,30 +257,25 @@ class Actividad extends React.Component {
       <View
         style={{
           flex: 1,
-          backgroundColor: 'white',
-          marginHorizontal: 8,
+          marginHorizontal: 4,
           borderRadius: 20,
-          paddingBottom: 16,
-          shadowColor: 'rgba(0,0,0,.5)',
-          elevation: 5,
-          marginBottom: 32,
         }}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{flex: 1, padding: 32}}>{preguntas}</View>
+          <View style={{flex: 1, padding: 16}}>{preguntas}</View>
+          <View style={{padding: 16}}>
+            <TouchableOpacity
+              style={styleButton.wrapper}
+              onPress={this.enviarCuestionario}>
+              <Text style={styleButton.text}>Enviar Respuestas</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
-
-        <View style={{padding: 16}}>
-          <TouchableOpacity
-            style={styleButton.wrapper}
-            onPress={this.enviarCuestionario}>
-            <Text style={styleButton.text}>Enviar Respuestas</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     );
   };
 
   onStateChange = (state) => {
+    console.log('Cambio de estado');
     console.log(state);
     this.setState({estado_video: state});
     switch (state) {
@@ -273,25 +300,11 @@ class Actividad extends React.Component {
     return (
       <View
         style={{
-          marginTop: -20,
           overflow: 'hidden',
-          marginHorizontal: 8,
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20,
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
           height: 250,
         }}>
-        {/*
-        <View
-          style={{
-            zIndex: 4,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: 250,
-            backgroundColor: 'transparent',
-          }}></View>*/}
-
         {this.state.estado_video != 'playing' &&
         this.state.video_cover != '' ? (
           <Image
@@ -329,6 +342,7 @@ class Actividad extends React.Component {
 
     return (
       <View style={styles.container}>
+        <Loader loading={cargando} />
         <View style={styleHeader.wrapper}>
           <TouchableOpacity
             style={styleHeader.btnLeft}
@@ -343,54 +357,63 @@ class Actividad extends React.Component {
         </View>
 
         <View style={styles.container}>
-          {this.renderVideo(data)}
-
           <View
             style={{
               flex: 1,
               justifyContent: 'flex-start',
               alignItems: 'stretch',
             }}>
-            <View
-              style={{
-                paddingHorizontal: 20,
-                paddingTop: 20,
-                marginBottom: 20,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-              }}>
-              <Title style={[{flex: 1}]}>{data.titulo}</Title>
-
-              {data.tipo == 'cuestionario' ? (
-                <View style={{}}>
-                  <Paragraph>
-                    Intentos {data.intentos_user}/{data.intentos}
-                  </Paragraph>
-                  <Paragraph>Calificacion {data.calificacion}</Paragraph>
-                </View>
-              ) : null}
-              {data.tipo == 'video' && this.state.video_cover != '' ? (
-                <FAB
-                  icon={this.state.estado_video == 'playing' ? 'pause' : 'play'}
-                  loading={this.state.estado_video == 'buffering'}
-                  onPress={this.playVideo}
-                />
-              ) : null}
-              {data.tipo == 'lectura' ? (
+            <Card
+              style={{borderRadius: 16, marginHorizontal: 16, marginTop: 32}}
+              elevation={4}>
+              {this.renderVideo(data)}
+              <Card.Content>
                 <View
                   style={{
+                    paddingHorizontal: 20,
+                    paddingTop: 20,
+                    marginBottom: 20,
                     flexDirection: 'row',
-                    alignItems: 'center',
-                    alignSelf: 'flex-end',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
                   }}>
-                  <Text style={styleText.small}>Marcar como leido</Text>
-                  <Switch
-                    value={data.visualizado}
-                    onValueChange={() => this.marcarLeida()}></Switch>
+                  <Title style={[{flex: 1}]}>{data.titulo}</Title>
+
+                  {data.tipo == 'cuestionario' && (
+                    <View style={{}}>
+                      <Paragraph>
+                        Intentos {data.intentos_user}/{data.intentos}
+                      </Paragraph>
+                      <Paragraph>Calificacion {data.calificacion}</Paragraph>
+                    </View>
+                  )}
+
+                  {data.tipo == 'video' && this.state.video_cover != '' && (
+                    <FAB
+                      icon={
+                        this.state.estado_video == 'playing' ? 'pause' : 'play'
+                      }
+                      loading={this.state.estado_video == 'buffering'}
+                      onPress={this.playVideo}
+                    />
+                  )}
+
+                  {data.tipo == 'lectura' ? (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        alignSelf: 'flex-end',
+                      }}>
+                      <Text style={styleText.small}>Marcar como leido</Text>
+                      <Switch
+                        value={data.visualizado}
+                        onValueChange={() => this.marcarLeida()}></Switch>
+                    </View>
+                  ) : null}
                 </View>
-              ) : null}
-            </View>
+              </Card.Content>
+            </Card>
 
             {this.renderLectura(data)}
             {this.renderCuestionario(data)}
@@ -405,6 +428,8 @@ const mapToState = (state) => {
   return {
     data: state.Capacitacion.actividad_seleccionada,
     cargando: state.Capacitacion.cargando,
+    error: state.Capacitacion.error,
+    cuestionario_aprobado: state.Capacitacion.cuestionario_aprobado,
   };
 };
 const mapToActions = (dispatch) => {
@@ -425,8 +450,15 @@ const mapToActions = (dispatch) => {
         ),
       );
     },
-    enviarCuestionario: (actividad, data) => {
-      dispatch(actividadEnviarCuestionario(actividad, data));
+    enviarCuestionario: (capacitacion_id, seccion_id, actividad, data) => {
+      dispatch(
+        actividadEnviarCuestionario(
+          capacitacion_id,
+          seccion_id,
+          actividad,
+          data,
+        ),
+      );
     },
   };
 };

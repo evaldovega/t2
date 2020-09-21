@@ -7,6 +7,8 @@ import CapacitacionListado from './Capacitacion/Listado'
 import Lead from './Client/Lead'
 
 
+
+
 const Drawer =   createDrawerNavigator()
 
 

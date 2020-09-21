@@ -11,6 +11,7 @@ import {
   Platform,
   Alert,
   VirtualizedList,
+  RefreshControl,
   SafeAreaView,
 } from 'react-native';
 
@@ -23,11 +24,21 @@ import {
   Searchbar,
   List,
   Provider,
+  FAB,
+  Card,
 } from 'react-native-paper';
 
 import Contacts from 'react-native-contacts';
 import Icon from 'react-native-vector-icons/Entypo';
 import {styleHeader} from 'styles';
+import {loadClients} from 'redux/actions/Clients';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {COLORS} from 'constants';
+
+const genero = {
+  M: require('utils/images/man.png'),
+  F: require('utils/images/woman.png'),
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -35,6 +46,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7F8F9',
   },
 });
+
 class Lead extends React.Component {
   state = {
     contacts: [],
@@ -42,6 +54,7 @@ class Lead extends React.Component {
     contact_q: '',
     visualizar_contacto: 0,
     mostrar_contactos: false,
+    open_fab: false,
   };
   loadContacts = async () => {
     if (Platform.OS == 'android') {
@@ -75,6 +88,7 @@ class Lead extends React.Component {
       });
     }
   };
+
   filterContacts = (q) => {
     this.setState({contact_q: q, contacts_filter: []});
     if (this.state.contact_q.length < 4) {
@@ -87,36 +101,68 @@ class Lead extends React.Component {
   };
 
   getItem = (data, index) => {
-    return this.state.contacts_filter[index];
+    return this.props.items[index];
   };
   getItemCount = () => {
-    return this.state.contacts_filter.length;
+    return this.props.items.length;
   };
 
-  Item = ({foto, nombre, empresa}) => {
+  Item = (item) => {
     return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 16,
-          paddingVertical: 16,
-        }}>
-        <Avatar.Image source={{uri: foto}} style={{marginRight: 8}} />
-        <View style={{flex: 1}}>
-          <Title>{nombre}</Title>
-          <Paragraph>
-            {}
-            {empresa}
-          </Paragraph>
-        </View>
-      </View>
+      <Card
+        style={{marginVertical: 8, marginHorizontal: 8, borderRadius: 16}}
+        elevation={4}>
+        <Card.Content>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Avatar.Image
+              style={{marginRight: 8}}
+              source={genero[item.genero]}
+            />
+            <View style={{flex: 1}}>
+              <Title>
+                {item.primer_nombre} {item.segundo_nombre}{' '}
+                {item.primer_apellido} {item.segundo_apellido}
+              </Title>
+              <Paragraph></Paragraph>
+            </View>
+          </View>
+        </Card.Content>
+        <Card.Actions style={{justifyContent: 'flex-end'}}>
+          <Button
+            icon="pencil"
+            large
+            onPress={() =>
+              this.props.navigation.push('ClientSave', {id: item.id})
+            }>
+            Editar
+          </Button>
+          <Button icon="delete" color={Colors.red100}>
+            Borrar
+          </Button>
+        </Card.Actions>
+      </Card>
     );
   };
+
+  toggleFab = ({open}) => this.setState({open_fab: open});
 
   onPressMenu = () => {
     this.props.navigation.openDrawer();
   };
+
+  componentDidMount() {
+    this.props.load();
+  }
+
+  componentDidUpdate(prev) {
+    if (this.props.error != prev.error && this.props.error != '') {
+      Alert.alert('Algo anda mal', this.props.error);
+    }
+  }
 
   render() {
     return (
@@ -135,25 +181,56 @@ class Lead extends React.Component {
           <Text style={styleHeader.title}>
             Clientes Potenciales {this.props.cargando}
           </Text>
-          <TouchableOpacity
-            style={styleHeader.btnRight}
-            onPress={this.loadContacts}>
-            <Icon name="v-card" color="white" size={24} />
-          </TouchableOpacity>
+          <View></View>
         </View>
+
         <SafeAreaView style={{flex: 1}}>
           <VirtualizedList
-            data={this.state.contacts_filter}
+            style={{flex: 1}}
+            data={this.props.items}
             initialNumToRender={10}
             renderItem={({item}) => this.Item(item)}
-            keyExtractor={(item) => item.recordID}
+            keyExtractor={(item) => item.id}
             getItemCount={this.getItemCount}
             getItem={this.getItem}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.props.loading}
+                onRefresh={this.props.load}
+              />
+            }
           />
         </SafeAreaView>
+
+        <FAB.Group
+          open={this.state.open_fab}
+          onStateChange={this.toggleFab}
+          icon={this.state.open_fab ? 'minus' : 'plus'}
+          actions={[
+            {
+              icon: 'account-plus',
+              onPress: () => this.props.navigation.push('ClientSave'),
+            },
+            {icon: 'application-import', onPress: () => this.loadContacts},
+          ]}></FAB.Group>
       </View>
     );
   }
 }
 
-export default connect()(Lead);
+const mapToState = (state) => {
+  return {
+    items: state.Clients.items,
+    error: state.Clients.error,
+    loading: state.Clients.loading,
+  };
+};
+
+const mapToActions = (dispatch) => {
+  return {
+    load: () => {
+      dispatch(loadClients());
+    },
+  };
+};
+export default connect(mapToState, mapToActions)(Lead);

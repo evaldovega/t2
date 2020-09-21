@@ -61,7 +61,7 @@ const styleHeader = StyleSheet.create({
     zIndex: 99,
   },
   title: {
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat-Medium',
     fontSize: 17,
     color: '#fff',
   },
@@ -87,4 +87,25 @@ const styleButton = StyleSheet.create({
     color: '#FFF',
   },
 });
-export {styleText, styelCard, styleHeader, styleButton};
+
+const styleInput = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    padding: 8,
+    borderRadius: 24,
+    borderWidth: 1,
+    marginTop: 16,
+    borderColor: '#EAE8EA',
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input: {
+    fontFamily: 'Lato-Regular',
+    fontSize: 15,
+    flex: 1,
+    padding: 0,
+    margin: 0,
+  },
+});
+export {styleText, styelCard, styleHeader, styleButton, styleInput};

@@ -7,6 +7,7 @@ import {
   ScrollView,
   StatusBar,
   Image,
+  RefreshControl,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -56,9 +57,15 @@ class CapacitacionListado extends React.Component {
         <Card.Content>
           <Title>{l.tiutlo}</Title>
           <Paragraph>{l.descripcion}</Paragraph>
+          {parseFloat(l.progreso) >= 100 && (
+            <Text style={{marginVertical: 8, color: Colors.green400}}>
+              Capacitación completada <Icon name="check" />
+              <Icon name="check" />
+            </Text>
+          )}
         </Card.Content>
         <Card.Actions>
-          <Button onPress={() => this.detalle(l)}>Realizar</Button>
+          <Button onPress={() => this.detalle(l)}>Capacitarme</Button>
         </Card.Actions>
       </Card>
     ));
@@ -71,7 +78,7 @@ class CapacitacionListado extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-        <Loader loading={this.props.cargando} />
+
         <View style={styleHeader.wrapper}>
           <TouchableOpacity
             hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
@@ -85,7 +92,14 @@ class CapacitacionListado extends React.Component {
           <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.props.cargando}
+              onRefresh={this.props.cargar}
+            />
+          }>
           <View style={{flex: 1, paddingHorizontal: 16, paddingVertical: 8}}>
             {this.renderCapacitaciones()}
           </View>

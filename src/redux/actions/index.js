@@ -4,6 +4,7 @@ import {
   ACTION_CAPACITACIONES_CARGANDO,
   ACTION_CAPACITACIONES_CARGADAS,
   ACTION_CAPACITACIONES_ERROR,
+  ACTION_CAPACITACION_INC_PROGRESO,
   ACTION_CAPACITACION_CARGANDO,
   ACTION_CAPACITACION_CARGADA,
   ACTION_CAPACITACION_OBTENER_ACTIVIDAD,
@@ -15,6 +16,7 @@ import {
   ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_ERROR,
   ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_OK,
   ACTION_ACTIVIDAD_MARCAR_ERROR_PREGUNTA,
+  ACTION_ACTIVIDAD_INTENTO,
 } from '../Constantes';
 
 import {Token} from '../Utils';
@@ -154,7 +156,13 @@ export const actividadSeleccionarOpcion = (
   };
 };
 
-export const actividadEnviarCuestionario = (actividad_id, data) => {
+export const actividadEnviarCuestionario = (
+  capacitacion_id,
+  seccion_id,
+  actividad_id,
+  data,
+) => {
+  console.log('Capacitacion id ', capacitacion_id);
   return async (dispatch) => {
     dispatch({type: ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO});
     let token = await Token();
@@ -171,25 +179,48 @@ export const actividadEnviarCuestionario = (actividad_id, data) => {
       .then((r) => {
         console.log('Resultados cuestionario');
         console.log(r);
-        if (r.errores) {
+        if (r.errores && r.errores.length > 0) {
+          dispatch({type: ACTION_ACTIVIDAD_INTENTO});
           console.log('Marcar errores');
           r.errores.forEach((r) => {
-            console.log('Pregunta ', r, ' errada ');
             dispatch({
               type: ACTION_ACTIVIDAD_MARCAR_ERROR_PREGUNTA,
               pregunta_id: r,
               error: 'Respuesta incorrecta',
             });
           });
+        } else if (r.status && r.status == 'no_intentos') {
+          dispatch({
+            type: ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_ERROR,
+            error: 'No cuentas con mas intentos',
+            aprobado: r.aprobado,
+          });
+        } else if (r.status && r.status == 'saved') {
+          console.log('CAPACITACION ', capacitacion_id);
+          console.log('SECCION ', seccion_id);
+          console.log('ACTIVIDAD ', actividad_id);
+          console.log('APROBADO ', r.aprobado);
+          console.log('PROGRESO ', r.progreso);
+
+          dispatch({
+            type: ACTION_CAPACITACION_INC_PROGRESO,
+            capacitacion_id: capacitacion_id,
+            progreso: parseFloat(r.progreso) / 100,
+          });
+
+          dispatch({
+            type: ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_OK,
+            capacitacion_id: capacitacion_id,
+            seccion_id: seccion_id,
+            actividad_id: actividad_id,
+            calificacion: r.calificacion,
+            aprobado: r.aprobado,
+          });
         }
-        dispatch({
-          type: ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_OK,
-          calificacion: r.calificacion,
-        });
       })
       .catch((error) => {
         console.log('Error enviando cuestonario');
-        console.log(error);
+        console.log(error.toString());
         dispatch({
           type: ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_ERROR,
           error: error.toString(),

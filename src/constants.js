@@ -1,4 +1,4 @@
-export const SERVER_ADDRESS = 'http://192.168.0.32:8000/';
+export const SERVER_ADDRESS = 'http://10.0.82.15:8000/';
 
 export const COLORS = {
   PRIMARY_COLOR: '#209A91',

@@ -35,6 +35,7 @@ import {capacitacionDetalleCargar} from '../../../redux/actions';
 class CapacitacionDetalle extends React.Component {
   state = {
     valueScale: new Animated.Value(0.02),
+    scaleY: new Animated.Value(0.02),
   };
   constructor(props) {
     super(props);
@@ -50,13 +51,22 @@ class CapacitacionDetalle extends React.Component {
     Animated.timing(this.state.valueScale, {
       toValue: 1,
       duration: 500,
-      easing: Easing.bounce,
+      easing: Easing.quad,
       delay: 200,
+      useNativeDriver: true,
+    }).start();
+
+    Animated.timing(this.state.scaleY, {
+      toValue: 1,
+      duration: 800,
+      easing: Easing.quad,
+      delay: 0,
       useNativeDriver: true,
     }).start();
   }
   actividad = (seccion_id, actividad_id) => {
     this.props.navigation.push('Actividad', {
+      capacitacion_id: this.props.route.params.item.id,
       seccion_index: seccion_id,
       actividad_index: actividad_id,
     });
@@ -71,7 +81,7 @@ class CapacitacionDetalle extends React.Component {
     if (actividades.length == 0) {
       return <Text>No hay actividades</Text>;
     }
-    return actividades.map((a, key) => {
+    return actividades.map((a, key, arr) => {
       return (
         <TouchableNativeFeedback
           key={key}
@@ -84,7 +94,26 @@ class CapacitacionDetalle extends React.Component {
               paddingVertical: 16,
               paddingHorizontal: 32,
               marginLeft: -32,
+              position: 'relative',
             }}>
+            {key + 1 < arr.length && (
+              <Animated.View style={{transform: [{scaleY: this.state.scaleY}]}}>
+                <View
+                  style={{
+                    width: 3,
+                    height: '150%',
+                    backgroundColor: COLORS.PRIMARY_COLOR,
+                    position: 'absolute',
+                    borderTopLeftRadius: 4,
+                    borderTopRightRadius: 4,
+                    shadowColor: 'rgba(0,0,0,.6)',
+                    elevation: 0,
+                    top: 0,
+                    left: 19,
+                  }}></View>
+              </Animated.View>
+            )}
+
             <Animated.View style={this.getTransform()}>
               <FAB
                 ref={(v) => {
@@ -98,7 +127,11 @@ class CapacitacionDetalle extends React.Component {
                 color="#ffff"
                 animated={true}
                 small
-                icon={a.visualizado ? 'check' : 'alert-octagon'}></FAB>
+                icon={
+                  (a.tipo != 'cuestionario' && a.visualizado) || a.aprobado
+                    ? 'check'
+                    : 'alert-octagon'
+                }></FAB>
             </Animated.View>
 
             <View style={{flex: 1}}>
@@ -128,21 +161,23 @@ class CapacitacionDetalle extends React.Component {
           onLayout={(event) => {
             const layout = event.nativeEvent.layout;
           }}>
-          {key == 0 ? (
-            <View
-              style={{
-                width: 3,
-                height: 36 * (s.actividades.length + 1),
-                backgroundColor: COLORS.PRIMARY_COLOR,
-                position: 'absolute',
-                borderTopLeftRadius: 4,
-                borderTopRightRadius: 4,
-                shadowColor: 'rgba(0,0,0,.6)',
-                elevation: 0,
-                top: 90,
-                left: 19,
-              }}></View>
-          ) : null}
+          {key == 100 && (
+            <Animated.View style={{transform: [{scaleY: this.state.scaleY}]}}>
+              <View
+                style={{
+                  width: 3,
+                  height: 36 * (s.actividades.length + 1),
+                  backgroundColor: COLORS.PRIMARY_COLOR,
+                  position: 'absolute',
+                  borderTopLeftRadius: 4,
+                  borderTopRightRadius: 4,
+                  shadowColor: 'rgba(0,0,0,.6)',
+                  elevation: 0,
+                  top: 90,
+                  left: 19,
+                }}></View>
+            </Animated.View>
+          )}
           <Text style={[styleText.h2]}>{s.titulo}</Text>
           <View style={{marginBottom: 24, position: 'relative'}}>
             {this.renderActividades(s.id, s.actividades)}
@@ -176,7 +211,7 @@ class CapacitacionDetalle extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-        {/*<Loader loading={this.props.cargando}/>*/}
+        <Loader loading={this.props.cargando} />
         <View style={styleHeader.wrapper}>
           <TouchableOpacity
             hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
@@ -213,6 +248,24 @@ class CapacitacionDetalle extends React.Component {
           </View>
 
           <View style={styles.content}>
+            <View
+              style={{
+                width: 64,
+                height: 64,
+                backgroundColor: 'white',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 32,
+                elevation: 4,
+                marginTop: -50,
+                marginLeft: width / 2 - 64,
+                marginBottom: 32,
+              }}>
+              <Image
+                source={require('utils/images/ISO.png')}
+                style={{width: 32, height: 32}}
+              />
+            </View>
             <Text>{item.descripcion}</Text>
             {this.renderSecciones()}
           </View>
@@ -249,7 +302,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     marginHorizontal: 8,
     marginBottom: 30,
-    overflow: 'hidden',
     shadowColor: 'rgba(0,0,0,.5)',
     elevation: 5,
     paddingLeft: 20,
@@ -374,7 +426,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 24,
     marginTop: 20,
-    marginBottom: 32,
+    marginBottom: 64,
   },
   col: {
     alignItems: 'center',
