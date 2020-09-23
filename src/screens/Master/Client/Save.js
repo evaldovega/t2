@@ -9,6 +9,7 @@ import {
   Alert,
   Picker,
   TextInput,
+  StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loader from 'components/Loader';
@@ -56,14 +57,37 @@ class ClientSave extends React.Component {
   };
 
   componentDidMount() {
-    if (this.props.route.params.id) {
-      this.props.load(this.props.route.params.id);
+    this.props.load(this.props.route.params.id);
+    const item = this.props.route.params?.item;
+    if (item) {
+      this.props.changeProp('primer_nombre', item.primer_nombre);
+      this.props.changeProp('primer_apellido', item.primer_apellido);
+      this.props.changeProp('segundo_apellido', item.segundo_apellido);
+      this.props.changeProp('numero_telefono', item.telefonos);
+      this.props.changeProp('correo_electronico', item.email);
+    } else {
+      console.log('No hay valores por defecto');
+    }
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.error != this.props.error && this.props.error != '') {
+      Alert.alert('Algo anda mal', this.props.error);
+    }
+
+    if (prev.success != this.props.success && this.props.success != '') {
+      Alert.alert('Buen trabajo', this.props.success);
     }
   }
 
   render() {
     return (
       <View style={styles.container}>
+        <StatusBar
+          translucent={true}
+          backgroundColor={'transparent'}
+          barStyle={'light-content'}
+        />
         <View style={styleHeader.wrapper}>
           <TouchableOpacity
             style={styleHeader.btnLeft}
@@ -165,7 +189,6 @@ class ClientSave extends React.Component {
               <TextInput
                 style={styleInput.input}
                 placeholder="Número de teléfono"
-                keyboardType="number-pad"
                 value={this.props.numero_telefono}
                 onChangeText={(i) =>
                   this.props.changeProp('numero_telefono', i)
@@ -219,6 +242,8 @@ const mapToState = (state) => {
     numero_cedula: state.Client.numero_cedula,
     genero: state.Client.genero,
     loading: state.Client.loading,
+    error: state.Client.error,
+    success: state.Client.success,
   };
 };
 const mapToActions = (dispatch) => {

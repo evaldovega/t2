@@ -30,7 +30,7 @@ export default class Master extends React.Component{
                 <Drawer.Screen name='Profile' component={Profile} />
                 <Drawer.Screen name='Dashboard' component={Dashboard} />
                 <Drawer.Screen name='Capacitaciones' component={CapacitacionListado}/>
-                <Drawer.Screen name='Clientes Potenciales' component={Lead}/>
+                <Drawer.Screen name='Clientes' component={Lead}/>
             </Drawer.Navigator>
         )
     }

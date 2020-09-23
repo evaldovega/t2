@@ -37,7 +37,7 @@ class SignIn extends React.Component {
         }
 
         this.setState({loading:true})
-        fetch(SERVER_ADDRESS+"login/", {
+        fetch(SERVER_ADDRESS+"api/login/", {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

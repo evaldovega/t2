@@ -19,6 +19,7 @@ import LeftMenu from "screens/LeftMenu";
 import CapacitacionDetalle from '../screens/Master/Capacitacion/Detalle'
 import Actividad from '../screens/Master/Capacitacion/Actividad'
 const ClientSave = React.lazy(() => import('../screens/Master/Client/Save'));
+const ContactToClient = React.lazy(() => import('../screens/Master/Client/Import'));
 
 import {Platform} from "react-native";
 
@@ -91,7 +92,7 @@ const MainNavigation = memo(() => {
                             <Screen name='CapacitacionDetalle' component={CapacitacionDetalle} options={optionNavigator}/>
                             <Screen name='Actividad' component={Actividad}  options={optionNavigator}/>
                             <Screen name='ClientSave' component={ClientSave}  options={optionNavigator}/>
-                        
+                            <Screen name='ContactoAcliente' component={ContactToClient} options={optionNavigator}/>
                         </Navigator>
                     </NavigationContainer>
                 </PaperProvider>

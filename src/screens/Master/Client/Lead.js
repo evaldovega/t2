@@ -7,7 +7,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  PermissionsAndroid,
   Platform,
   Alert,
   VirtualizedList,
@@ -26,13 +25,12 @@ import {
   Provider,
   FAB,
   Card,
+  Colors,
 } from 'react-native-paper';
 
-import Contacts from 'react-native-contacts';
 import Icon from 'react-native-vector-icons/Entypo';
 import {styleHeader} from 'styles';
-import {loadClients} from 'redux/actions/Clients';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {loadClients, trash} from 'redux/actions/Clients';
 import {COLORS} from 'constants';
 
 const genero = {
@@ -49,60 +47,13 @@ const styles = StyleSheet.create({
 
 class Lead extends React.Component {
   state = {
-    contacts: [],
-    contacts_filter: [],
-    contact_q: '',
-    visualizar_contacto: 0,
-    mostrar_contactos: false,
     open_fab: false,
-  };
-  loadContacts = async () => {
-    if (Platform.OS == 'android') {
-      let p = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-        {
-          title: 'Contacts',
-          message: 'This app would like to view your contacts.',
-        },
-      );
-      if (p != 'granted') {
-        Alert.alert('Algo anda mal', 'Permiso no concedido');
-        return;
-      }
-      Contacts.getAll((err, contacts) => {
-        contacts = contacts.map((c) => {
-          return {
-            recordID: c.recordID,
-            nombre: c.givenName + ' ' + c.middleName,
-            foto: c.thumbnailPath,
-            telefonos: c.phoneNumbers,
-            empresa: c.company,
-          };
-        });
-        this.setState({
-          contacts: contacts,
-          contact_q: '',
-          contacts_filter: contacts,
-          mostrar_contactos: true,
-        });
-      });
-    }
-  };
-
-  filterContacts = (q) => {
-    this.setState({contact_q: q, contacts_filter: []});
-    if (this.state.contact_q.length < 4) {
-      return;
-    }
-    let filtered = this.state.contacts.filter((c) =>
-      c.nombre.includes(this.state.contact_q),
-    );
-    this.setState({contacts_filter: filtered});
   };
 
   getItem = (data, index) => {
     return this.props.items[index];
   };
+
   getItemCount = () => {
     return this.props.items.length;
   };
@@ -124,10 +75,10 @@ class Lead extends React.Component {
             />
             <View style={{flex: 1}}>
               <Title>
-                {item.primer_nombre} {item.segundo_nombre}{' '}
+                {item.primer_nombre} {item.segundo_nombre}
                 {item.primer_apellido} {item.segundo_apellido}
               </Title>
-              <Paragraph></Paragraph>
+              <Paragraph>{item.numero_telefono}</Paragraph>
             </View>
           </View>
         </Card.Content>
@@ -140,12 +91,25 @@ class Lead extends React.Component {
             }>
             Editar
           </Button>
-          <Button icon="delete" color={Colors.red100}>
+          <Button
+            icon="delete"
+            color={Colors.red400}
+            onPress={() => this.borrar(item)}>
             Borrar
           </Button>
         </Card.Actions>
       </Card>
     );
+  };
+
+  borrar = (item) => {
+    Alert.alert('Se borrara el cliente ' + item.primer_nombre, '', [
+      {
+        text: 'Mantener',
+        style: 'cancel',
+      },
+      {text: 'Borrar', onPress: () => this.props.trash(item.id)},
+    ]);
   };
 
   toggleFab = ({open}) => this.setState({open_fab: open});
@@ -161,6 +125,9 @@ class Lead extends React.Component {
   componentDidUpdate(prev) {
     if (this.props.error != prev.error && this.props.error != '') {
       Alert.alert('Algo anda mal', this.props.error);
+    }
+    if (prev.success != this.props.success && this.props.success != '') {
+      Alert.alert('Buen trabajo', this.props.success);
     }
   }
 
@@ -178,9 +145,7 @@ class Lead extends React.Component {
             onPress={this.onPressMenu}>
             <Icon name="menu" color="white" size={24} />
           </TouchableOpacity>
-          <Text style={styleHeader.title}>
-            Clientes Potenciales {this.props.cargando}
-          </Text>
+          <Text style={styleHeader.title}>Clientes</Text>
           <View></View>
         </View>
 
@@ -209,9 +174,12 @@ class Lead extends React.Component {
           actions={[
             {
               icon: 'account-plus',
-              onPress: () => this.props.navigation.push('ClientSave'),
+              onPress: () => this.props.navigation.push('ClientSave', {id: ''}),
             },
-            {icon: 'application-import', onPress: () => this.loadContacts},
+            {
+              icon: 'application-import',
+              onPress: () => this.props.navigation.push('ContactoAcliente'),
+            },
           ]}></FAB.Group>
       </View>
     );
@@ -223,6 +191,7 @@ const mapToState = (state) => {
     items: state.Clients.items,
     error: state.Clients.error,
     loading: state.Clients.loading,
+    success: state.Clients.success,
   };
 };
 
@@ -230,6 +199,9 @@ const mapToActions = (dispatch) => {
   return {
     load: () => {
       dispatch(loadClients());
+    },
+    trash: (id) => {
+      dispatch(trash(id));
     },
   };
 };
