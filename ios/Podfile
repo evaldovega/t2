@@ -82,6 +82,8 @@ target 'Claka' do
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
 
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+
   target 'ClakaTests' do
     inherit! :complete
     # Pods for testing

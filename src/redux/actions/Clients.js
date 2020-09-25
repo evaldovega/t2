@@ -49,6 +49,7 @@ export const loadClient = (id) => {
     if (id == '') {
       return;
     }
+    dispatch({type: ACTION_CLIENT_LOADING});
     let token = await Token();
     fetch(SERVER_ADDRESS + 'api/clientes/' + id, {
       headers: {
@@ -59,7 +60,9 @@ export const loadClient = (id) => {
       .then((r) => {
         console.log('Loaded clients');
         console.log(r);
-        dispatch({type: ACTION_CLIENT_LOADED, data: r});
+        setTimeout(() => {
+          dispatch({type: ACTION_CLIENT_LOADED, data: r});
+        }, 1000);
       })
       .catch((error) => {
         console.log(error);

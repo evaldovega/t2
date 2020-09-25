@@ -59,44 +59,39 @@ class Lead extends React.Component {
   };
 
   Item = (item) => {
+    const nombre = `${item.primer_nombre} ${item.segundo_nombre} ${item.primer_apellido} ${item.segundo_apellido}`;
     return (
       <Card
-        style={{marginVertical: 8, marginHorizontal: 8, borderRadius: 16}}
-        elevation={4}>
-        <Card.Content>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Avatar.Image
-              style={{marginRight: 8}}
-              source={genero[item.genero]}
-            />
-            <View style={{flex: 1}}>
-              <Title>
-                {item.primer_nombre} {item.segundo_nombre}
-                {item.primer_apellido} {item.segundo_apellido}
-              </Title>
-              <Paragraph>{item.numero_telefono}</Paragraph>
-            </View>
+        style={{marginVertical: 8, marginHorizontal: 16, borderRadius: 16}}
+        elevation={1}>
+        <Card.Content
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Avatar.Image style={{marginRight: 8}} source={genero[item.genero]} />
+          <View style={{flex: 1}}>
+            <Title>{nombre}</Title>
+            <Paragraph>{item.numero_telefono}</Paragraph>
           </View>
         </Card.Content>
         <Card.Actions style={{justifyContent: 'flex-end'}}>
+          <Button
+            icon="account-details"
+            large
+            onPress={() =>
+              this.props.navigation.push('ClientProfile', {id: item.id})
+            }></Button>
           <Button
             icon="pencil"
             large
             onPress={() =>
               this.props.navigation.push('ClientSave', {id: item.id})
-            }>
-            Editar
-          </Button>
+            }></Button>
           <Button
             icon="delete"
             color={Colors.red400}
-            onPress={() => this.borrar(item)}>
-            Borrar
-          </Button>
+            onPress={() => this.borrar(item)}></Button>
         </Card.Actions>
       </Card>
     );
@@ -177,7 +172,7 @@ class Lead extends React.Component {
               onPress: () => this.props.navigation.push('ClientSave', {id: ''}),
             },
             {
-              icon: 'application-import',
+              icon: 'card-account-phone',
               onPress: () => this.props.navigation.push('ContactoAcliente'),
             },
           ]}></FAB.Group>

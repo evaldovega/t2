@@ -5,6 +5,8 @@ import Capacitaciones from './Capacitaciones';
 
 import Clients from './Clients';
 import Client from './Client';
+import Productos from './Productos';
+import ProductosTomar from './ProductosTomar';
 
 export default combineReducers({
   Usuario: Usuario,
@@ -12,4 +14,6 @@ export default combineReducers({
   Capacitacion: Capacitacion,
   Clients: Clients,
   Client: Client,
+  Productos: Productos,
+  ProductosTomar: ProductosTomar,
 });

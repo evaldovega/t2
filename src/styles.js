@@ -68,8 +68,9 @@ const styleHeader = StyleSheet.create({
   },
   btnLeft: {
     zIndex: 1,
+    elevation: 0,
   },
-  btnRight: {},
+  btnRight: {elevation: 0},
 });
 
 const styleButton = StyleSheet.create({
@@ -115,4 +116,11 @@ const styleInput = StyleSheet.create({
     marginTop: 4,
   },
 });
-export {styleText, styelCard, styleHeader, styleButton, styleInput};
+const checkbox = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+});
+export {styleText, styelCard, styleHeader, styleButton, styleInput, checkbox};

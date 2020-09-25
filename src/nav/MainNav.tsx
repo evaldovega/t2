@@ -4,6 +4,7 @@ import {StatusBar,Text} from 'react-native'
 import {NavigationContainer, navigationRef, Navigator, ROUTERS, Screen} from "utils/navigation";
 import {StackNavigationOptions} from "@react-navigation/stack";
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import {Platform} from "react-native";
 // @ts-ignore
 import ScalingDrawer from 'react-native-scaling-drawer';
 import Walkthroughs from "screens/Walkthroughs";
@@ -18,11 +19,16 @@ import LeftMenu from "screens/LeftMenu";
 
 import CapacitacionDetalle from '../screens/Master/Capacitacion/Detalle'
 import Actividad from '../screens/Master/Capacitacion/Actividad'
+
 const ClientSave = React.lazy(() => import('../screens/Master/Client/Save'));
 const ContactToClient = React.lazy(() => import('../screens/Master/Client/Import'));
+const ClientProfile =   React.lazy(()=>import('../screens/Master/Client/Profile'));
+const ProductList   =   React.lazy(()=>import('../screens/Master/Product/List'))
+const ProductDetail =   React.lazy(()=>import('../screens/Master/Product/Detail'))
+const Plan =   React.lazy(()=>import('../screens/Master/Product/Plan'))
 
-import {Platform} from "react-native";
 
+import LoaderModule from '../components/LoaderModules'
 import {Provider} from 'react-redux'
 import configureStore from '../redux/configuracion'
 import { COLORS } from 'constants';
@@ -65,7 +71,7 @@ const MainNavigation = memo(() => {
             content={<LeftMenu onClose={onClose} onOpen={onOpen}/>}
             {...defaultScalingDrawerConfig}
         >*/
-        <Suspense fallback={<Text>&nbsp;</Text>}>
+        <Suspense fallback={<LoaderModule visible={true}/>}>
             <Provider store={store}>
                 <PaperProvider theme={theme}>
                     <StatusBar translucent={true} backgroundColor={'transparent'} barStyle={'light-content'}/>
@@ -92,7 +98,11 @@ const MainNavigation = memo(() => {
                             <Screen name='CapacitacionDetalle' component={CapacitacionDetalle} options={optionNavigator}/>
                             <Screen name='Actividad' component={Actividad}  options={optionNavigator}/>
                             <Screen name='ClientSave' component={ClientSave}  options={optionNavigator}/>
-                            <Screen name='ContactoAcliente' component={ContactToClient} options={optionNavigator}/>
+                            {ContactToClient && <Screen name='ContactoAcliente' component={ContactToClient} options={optionNavigator}/>}
+                            {ClientProfile && <Screen name='ClientProfile' component={ClientProfile} options={optionNavigator}/>}
+                            {ProductList && <Screen name='ProductList' component={ProductList} options={optionNavigator}/>}
+                            {ProductDetail && <Screen name='ProductDetail' component={ProductDetail} options={optionNavigator} />}
+                            {Plan && <Screen name='Plan' component={Plan} options={optionNavigator} />}
                         </Navigator>
                     </NavigationContainer>
                 </PaperProvider>

@@ -1,13 +1,11 @@
 import React from 'react';
 import Contacts from 'react-native-contacts';
+
 import {
-  ScrollView,
-  StatusBar,
   View,
   Text,
   TouchableOpacity,
-  TouchableNativeFeedback,
-  StyleSheet,
+  TouchableHighlight,
   PermissionsAndroid,
   Platform,
   Alert,
@@ -18,6 +16,7 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 import {styleHeader} from 'styles';
 import {
+  Colors,
   Card,
   Avatar,
   Button,
@@ -29,17 +28,36 @@ import {
 import {changeProp} from '../../../redux/actions/Clients';
 import {connect} from 'react-redux';
 
-class ContactToClient extends React.Component {
+class PreventDoubleTap extends React.Component {
+  disabled = false;
+  onPress = (...args) => {
+    if (this.disabled) return;
+    this.disabled = true;
+    console.log('Desactivar');
+    this.props.navigation.push('ClientSave', {id: '', item: args[0]});
+    setTimeout(() => {
+      this.disabled = false;
+    }, 2000);
+    this.props.onPress && this.props.onPress(...args);
+  };
+}
+
+class ContactToClient extends PreventDoubleTap {
   state = {
     loading: false,
     contacts: [],
     contacts_filter: [],
+    total_elementos: 0,
     contact_q: '',
     visualizar_contacto: 0,
     mostrar_contactos: false,
     open_fab: false,
     open_client: false,
   };
+
+  construct() {
+    this.contatcs = [];
+  }
 
   loadContacts = async () => {
     if (Platform.OS == 'android') {
@@ -74,11 +92,12 @@ class ContactToClient extends React.Component {
             email: email,
           };
         });
+        this.contacts = contacts;
         this.setState({
           loading: false,
-          contacts: contacts,
           contact_q: '',
           contacts_filter: contacts,
+          total_elementos: contacts.length,
           mostrar_contactos: true,
         });
       });
@@ -87,18 +106,16 @@ class ContactToClient extends React.Component {
 
   filterContacts = (q) => {
     this.setState({contact_q: q, contacts_filter: []});
-    if (this.state.contact_q.length < 2) {
-      if (this.state.contacts.length == 0) {
-        this.setState({contacts_filter: this.state.contacts});
-      }
-      return;
-    }
-    let filtered = this.state.contacts.filter((c) =>
+
+    let filtered = this.contacts.filter((c) =>
       c.nombre
         .toUpperCase()
         .includes(this.state.contact_q.trim().toUpperCase()),
     );
-    this.setState({contacts_filter: filtered});
+    this.setState({
+      contacts_filter: filtered,
+      total_elementos: filtered.length,
+    });
   };
 
   componentDidMount() {
@@ -112,30 +129,35 @@ class ContactToClient extends React.Component {
   };
 
   getItemCount = () => {
-    return this.state.contacts_filter.length;
-  };
-
-  add = (item) => {
-    this.props.navigation.push('ClientSave', {id: '', item: item});
+    return this.state.total_elementos;
   };
 
   Item = (item) => {
     return (
-      <Card onPress={() => this.add(item)}>
-        <Card.Content>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Avatar.Image size={64} source={{uri: item.foto}} />
-            <View style={{marginLeft: 16, flex: 1}}>
-              <Title>{item.nombre}</Title>
-              <Caption>
-                {item.telefonos} {item.email}
-              </Caption>
-            </View>
-          </View>
-        </Card.Content>
-      </Card>
+      <TouchableHighlight
+        underlayColor={Colors.primary}
+        {...this.props}
+        onPress={() => this.onPress(item)}>
+        <Card>
+          <Card.Content>
+            <Title>{item.nombre}</Title>
+            <Caption>
+              {item.telefonos} {item.email}
+            </Caption>
+          </Card.Content>
+        </Card>
+      </TouchableHighlight>
     );
   };
+
+  refresh() {
+    return (
+      <RefreshControl
+        refreshing={this.state.loading}
+        onRefresh={this.state.loadContacts}
+      />
+    );
+  }
 
   render() {
     return (
@@ -167,6 +189,9 @@ class ContactToClient extends React.Component {
 
         <SafeAreaView style={{flex: 1}}>
           <VirtualizedList
+            maxToRenderPerBatch={7}
+            windowSize={2}
+            removeClippedSubviews={true}
             style={{flex: 1}}
             data={this.state.contacts_filter}
             initialNumToRender={10}
@@ -174,12 +199,7 @@ class ContactToClient extends React.Component {
             keyExtractor={(item) => item.recordID}
             getItemCount={this.getItemCount}
             getItem={this.getItem}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.loading}
-                onRefresh={this.state.loadContacts}
-              />
-            }
+            refreshControl={this.refresh()}
           />
         </SafeAreaView>
       </View>

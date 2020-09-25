@@ -14,7 +14,7 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loader from 'components/Loader';
 import {styleHeader, styleInput, styleButton} from 'styles';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native-paper';
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import {loadClient, changeProp, save} from '../../../redux/actions/Clients';
 import {validar, renderErrores} from 'utils/Validar';
@@ -77,6 +77,7 @@ class ClientSave extends React.Component {
 
     if (prev.success != this.props.success && this.props.success != '') {
       Alert.alert('Buen trabajo', this.props.success);
+      this.props.navigation.pop();
     }
   }
 
