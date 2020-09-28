@@ -1,4 +1,5 @@
-export const SERVER_ADDRESS = 'http://10.0.82.61:8000/';
+export const SERVER_ADDRESS = 'http://10.0.82.19:8000/';
+export const SOCKET_ADDRESS = 'http://10.0.82.91:3000';
 
 export const COLORS = {
   PRIMARY_COLOR: '#209A91',

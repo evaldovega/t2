@@ -5,7 +5,8 @@ import Dashboard from './Dashboard'
 import Profile from './Profile'
 import CapacitacionListado from './Capacitacion/Listado'
 import Lead from './Client/Lead'
-
+import ChatUsers from './Chat/Users'
+import SideMenu from '../../components/SideMenu'
 
 
 
@@ -26,11 +27,12 @@ export default class Master extends React.Component{
 
     render(){
         return (
-            <Drawer.Navigator style={{flex:1}}  initialRouteName='Profile' drawerType={width >= 768 ? 'permanent' : 'back'}>
+            <Drawer.Navigator style={{flex:1}} DrawerContent={(props)=><SideMenu {...props}/>}  initialRouteName='Profile' drawerType={width >= 768 ? 'permanent' : 'back'}>
                 <Drawer.Screen name='Profile' component={Profile} />
                 <Drawer.Screen name='Dashboard' component={Dashboard} />
                 <Drawer.Screen name='Capacitaciones' component={CapacitacionListado}/>
                 <Drawer.Screen name='Clientes' component={Lead}/>
+                <Drawer.Screen name='ChatUsers' component={ChatUsers}/>
             </Drawer.Navigator>
         )
     }
