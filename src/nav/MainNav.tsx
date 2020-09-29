@@ -26,6 +26,7 @@ const ClientProfile =   React.lazy(()=>import('../screens/Master/Client/Profile'
 const ProductList   =   React.lazy(()=>import('../screens/Master/Product/List'))
 const ProductDetail =   React.lazy(()=>import('../screens/Master/Product/Detail'))
 const Plan =   React.lazy(()=>import('../screens/Master/Product/Plan'))
+const TaskSave  =   React.lazy(()=>import('../screens/Master/Task/Save'))
 
 
 import LoaderModule from '../components/LoaderModules'
@@ -103,6 +104,7 @@ const MainNavigation = memo(() => {
                             {ProductList && <Screen name='ProductList' component={ProductList} options={optionNavigator}/>}
                             {ProductDetail && <Screen name='ProductDetail' component={ProductDetail} options={optionNavigator} />}
                             {Plan && <Screen name='Plan' component={Plan} options={optionNavigator} />}
+                            {TaskSave && <Screen name='TaskSave' component={TaskSave} options={optionNavigator}/>}
                         </Navigator>
                     </NavigationContainer>
                 </PaperProvider>

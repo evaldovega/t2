@@ -75,6 +75,7 @@ const styleHeader = StyleSheet.create({
 
 const styleButton = StyleSheet.create({
   wrapper: {
+    flex: 1,
     marginHorizontal: 40,
     height: 48,
     borderRadius: 24,
@@ -98,7 +99,7 @@ const styleInput = StyleSheet.create({
     borderWidth: 1,
     marginTop: 16,
     borderColor: '#EAE8EA',
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -108,6 +109,8 @@ const styleInput = StyleSheet.create({
     flex: 1,
     padding: 0,
     margin: 0,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
   },
   error: {
     fontSize: 12,

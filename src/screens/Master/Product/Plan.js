@@ -39,6 +39,8 @@ import {
   setMetaData,
   cargarFormulario,
 } from '../../../redux/actions/ProductosTomar';
+import {addOrden} from '../../../redux/actions/Clients';
+
 import {COLORS} from 'constants';
 import {Token} from 'redux/Utils';
 import {SERVER_ADDRESS} from 'constants';
@@ -293,8 +295,12 @@ class Plan extends React.Component {
     )
       .then((r) => r.json())
       .then((r) => {
+        console.log(r);
         this.setState({guardando: false});
-        this.props.navigation.navigate('ClientProfile', {orden: r.orden});
+        this.props.addOrden(r);
+        this.props.navigation.navigate('ClientProfile', {
+          orden: r.numero_orden,
+        });
       })
       .catch((error) => {
         this.setState({guardando: false});
@@ -431,6 +437,7 @@ class Plan extends React.Component {
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
                     alignItems: 'center',
+                    paddingBottom: 16,
                   }}>
                   <View
                     style={{
@@ -456,7 +463,7 @@ class Plan extends React.Component {
                   </View>
                   <View>
                     <Text style={[styleText.h2, {marginTop: 0}]}>
-                      Completar los siguientes datos
+                      Completa los datos
                     </Text>
                   </View>
                 </View>
@@ -501,6 +508,9 @@ const mapToAction = (dispatch) => {
     },
     cargarFormulario: (producto_id, plan_id) => {
       dispatch(cargarFormulario(producto_id, plan_id));
+    },
+    addOrden: (orden) => {
+      dispatch(addOrden(orden));
     },
   };
 };

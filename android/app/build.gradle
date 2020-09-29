@@ -197,6 +197,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@react-native-community_datetimepicker')
     implementation project(':react-native-contacts')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion

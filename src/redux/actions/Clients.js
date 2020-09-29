@@ -15,6 +15,10 @@ import {
   ACTION_CLIENTS_ADD,
   ACTION_CLIENTS_EDIT,
   ACTION_CLIENT_CLEAN,
+  ACTION_CLIENT_ADD_ORDEN,
+  ACTION_CLIENT_SAVED_TASK,
+  ACTION_CLIENT_SAVING_TASK,
+  ACTION_CLIENT_ERROR_TASK,
 } from '../Constantes';
 import {Token} from '../Utils';
 import {SERVER_ADDRESS} from '../../constants';
@@ -141,6 +145,38 @@ export const trash = (id) => {
       .catch((error) => {
         console.log(error);
         dispatch({type: ACTION_CLIENTS_ERROR, error: error});
+      });
+  };
+};
+
+export const addOrden = (orden) => {
+  return (dispatch) => {
+    dispatch({type: ACTION_CLIENT_ADD_ORDEN, orden: orden});
+  };
+};
+
+export const taskSave = (cliente, data) => {
+  return async (dispatch) => {
+    console.log('Guardar Tarea');
+    dispatch({type: ACTION_CLIENT_SAVING_TASK});
+    let token = await Token();
+    fetch(SERVER_ADDRESS + 'api/clientes/' + cliente + '/asignar/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        Authorization: 'Token ' + token,
+        Accept: 'application/json',
+        'content-type': 'application/json',
+      },
+    })
+      .then((r) => r.json())
+      .then((r) => {
+        console.log(r);
+        dispatch({type: ACTION_CLIENT_SAVED_TASK, task: r});
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({type: ACTION_CLIENT_ERROR_TASK, error: error.toString()});
       });
   };
 };

@@ -26,41 +26,12 @@ import {
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
 import {loadClient} from '../../../redux/actions/Clients';
+import {COLORS} from 'constants';
+import TaskList from '../Task/List';
+
 const styles = StyleSheet.create({
   container: {flex: 1},
 });
-
-const PRODUCTOS = [
-  {
-    id: 1,
-    nombre: 'Plan superior',
-    fecha: '2023-08-10',
-    foto:
-      'https://secureservercdn.net/198.71.233.109/1kf.e90.myftpupload.com/wp-content/uploads/2020/05/affection-1866868_1920-300x300.jpg',
-  },
-  {
-    id: 2,
-    nombre: 'Plan prevenir',
-    fecha: '2022-08-10',
-    foto:
-      'https://secureservercdn.net/198.71.233.109/1kf.e90.myftpupload.com/wp-content/uploads/2020/05/familia_servi-300x267.jpeg',
-  },
-];
-
-const VISITAS = [
-  {
-    id: 1,
-    lugar: 'Plaza de la paz',
-    fecha: '2020-11-01',
-    des: 'Cerrar un nuevo plan',
-  },
-  {
-    id: 2,
-    lugar: 'Centtro comercial viva',
-    fecha: '2020-12-30',
-    des: 'Proponer ropa para los niños',
-  },
-];
 
 class ClientProfile extends React.Component {
   componentDidMount() {
@@ -92,42 +63,17 @@ class ClientProfile extends React.Component {
   renderProduct = ({item}) => (
     <View style={{flexDirection: 'row', marginTop: 8}}>
       <Image
-        source={{uri: item.foto}}
+        source={{uri: item.imagen_producto}}
         style={{width: 64, height: 64, borderRadius: 8, marginRight: 8}}
       />
       <View>
-        <Subheading>{item.nombre}</Subheading>
-        <Caption>Vence el {moment(item.fecha).format('lll')}</Caption>
+        <Subheading>{item.producto}</Subheading>
+        <Caption>Nº {item.numero_orden}</Caption>
+        <Caption>$ {item.precio_pagado}</Caption>
       </View>
     </View>
   );
 
-  renderVisit = ({item}) => (
-    <View style={{flexDirection: 'row', marginTop: 8}}>
-      <View
-        style={{
-          width: 64,
-          height: 64,
-          marginRight: 8,
-          overflow: 'hidden',
-          borderRadius: 8,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: Colors.yellow100,
-        }}>
-        <View style={{width: '100%', backgroundColor: Colors.red400}}>
-          <Subheading style={{color: Colors.white, textAlign: 'center'}}>
-            {moment(item.fecha).format('MMM')}
-          </Subheading>
-        </View>
-        <Title>{moment(item.fecha).format('DD')}</Title>
-      </View>
-      <View>
-        <Subheading>{item.lugar}</Subheading>
-        <Caption>{item.des}</Caption>
-      </View>
-    </View>
-  );
   renderLoadingClientInfor = () => (
     <SkeletonPlaceholder>
       <View
@@ -166,7 +112,7 @@ class ClientProfile extends React.Component {
             'https://mk0careergirlda22ty0.kinstacdn.com/wp-content/uploads/2018/11/Victoria-Beckham-1.jpg',
         }}
       />
-      <View>
+      <View style={{flex: 1, paddingHorizontal: 4}}>
         <Text
           style={[styleText.h1, {textAlign: 'center', color: Colors.primary}]}>
           {!this.props.loading &&
@@ -216,11 +162,14 @@ class ClientProfile extends React.Component {
 
             <Card style={{borderRadius: 16, marginTop: 32}} elevation={2}>
               <Card.Title
-                title="Productos"
-                subtitle="El cliente no ha adquirido ningún producto"></Card.Title>
+                title="Productos Adquiridos"
+                subtitle={
+                  this.props.ordenes.length == 0 &&
+                  'El cliente no ha adquirido ningún producto'
+                }></Card.Title>
               <Card.Content>
                 <FlatList
-                  data={PRODUCTOS}
+                  data={this.props.ordenes}
                   renderItem={this.renderProduct}
                   keyExtractor={(item) => item.id}
                 />
@@ -241,24 +190,20 @@ class ClientProfile extends React.Component {
             </Card>
 
             <Card style={{borderRadius: 16, marginTop: 32}} elevation={2}>
-              <Card.Title title="Visitas" subtitle=""></Card.Title>
+              <Card.Title title="Tareas" subtitle=""></Card.Title>
               <Card.Content>
-                <FlatList
-                  data={VISITAS}
-                  renderItem={this.renderVisit}
-                  keyExtractor={(item) => item.id}
-                />
+                <TaskList {...this.props} />
               </Card.Content>
               <Card.Actions style={{marginVertical: 32}}>
                 <Button
                   icon="calendar-plus"
                   onPress={() =>
-                    this.props.navigation.push('ProductList', {
-                      cliente_id: this.props.id,
+                    this.props.navigation.push('TaskSave', {
+                      cliente_id: this.props.route.params.id,
                     })
                   }>
                   {' '}
-                  Programar Visita
+                  Programar Tarea
                 </Button>
               </Card.Actions>
             </Card>
@@ -279,6 +224,8 @@ const mapToState = (state) => {
     numero_cedula: state.Client.numero_cedula,
     correo_electronico: state.Client.correo_electronico,
     numero_telefono: state.Client.numero_telefono,
+    ordenes: state.Client.ordenes,
+    tareas: state.Client.tareas,
     loading: state.Client.loading,
   };
 };

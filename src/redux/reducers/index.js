@@ -8,6 +8,8 @@ import Client from './Client';
 import Productos from './Productos';
 import ProductosTomar from './ProductosTomar';
 
+import TaskType from './TaskType';
+
 export default combineReducers({
   Usuario: Usuario,
   Capacitaciones: Capacitaciones,
@@ -16,4 +18,5 @@ export default combineReducers({
   Client: Client,
   Productos: Productos,
   ProductosTomar: ProductosTomar,
+  TaskType: TaskType,
 });

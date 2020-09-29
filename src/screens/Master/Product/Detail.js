@@ -26,6 +26,7 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import ModalWebView from 'components/ModalWebView';
 import {cargar} from '../../../redux/actions/ProductosTomar';
 import {COLORS} from 'constants';
+import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 
 class ProductDetail extends React.Component {
   state = {
@@ -58,32 +59,31 @@ class ProductDetail extends React.Component {
     if (this.props.detalle.planes) {
       return this.props.detalle.planes.map((p) => {
         return (
-          <Card
-            style={{
-              borderRadius: 16,
-              marginTop: 8,
-              backgroundColor: COLORS.SECONDARY_COLOR,
-            }}
-            elevation={1}>
-            <Card.Content>
-              <Subheading style={{color: Colors.white}}>{p.titulo}</Subheading>
-              <Text
-                style={{
-                  fontFamily: 'Montserrat-Regular',
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  color: Colors.white,
-                  flex: 1,
-                }}>
-                {p.precio}
-              </Text>
-            </Card.Content>
-            <Card.Actions>
-              <Button color="white" onPress={() => this.tomar(p)}>
-                Tomar
-              </Button>
-            </Card.Actions>
-          </Card>
+          <TouchableNativeFeedback onPress={() => this.tomar(p)}>
+            <Card
+              style={{
+                borderRadius: 16,
+                marginTop: 8,
+                backgroundColor: COLORS.PRIMARY_COLOR,
+              }}
+              elevation={2}>
+              <Card.Content>
+                <Subheading style={{color: Colors.white}}>
+                  {p.titulo}
+                </Subheading>
+                <Text
+                  style={{
+                    fontFamily: 'Montserrat-Regular',
+                    fontSize: 22,
+                    fontWeight: 'bold',
+                    color: Colors.white,
+                    flex: 1,
+                  }}>
+                  {p.precio}
+                </Text>
+              </Card.Content>
+            </Card>
+          </TouchableNativeFeedback>
         );
       });
     }
@@ -208,12 +208,11 @@ class ProductDetail extends React.Component {
                       }}>
                       <Text style={{color: 'white'}}>2</Text>
                     </View>
-                    <View>
-                      <Text style={[styleText.h2, {marginTop: 0}]}>
-                        {this.props.route.params.nombre_producto}
-                      </Text>
-                      <Button onPress={this.detalle}>Detalles</Button>
-                    </View>
+
+                    <Text style={[styleText.h2, {marginTop: 0, flex: 1}]}>
+                      {this.props.route.params.nombre_producto}
+                    </Text>
+                    <FAB onPress={this.detalle} icon="dots-vertical" small />
                   </View>
                 </TouchableHighlight>
               </Card.Content>
@@ -237,7 +236,7 @@ class ProductDetail extends React.Component {
                       marginRight: 8,
                       backgroundColor: 'white',
                     }}>
-                    <Text style={{color: COLORS.PRIMARY_COLOR}}>2</Text>
+                    <Text style={{color: COLORS.PRIMARY_COLOR}}>3</Text>
                   </View>
                   <View>
                     <Text style={[styleText.h2, {marginTop: 0}]}>
