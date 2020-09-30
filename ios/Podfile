@@ -86,6 +86,12 @@ target 'Claka' do
 
   pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
 
+  pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
+
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
+  pod 'react-native-signature-capture', :path => '../node_modules/react-native-signature-capture'
+
   target 'ClakaTests' do
     inherit! :complete
     # Pods for testing

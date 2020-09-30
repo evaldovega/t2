@@ -11,7 +11,7 @@ import Walkthroughs from "screens/Walkthroughs";
 import ForgotPass from "screens/ForgotPass";
 import SignIn from "screens/SiginIn";
 import StaticsHealth from "screens/StaticsHealth";
-import Profile from "screens/Profile";
+
 import Notification from "screens/Notification";
 import SignUp from "screens/SignUp";
 import Master from '../screens/Master'
@@ -92,7 +92,7 @@ const MainNavigation = memo(() => {
                             <Screen name={ROUTERS.ForgotPassword} component={ForgotPass} options={optionNavigator}/>
                             <Screen name={ROUTERS.SignIn} component={SignIn} options={optionNavigator}/>
                             <Screen name={ROUTERS.Master} component={Master} options={optionNavigator}/>
-                            <Screen name={ROUTERS.Profile} component={Profile} options={optionNavigator}/>
+                            
                             <Screen name={ROUTERS.Notification} component={Notification} options={optionNavigator}/>
                             <Screen name={ROUTERS.SignUp} component={SignUp} options={optionNavigator}/>
 

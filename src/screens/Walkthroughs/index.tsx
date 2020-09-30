@@ -7,6 +7,7 @@ import SvgIntro1 from "svgs/walkthroughs/SvgIntro1";
 import SvgIntro2 from "svgs/walkthroughs/SvgIntro2";
 import SvgIntro3 from "svgs/walkthroughs/SvgIntro3";
 import {ROUTERS} from "utils/navigation";
+import { getItem } from 'react-native-sensitive-info';
 
 const {width: viewportWidth} = Dimensions.get('window');
 
@@ -20,6 +21,7 @@ const slideWidth = wp(80);
 const itemHorizontalMargin = wp(2);
 export const sliderWidth = viewportWidth;
 export const itemWidth = slideWidth + itemHorizontalMargin * 2;
+import SInfo from 'react-native-sensitive-info'
 
 const data = [
     {color: '#00C48C', Svg: SvgIntro1, Titulo:"Conéctate y gana", Texto:"Conéctate y gana vendiendo seguros con Servi"},
@@ -31,7 +33,18 @@ const Walkthroughs = memo(() => {
     const [indexActive, setIndex] = useState(0);
 
     const onPress = useCallback(()=>{
-        navigate(ROUTERS.SignIn);
+        SInfo.getItem('auth-token',{
+            sharedPreferencesName: 'ServiSharedPreferences',
+            keychainService: 'ServiKeyChain'
+        }).then((r)=>{
+            if(r){
+                navigate(ROUTERS.SignIn);
+            }else{
+                navigate('Master');
+            }
+        })
+      
+        
     },[])
 
     const renderItem = useCallback(({item}) => {

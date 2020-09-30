@@ -135,6 +135,7 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
     splits {
         abi {
@@ -197,6 +198,8 @@ android {
 }
 
 dependencies {
+    
+    implementation project(':react-native-fs')
     implementation project(':@react-native-community_datetimepicker')
     implementation project(':react-native-contacts')
     implementation fileTree(dir: "libs", include: ["*.jar"])

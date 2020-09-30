@@ -3,7 +3,7 @@ import {View, FlatList, TouchableNativeFeedback, Alert} from 'react-native';
 
 import {COLORS} from 'constants';
 import moment from 'moment';
-import {Subheading, Title, Caption, Colors} from 'react-native-paper';
+import {Subheading, Title, Caption, Colors, Avatar} from 'react-native-paper';
 
 class TaskList extends React.Component {
   constructor(props) {
@@ -20,7 +20,7 @@ class TaskList extends React.Component {
           onPress: () => console.log('Conservar'),
           style: 'cancel',
         },
-        {text: 'Borrar', onPress: () => console.log('OK Pressed')},
+        {text: 'Borrar', onPress: () => this.props.taskRemove(item.id)},
       ],
       {cancelable: false},
     );
@@ -28,7 +28,7 @@ class TaskList extends React.Component {
 
   renderVisit = ({item}) => (
     <TouchableNativeFeedback onLongPress={() => this.eliminar(item)}>
-      <View style={{flexDirection: 'row', marginTop: 8}}>
+      <View style={{flexDirection: 'row', marginTop: 8, alignItems: 'center'}}>
         <View
           style={{
             width: 64,
@@ -57,6 +57,9 @@ class TaskList extends React.Component {
         <View>
           <Subheading>{item.tipo_tarea}</Subheading>
           <Caption>{item.motivo_tarea}</Caption>
+          <Caption>
+            🕒 {moment(item.fecha_agendamiento).format('hh:mm a')}
+          </Caption>
         </View>
       </View>
     </TouchableNativeFeedback>

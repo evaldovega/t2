@@ -12,11 +12,14 @@ import ModalFilterPicker from 'react-native-modal-filter-picker';
 import DatePicker from 'react-native-datepicker'
 import ModalWebView from 'components/ModalWebView';
 import ModalPrompt from 'components/ModalPrompt';
+import SignatureCapture from 'react-native-signature-capture';
+import { Caption, Divider, FAB,Colors } from 'react-native-paper';
 
 
 class SignUp extends React.Component {
     constructor(props) {
         super(props);
+        
         this.state = {
             contratoVisualizacion: false,
             isEnabled:false,
@@ -32,7 +35,7 @@ class SignUp extends React.Component {
             firstnameErrors: false,
             lastname: "",
             lastnameErrors: false,
-            mail: "",
+            mail: "evaldo.vega@gmail.com",
             mailErrors: false,
             password1: "",
             password1Errors: false,
@@ -140,6 +143,7 @@ class SignUp extends React.Component {
     }
 
     validateCodeRegistration = () => {
+        console.log("Validar codigo")
         this.setState({inputCodeRegistrationError: false, inputCodeRegistrationMsgAlert:""})
         if(this.state.inputCodeRegistration == ""){
             this.setState({inputCodeRegistrationError: true})
@@ -404,7 +408,7 @@ class SignUp extends React.Component {
             <View style={styles.container}>
                 
                 <ModalWebView visible={this.state.contratoVisualizacion} html={this.state.contratoContent} cancelButtonText="Volver" onClose={this.cerrarContrato}></ModalWebView>
-                <ModalPrompt visible={this.state.contratoValidationVisible} mt={16} valid={this.state.contratoValidated} actionDisabled={this.state.contratoValidated} error={this.state.inputCodeRegistrationError} textMessage={this.state.textResponseCodeValidation} value={this.state.inputCodeRegistration} onChangeText={i=>this.setState({inputCodeRegistration: i})} onCodeValidation={this.validateCodeRegistration}></ModalPrompt>
+                <ModalPrompt visible={this.state.contratoValidationVisible} mt={16} valid={this.state.contratoValidated} actionDisabled={this.state.contratoValidated} error={this.state.inputCodeRegistrationError} textMessage={this.state.textResponseCodeValidation} value={this.state.inputCodeRegistration} onChangeText={(i)=>this.setState({inputCodeRegistration: i})} onCodeValidation={this.validateCodeRegistration}></ModalPrompt>
                 <ScrollView>
                     <View>
                         <Header/>
@@ -532,6 +536,18 @@ class SignUp extends React.Component {
                                 onValueChange={this.onSwitchAcceptContratoChange}
                                 value={this.state.aceptacionContrato}
                             />
+                        </View>
+
+                         
+                        <View style={{marginTop:24,paddingHorizontal:16,paddingVertical:16,backgroundColor:COLORS.SECONDARY_COLOR,justifyContent:'center'}}>
+                            <Divider/>
+                            
+                            <SignatureCapture ref='firma' minStrokeWidth={1} and maxStrokeWidth={4} showNativeButtons={false} style={{width:'100%',aspectRatio:16/9,marginVertical:8}}/>
+                            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginVertical:4}}>
+                                <Caption style={{color:'white'}}>Firmar Contrato</Caption>
+                                <FAB small icon='eraser' onPress={()=>this.refs['firma'].resetImage()} label='Borrar'/>
+                            </View>
+                            <Divider/>
                         </View>
 
                         <View style={styles.containerSignIn}>

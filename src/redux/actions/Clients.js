@@ -19,6 +19,9 @@ import {
   ACTION_CLIENT_SAVED_TASK,
   ACTION_CLIENT_SAVING_TASK,
   ACTION_CLIENT_ERROR_TASK,
+  ACTION_CLIENT_REMOVED_TASK,
+  ACTION_CLIENT_REMOVING_TASK,
+  ACTION_CLIENT_ERROR_REMOVING_TASK,
 } from '../Constantes';
 import {Token} from '../Utils';
 import {SERVER_ADDRESS} from '../../constants';
@@ -145,6 +148,30 @@ export const trash = (id) => {
       .catch((error) => {
         console.log(error);
         dispatch({type: ACTION_CLIENTS_ERROR, error: error});
+      });
+  };
+};
+
+export const taskRemove = (id) => {
+  return async (dispatch) => {
+    console.log('Borrar tarea ' + id);
+    dispatch({type: ACTION_CLIENT_REMOVING_TASK});
+    let token = await Token();
+    fetch(SERVER_ADDRESS + 'api/tareas/' + id + '/', {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Token ' + token,
+        Accept: 'application/json',
+        'content-type': 'application/json',
+      },
+    })
+      .then((r) => r.json())
+      .then((r) => {
+        dispatch({type: ACTION_CLIENT_REMOVED_TASK, id: id});
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({type: ACTION_CLIENT_ERROR_REMOVING_TASK, error: error});
       });
   };
 };

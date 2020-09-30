@@ -25,7 +25,7 @@ import {
 } from 'react-native-paper';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
-import {loadClient} from '../../../redux/actions/Clients';
+import {loadClient, taskRemove} from '../../../redux/actions/Clients';
 import {COLORS} from 'constants';
 import TaskList from '../Task/List';
 
@@ -46,6 +46,9 @@ class ClientProfile extends React.Component {
         'Orden ' + orden + ' generada',
         'Entrara en un proceso de validación',
       );
+    }
+    if (this.props.error != prev.error && this.props.error != '') {
+      Alert.alert('Algo anda mal', this.props.error);
     }
   }
   call = () => {
@@ -227,12 +230,17 @@ const mapToState = (state) => {
     ordenes: state.Client.ordenes,
     tareas: state.Client.tareas,
     loading: state.Client.loading,
+    error: state.Client.error,
+    success: state.Client.success,
   };
 };
 const mapToActions = (dispatch) => {
   return {
     load: (id) => {
       dispatch(loadClient(id));
+    },
+    taskRemove: (id) => {
+      dispatch(taskRemove(id));
     },
   };
 };

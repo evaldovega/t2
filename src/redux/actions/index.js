@@ -1,5 +1,9 @@
 import {
   ACTION_INICIAR_SESION,
+  ACTION_USUARIO_INIT,
+  ACTION_USUARIO_CAMBIANDO_FOTO_PERFIL,
+  ACTION_USUARIO_FOTO_PERFIL_CAMBIADA,
+  ACTION_USUARIO_ERROR_CAMBIANDO_FOTO_PERFIL,
   ACTION_CAMBIAR_NOMBRE_USUARIO,
   ACTION_CAPACITACIONES_CARGANDO,
   ACTION_CAPACITACIONES_CARGADAS,
@@ -18,7 +22,7 @@ import {
   ACTION_ACTIVIDAD_MARCAR_ERROR_PREGUNTA,
   ACTION_ACTIVIDAD_INTENTO,
 } from '../Constantes';
-
+import SInfo from 'react-native-sensitive-info';
 import {Token} from '../Utils';
 
 import {SERVER_ADDRESS} from '../../constants';
@@ -236,5 +240,121 @@ export const preguntaMarcarError = (pregunta_id, error) => {
       pregunta_id: pregunta_id,
       error: error,
     });
+  };
+};
+
+export const initUsuario = () => {
+  return async (dispatch) => {
+    let d = {type: ACTION_USUARIO_INIT};
+    let foto_perfil = await SInfo.getItem('foto-perfil', {
+      sharedPreferencesName: 'ServiSharedPreferences',
+      keychainService: 'ServiKeyChain',
+    });
+
+    if (foto_perfil) {
+      d.foto = foto_perfil;
+    }
+    let token = await SInfo.getItem('auth-token', {
+      sharedPreferencesName: 'ServiSharedPreferences',
+      keychainService: 'ServiKeyChain',
+    });
+    console.log(token);
+    if (token) {
+      d.token = token;
+    }
+    console.log(d);
+    dispatch(d);
+  };
+};
+export const cambiarFotoPerfil = (data) => {
+  return async (dispatch, getState) => {
+    console.log('Cambiar foto perfil ', data);
+    dispatch({type: ACTION_USUARIO_CAMBIANDO_FOTO_PERFIL});
+    const RNFS = require('react-native-fs');
+    //TemporaryDirectoryPath
+    const token = await Token();
+    let path = data.path.replace('file://', '');
+    console.log(path);
+    var files = [
+      {
+        name: 'foto_perfil',
+        filename: new Date().getTime() + '.' + data.mime.split('/')[1],
+        filepath: path,
+        filetype: data.mime,
+      },
+    ];
+    console.log(files[0].filename);
+
+    var uploadBegin = (response) => {
+      var jobId = response.jobId;
+      console.log('UPLOAD HAS BEGUN! JobId: ' + jobId);
+    };
+
+    var uploadProgress = (response) => {
+      var percentage = Math.floor(
+        (response.totalBytesSent / response.totalBytesExpectedToSend) * 100,
+      );
+      console.log('UPLOAD IS ' + percentage + '% DONE!');
+    };
+
+    RNFS.uploadFiles({
+      toUrl: SERVER_ADDRESS + 'api/usuarios/editar/',
+      files: files,
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        Authorization: 'Token ' + token,
+      },
+      begin: uploadBegin,
+      progress: uploadProgress,
+    })
+      .promise.then((response) => {
+        if (response.statusCode == 200) {
+          console.log('FILES UPLOADED!'); // response.statusCode, response.headers, response.body
+          console.log(response.body);
+          const body = JSON.parse(response.body);
+          SInfo.setItem('foto-perfil', SERVER_ADDRESS + body.foto_perfil, {
+            sharedPreferencesName: 'ServiSharedPreferences',
+            keychainService: 'ServiKeyChain',
+          });
+          dispatch({
+            type: ACTION_USUARIO_FOTO_PERFIL_CAMBIADA,
+            foto: SERVER_ADDRESS + body.foto_perfil,
+          });
+        } else {
+          console.log('SERVER ERROR');
+          dispatch({
+            type: ACTION_USUARIO_ERROR_CAMBIANDO_FOTO_PERFIL,
+            error: 'Server Error',
+          });
+        }
+      })
+      .catch((err) => {
+        if (err.description === 'cancelled') {
+          // cancelled by user
+        }
+        console.log(err);
+        dispatch({
+          type: ACTION_USUARIO_ERROR_CAMBIANDO_FOTO_PERFIL,
+          error: err.toString(),
+        });
+      });
+    /*
+    fetch(SERVER_ADDRESS+'api/usuarios/editar/',{
+      method:'PUT',
+      body:data,
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    })
+    .then(r=>r.json())
+    .then((r)=>{
+      console.log("Foto cambiada")
+      console.log(r)
+      dispatch({type:ACTION_USUARIO_FOTO_PERFIL_CAMBIADA,foto:r.foto_perfil})
+    }).catch((error)=>{
+      console.log(error)
+      dispatch({type:ACTION_USUARIO_ERROR_CAMBIANDO_FOTO_PERFIL})
+    })*/
   };
 };

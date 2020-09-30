@@ -6,11 +6,12 @@ import {
   Text,
   TextInput,
   Image,
-  Button,
   TouchableHighlight,
   View,
   Dimensions,
+  TouchableHighlightComponent,
 } from 'react-native';
+import {Button} from 'react-native-paper';
 import {Montserrat} from 'utils/fonts';
 import WebView from 'react-native-webview';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -106,17 +107,12 @@ const ModalPrompt = memo((props: Props) => {
             </View>
           )}
 
-          <View>
-            <TouchableOpacity
-              style={[
-                styles.btnSignIn,
-                props.actionDisabled ? styles.btnDisabled : null,
-              ]}
-              disabled={props.actionDisabled}
-              onPress={props.onCodeValidation}>
-              <Text style={styles.txtSignIn}>Validar</Text>
-            </TouchableOpacity>
-          </View>
+          <Button
+            disabled={props.actionDisabled}
+            onPress={() => props.onCodeValidation()}
+            style={{borderRadius: 16, marginTop: 24}}>
+            Validar
+          </Button>
         </View>
       </View>
     </Modal>
@@ -176,13 +172,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   btnSignIn: {
-    backgroundColor: COLORS.SECONDARY_COLOR,
+    backgroundColor: COLORS.PRIMARY_COLOR,
     borderRadius: 24,
     marginHorizontal: 40,
     marginTop: 24,
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 9999,
   },
   btnDisabled: {
     backgroundColor: COLORS.SECONDARY_COLOR_MUTED,

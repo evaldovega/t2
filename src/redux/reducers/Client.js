@@ -11,6 +11,9 @@ import {
   ACTION_CLIENT_SAVED_TASK,
   ACTION_CLIENT_SAVING_TASK,
   ACTION_CLIENT_ERROR_TASK,
+  ACTION_CLIENT_REMOVED_TASK,
+  ACTION_CLIENT_REMOVING_TASK,
+  ACTION_CLIENT_ERROR_REMOVING_TASK,
 } from '../Constantes';
 import produce from 'immer';
 
@@ -117,6 +120,24 @@ export default Client = (state = initial_state, action) => {
         draft.tareas.push(action.task);
         break;
       case ACTION_CLIENT_ERROR_TASK:
+        draft.loading = false;
+        draft.error = action.error;
+        break;
+      case ACTION_CLIENT_REMOVING_TASK:
+        draft.loading = true;
+        draft.error = '';
+        draft.success = '';
+        break;
+      case ACTION_CLIENT_REMOVED_TASK:
+        draft.loading = false;
+        draft.error = '';
+        draft.success = 'Tarea removida';
+        let index = draft.tareas.findIndex((t) => t.id == action.id);
+        if (index >= 0) {
+          draft.tareas.splice(index, 1);
+        }
+        break;
+      case ACTION_CLIENT_ERROR_REMOVING_TASK:
         draft.loading = false;
         draft.error = action.error;
         break;

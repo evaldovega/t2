@@ -18,13 +18,15 @@ import SvgAvatar from 'svgs/profile/SvgAvatar';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
 
-import SvgOption from 'svgs/staticsHealth/SvgOptions';
-import SvgNoti from 'svgs/profile/SvgNoti';
-
-import Icon from 'react-native-vector-icons/Entypo';
-
 import {connect} from 'react-redux';
-import {usuarioCambiarNombre} from '../../redux/actions';
+import {
+  usuarioCambiarNombre,
+  cambiarFotoPerfil,
+  initUsuario,
+} from '../../redux/actions';
+import {Avatar, FAB} from 'react-native-paper';
+import {TouchableNativeFeedback} from 'react-native-gesture-handler';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const dataClient = [SvgClient1, SvgClient2, SvgClient3, SvgClient4, SvgClient5];
 const dataWork = [
@@ -45,22 +47,35 @@ const dataWork = [
 class Profile extends React.Component {
   componentDidMount() {
     this.props.cambiarNombre('Evaldo vega');
+    this.props.initUsuario();
   }
   onPressMenu = () => {
     this.props.navigation.openDrawer();
   };
+  cambiarFoto = () => {
+    console.log('Buscar img');
+    ImagePicker.openPicker({width: 200, height: 200, mediaType: 'photo'})
+      .then((image) => {
+        this.props.cambiarFotoPerfil(image);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={styles.back} onPress={this.onPressMenu}>
-          <Icon name="menu" size={24} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.noti}>
-          <SvgNoti />
-        </TouchableOpacity>
+        <FAB icon="menu" small style={styles.back} onPress={this.onPressMenu} />
+        <FAB icon="bullhorn" small style={styles.noti} />
 
         <ScrollView>
-          <SvgAvatar style={styles.avatar} />
+          <TouchableNativeFeedback onPress={this.cambiarFoto}>
+            <Avatar.Image
+              style={styles.avatar}
+              source={{uri: this.props.usuario.foto_perfil}}
+            />
+          </TouchableNativeFeedback>
+
           <Text style={styles.name}>{this.props.usuario.nombre}</Text>
           <Text style={styles.job}>{this.props.usuario.nivel}</Text>
           {!this.props.usuario.entrenamiento_completado ? (
@@ -131,6 +146,12 @@ const mapTopActions = (dispatch) => {
     cambiarNombre: (nombre) => {
       dispatch(usuarioCambiarNombre(nombre));
     },
+    cambiarFotoPerfil: (data) => {
+      dispatch(cambiarFotoPerfil(data));
+    },
+    initUsuario: () => {
+      dispatch(initUsuario());
+    },
   };
 };
 export default connect(mapToState, mapTopActions)(Profile);
@@ -149,11 +170,14 @@ const styles = StyleSheet.create({
     left: 16,
     top: getStatusBarHeight(true) + 10,
     zIndex: 1,
+    backgroundColor: '#F7F8F9',
   },
   noti: {
     position: 'absolute',
     right: 16,
     top: getStatusBarHeight(true) + 10,
+    zIndex: 1,
+    backgroundColor: '#F7F8F9',
   },
   name: {
     fontFamily: Montserrat,
