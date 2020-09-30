@@ -59,6 +59,38 @@ class ContactToClient extends PreventDoubleTap {
     this.contatcs = [];
   }
 
+  load = () => {
+    this.setState({loading: true});
+    Contacts.getAll((err, contacts) => {
+      contacts = contacts.map((c, i) => {
+        let nombre = c.givenName + ' ' + c.middleName + ' ' + c.familyName;
+        let email =
+          c.emailAddresses && c.emailAddresses.length > 0
+            ? c.emailAddresses[0].email
+            : '';
+        return {
+          recordID: c.recordID,
+          nombre: nombre,
+          primer_nombre: c.givenName,
+          primer_apellido: c.middleName,
+          segundo_apellido: c.familyName,
+          foto: c.thumbnailPath,
+          telefonos: c.phoneNumbers.map((t) => t.number).join(','),
+          empresa: c.company,
+          email: email,
+        };
+      });
+      this.contacts = contacts;
+      this.setState({
+        loading: false,
+        contact_q: '',
+        contacts_filter: contacts,
+        total_elementos: contacts.length,
+        mostrar_contactos: true,
+      });
+    });
+  };
+
   loadContacts = async () => {
     if (Platform.OS == 'android') {
       let p = await PermissionsAndroid.request(
@@ -72,35 +104,9 @@ class ContactToClient extends PreventDoubleTap {
         Alert.alert('Algo anda mal', 'Permiso no concedido');
         return;
       }
-      this.setState({loading: true});
-      Contacts.getAll((err, contacts) => {
-        contacts = contacts.map((c, i) => {
-          let nombre = c.givenName + ' ' + c.middleName + ' ' + c.familyName;
-          let email =
-            c.emailAddresses && c.emailAddresses.length > 0
-              ? c.emailAddresses[0].email
-              : '';
-          return {
-            recordID: c.recordID,
-            nombre: nombre,
-            primer_nombre: c.givenName,
-            primer_apellido: c.middleName,
-            segundo_apellido: c.familyName,
-            foto: c.thumbnailPath,
-            telefonos: c.phoneNumbers.map((t) => t.number).join(','),
-            empresa: c.company,
-            email: email,
-          };
-        });
-        this.contacts = contacts;
-        this.setState({
-          loading: false,
-          contact_q: '',
-          contacts_filter: contacts,
-          total_elementos: contacts.length,
-          mostrar_contactos: true,
-        });
-      });
+      this.load();
+    } else {
+      this.load();
     }
   };
 
