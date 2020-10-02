@@ -8,7 +8,6 @@ import {
   ACTION_PRODUCTOS_ERROR_CARANDO_FORMULARIO,
 } from '../Constantes';
 
-import {Token} from '../Utils';
 import {SERVER_ADDRESS} from '../../constants';
 
 export const setMetaData = (cliente_id, producto_id, plan_id) => {
@@ -21,12 +20,12 @@ export const setMetaData = (cliente_id, producto_id, plan_id) => {
   };
 };
 export const cargar = (producto_id) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({type: ACTION_PRODUCTOS_CARGANDO_DETALLE});
-    let token = await Token();
+
     fetch(SERVER_ADDRESS + 'api/productos/' + producto_id + '/', {
       headers: {
-        Authorization: 'Token ' + token,
+        Authorization: 'Token ' + getState().Usuario.token,
       },
     })
       .then((r) => r.json())
@@ -48,9 +47,9 @@ export const cargar = (producto_id) => {
 };
 
 export const cargarFormulario = (producto_id, plan_id) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({type: ACTION_PRODUCTOS_CARGANDO_FORMULARIO});
-    let token = await Token();
+
     fetch(
       SERVER_ADDRESS +
         'api/productos/' +
@@ -59,7 +58,7 @@ export const cargarFormulario = (producto_id, plan_id) => {
         plan_id,
       {
         headers: {
-          Authorization: 'Token ' + token,
+          Authorization: 'Token ' + getState().Usuario.token,
         },
       },
     )

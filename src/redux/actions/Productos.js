@@ -4,16 +4,15 @@ import {
   ACTION_PRODUCTOS_ERROR,
 } from '../Constantes';
 
-import {Token} from '../Utils';
 import {SERVER_ADDRESS} from '../../constants';
 
 export const cargar = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({type: ACTION_PRODUCTOS_CARGANDO});
-    let token = await Token();
+
     fetch(SERVER_ADDRESS + 'api/productos/', {
       headers: {
-        Authorization: 'Token ' + token,
+        Authorization: 'Token ' + getState().Usuario.token,
       },
     })
       .then((r) => r.json())

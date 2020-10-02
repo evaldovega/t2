@@ -8,6 +8,7 @@ import {
   StatusBar,
   Image,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -38,13 +39,27 @@ class CapacitacionListado extends React.Component {
   componentDidMount() {
     this.props.cargar();
   }
+
   detalle(item) {
     this.props.navigation.push('CapacitacionDetalle', {item: item});
   }
+
+  componentDidUpdate(prev) {
+    if (prev.error != this.props.error && this.props.error != '') {
+      Alert.alert('Algo anda mal', this.props.error);
+    }
+  }
+
   renderCapacitaciones() {
+    if (!this.props.listado) {
+      return <Text>No hay capacitaciones</Text>;
+    }
+
     if (this.props.listado.length == 0) {
       return <Text>No hay capacitaciones</Text>;
     }
+
+    console.log(this.props.listado);
     return this.props.listado.map((l, k) => (
       <Card
         elevation={0}
@@ -113,6 +128,7 @@ const mapToState = (state) => {
   return {
     listado: state.Capacitaciones.listado,
     cargando: state.Capacitaciones.cargando,
+    error: state.Capacitaciones.error,
   };
 };
 const mapToActions = (dispatch) => {

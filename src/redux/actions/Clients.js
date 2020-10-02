@@ -23,18 +23,17 @@ import {
   ACTION_CLIENT_REMOVING_TASK,
   ACTION_CLIENT_ERROR_REMOVING_TASK,
 } from '../Constantes';
-import {Token} from '../Utils';
+
 import {SERVER_ADDRESS} from '../../constants';
 
 export const loadClients = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({type: ACTION_CLIENTS_LOADING});
     console.log('Loading clients');
-    let token = await Token();
-    console.log(token);
+
     fetch(SERVER_ADDRESS + 'api/clientes/', {
       headers: {
-        Authorization: 'Token ' + token,
+        Authorization: 'Token ' + getState().Usuario.token,
       },
     })
       .then((r) => r.json())
@@ -51,16 +50,16 @@ export const loadClients = () => {
 };
 
 export const loadClient = (id) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({type: ACTION_CLIENT_CLEAN});
     if (id == '') {
       return;
     }
     dispatch({type: ACTION_CLIENT_LOADING});
-    let token = await Token();
+
     fetch(SERVER_ADDRESS + 'api/clientes/' + id, {
       headers: {
-        Authorization: 'Token ' + token,
+        Authorization: 'Token ' + getState().Usuario.token,
       },
     })
       .then((r) => r.json())
@@ -85,9 +84,9 @@ export const changeProp = (prop, value) => {
 };
 
 export const save = (props) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({type: ACTION_CLIENT_SAVEING});
-    let token = await Token();
+
     let method = props.id > 0 ? 'PUT' : 'POST';
     let url = props.id > 0 ? 'api/clientes/' + props.id + '/' : 'api/clientes/';
     let data = {
@@ -105,7 +104,7 @@ export const save = (props) => {
       method: method,
       body: JSON.stringify(data),
       headers: {
-        Authorization: 'Token ' + token,
+        Authorization: 'Token ' + getState().Usuario.token,
         Accept: 'application/json',
         'content-type': 'application/json',
       },
@@ -129,13 +128,13 @@ export const save = (props) => {
 };
 
 export const trash = (id) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({type: ACTION_CLIENT_DELETING});
-    let token = await Token();
+
     fetch(SERVER_ADDRESS + 'api/clientes/' + id + '/', {
       method: 'DELETE',
       headers: {
-        Authorization: 'Token ' + token,
+        Authorization: 'Token ' + getState().Usuario.token,
         Accept: 'application/json',
         'content-type': 'application/json',
       },
@@ -153,14 +152,14 @@ export const trash = (id) => {
 };
 
 export const taskRemove = (id) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     console.log('Borrar tarea ' + id);
     dispatch({type: ACTION_CLIENT_REMOVING_TASK});
-    let token = await Token();
+
     fetch(SERVER_ADDRESS + 'api/tareas/' + id + '/', {
       method: 'DELETE',
       headers: {
-        Authorization: 'Token ' + token,
+        Authorization: 'Token ' + getState().Usuario.token,
         Accept: 'application/json',
         'content-type': 'application/json',
       },
@@ -183,15 +182,15 @@ export const addOrden = (orden) => {
 };
 
 export const taskSave = (cliente, data) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     console.log('Guardar Tarea');
     dispatch({type: ACTION_CLIENT_SAVING_TASK});
-    let token = await Token();
+
     fetch(SERVER_ADDRESS + 'api/clientes/' + cliente + '/asignar/', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
-        Authorization: 'Token ' + token,
+        Authorization: 'Token ' + getState().Usuario.token,
         Accept: 'application/json',
         'content-type': 'application/json',
       },

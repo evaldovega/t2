@@ -8,6 +8,7 @@ import {
 const initialState = {
   cargando: false,
   listado: [],
+  error: '',
 };
 
 export default Capacitaciones = (state = initialState, action) => {
@@ -16,6 +17,7 @@ export default Capacitaciones = (state = initialState, action) => {
       case ACTION_CAPACITACIONES_CARGANDO:
         draft.cargando = true;
         draft.listado = [];
+        draft.error = '';
         break;
       case ACTION_CAPACITACIONES_CARGADAS:
         draft.cargando = false;
@@ -23,6 +25,7 @@ export default Capacitaciones = (state = initialState, action) => {
         break;
       case ACTION_CAPACITACIONES_ERROR:
         draft.cargando = false;
+        draft.error = action.error;
         break;
       case ACTION_CAPACITACION_INC_PROGRESO:
         try {

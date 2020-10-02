@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface ClakaTests : XCTestCase
+@interface serviproteccionTests : XCTestCase
 
 @end
 
-@implementation ClakaTests
+@implementation serviproteccionTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
 {

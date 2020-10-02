@@ -6,29 +6,45 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+/*
 import SvgClient1 from 'svgs/profile/SvgClient1';
 import SvgClient2 from 'svgs/profile/SvgClient2';
 import SvgClient3 from 'svgs/profile/SvgClient3';
 import SvgClient4 from 'svgs/profile/SvgClient4';
-import SvgClient5 from 'svgs/profile/SvgClient5';
+import SvgClient5 from 'svgs/profile/SvgClient5';*/
+
+/*
 import SvgWork1 from 'svgs/profile/SvgWork1';
 import SvgWork2 from 'svgs/profile/SvgWork2';
-import SvgWork3 from 'svgs/profile/SvgWork3';
-import SvgAvatar from 'svgs/profile/SvgAvatar';
+import SvgWork3 from 'svgs/profile/SvgWork3';*/
+
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
 
 import {connect} from 'react-redux';
 import {
-  usuarioCambiarNombre,
+  CambiarNombre,
   cambiarFotoPerfil,
   initUsuario,
-} from '../../redux/actions';
-import {Avatar, FAB} from 'react-native-paper';
+} from 'redux/actions/Usuario';
+
+import {
+  Avatar,
+  FAB,
+  Subheading,
+  TextInput,
+  Title,
+  Caption,
+  Button,
+} from 'react-native-paper';
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
+import {COLORS} from 'constants';
 
-const dataClient = [SvgClient1, SvgClient2, SvgClient3, SvgClient4, SvgClient5];
+import ProfileIdentificacion from './Identificacion';
+
+//const dataClient = [SvgClient1, SvgClient2, SvgClient3, SvgClient4, SvgClient5];
+/*
 const dataWork = [
   {
     title: 'Illustration Collection #2',
@@ -42,16 +58,17 @@ const dataWork = [
     title: 'Illustration Collection #2',
     Svg: SvgWork3,
   },
-];
+];*/
 
 class Profile extends React.Component {
   componentDidMount() {
-    this.props.cambiarNombre('Evaldo vega');
-    this.props.initUsuario();
+    //this.props.initUsuario()
   }
+
   onPressMenu = () => {
     this.props.navigation.openDrawer();
   };
+
   cambiarFoto = () => {
     console.log('Buscar img');
     ImagePicker.openPicker({width: 200, height: 200, mediaType: 'photo'})
@@ -62,10 +79,17 @@ class Profile extends React.Component {
         console.log(error);
       });
   };
+
   render() {
     return (
       <View style={styles.container}>
-        <FAB icon="menu" small style={styles.back} onPress={this.onPressMenu} />
+        <FAB
+          icon="menu"
+          small
+          style={styles.back}
+          elevation={0}
+          onPress={this.onPressMenu}
+        />
         <FAB icon="bullhorn" small style={styles.noti} />
 
         <ScrollView>
@@ -76,8 +100,12 @@ class Profile extends React.Component {
             />
           </TouchableNativeFeedback>
 
-          <Text style={styles.name}>{this.props.usuario.nombre}</Text>
-          <Text style={styles.job}>{this.props.usuario.nivel}</Text>
+          <Title style={{textAlign: 'center'}}>
+            {this.props.usuario.nombre}
+          </Title>
+          <Subheading style={{textAlign: 'center'}}>
+            {this.props.usuario.nivel}
+          </Subheading>
           {!this.props.usuario.entrenamiento_completado ? (
             <TouchableOpacity
               style={styles.btnUpdate}
@@ -88,48 +116,42 @@ class Profile extends React.Component {
 
           <View style={styles.containerInfo}>
             <View style={styles.col}>
-              <Text style={styles.value}>3.890</Text>
-              <Text style={styles.title}>Follower</Text>
+              <Subheading>3.890</Subheading>
+              <Caption>Clientes</Caption>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Text style={styles.value}>257</Text>
-              <Text style={styles.title}>Project</Text>
+              <Subheading>257</Subheading>
+              <Caption>Ventas</Caption>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Text style={styles.value}>10.468</Text>
-              <Text style={styles.title}>Loves</Text>
+              <Subheading>1.000.468</Subheading>
+              <Caption>Ganancias</Caption>
             </View>
           </View>
 
           <View style={styles.content}>
-            <Text style={styles.titleContent}>Our Clients (24)</Text>
-            <View style={styles.client}>
-              <ScrollView
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}>
-                {dataClient.map((Item, index) => {
-                  return <Item key={index} style={{marginRight: 25}} />;
-                })}
-              </ScrollView>
-            </View>
-            <Text style={styles.titleContent}>Latest Works</Text>
-            <View style={styles.work}>
-              <ScrollView
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}>
-                {dataWork.map((item, index) => {
-                  const {Svg, title} = item;
-                  return (
-                    <View key={index}>
-                      <Svg style={styles.svgWork} />
-                      <Text style={styles.titleWork}>{title}</Text>
-                    </View>
-                  );
-                })}
-              </ScrollView>
-            </View>
+            <Title style={{color: COLORS.PRIMARY_COLOR}}>
+              Datos Personales
+            </Title>
+            <TextInput
+              label="Correo Electrónico"
+              textContentType="emailAddress"
+              value={this.props.usuario.email}
+              style={{backgroundColor: 'transparent'}}
+            />
+            <TextInput
+              label="Número de Celular"
+              textContentType="telephoneNumber"
+              value={this.props.usuario.cel}
+              style={{backgroundColor: 'transparent'}}
+            />
+            <Button icon="pencil" style={{marginVertical: 16}}>
+              Actualizar Datos
+            </Button>
+
+            <ProfileIdentificacion />
           </View>
         </ScrollView>
       </View>
@@ -144,7 +166,7 @@ const mapToState = (state) => {
 const mapTopActions = (dispatch) => {
   return {
     cambiarNombre: (nombre) => {
-      dispatch(usuarioCambiarNombre(nombre));
+      dispatch(CambiarNombre(nombre));
     },
     cambiarFotoPerfil: (data) => {
       dispatch(cambiarFotoPerfil(data));
@@ -160,6 +182,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F8F9',
+    elevation: 0,
   },
   avatar: {
     marginTop: getStatusBarHeight(true) + 10,
@@ -170,6 +193,7 @@ const styles = StyleSheet.create({
     left: 16,
     top: getStatusBarHeight(true) + 10,
     zIndex: 1,
+    elevation: 0,
     backgroundColor: '#F7F8F9',
   },
   noti: {
@@ -178,6 +202,7 @@ const styles = StyleSheet.create({
     top: getStatusBarHeight(true) + 10,
     zIndex: 1,
     backgroundColor: '#F7F8F9',
+    elevation: 0,
   },
   name: {
     fontFamily: Montserrat,
@@ -202,6 +227,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     justifyContent: 'center',
     paddingHorizontal: 16,
+
     alignItems: 'center',
     alignSelf: 'center',
   },
@@ -240,8 +266,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingLeft: 32,
+    paddingHorizontal: 32,
     paddingBottom: 20,
+    paddingTop: 32,
   },
   titleContent: {
     fontFamily: Montserrat,

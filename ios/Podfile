@@ -44,8 +44,8 @@ def flipper_post_install(installer)
   end
 end
 
-target 'Claka' do
-  # Pods for Claka
+target 'serviproteccion' do
+  # Pods for serviproteccion
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -92,7 +92,7 @@ target 'Claka' do
 
   pod 'react-native-signature-capture', :path => '../node_modules/react-native-signature-capture'
 
-  target 'ClakaTests' do
+  target 'serviproteccionTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -109,10 +109,10 @@ target 'Claka' do
   end
 end
 
-target 'Claka-tvOS' do
-  # Pods for Claka-tvOS
+target 'serviproteccion-tvOS' do
+  # Pods for serviproteccion-tvOS
 
-  target 'Claka-tvOSTests' do
+  target 'serviproteccion-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

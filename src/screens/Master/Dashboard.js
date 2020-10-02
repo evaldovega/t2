@@ -17,16 +17,14 @@ import Chart from 'screens/StaticsHealth/components/Chart';
 const dataTime = ['DAYS', 'WEEKS', 'MONTHS', 'YEARS'];
 import {styleHeader} from 'styles';
 import {connect} from 'react-redux';
-import {usuarioCambiarNombre} from '../../redux/actions';
+import {CambiarNombre} from '../../redux/actions/Usuario';
 import Icon from 'react-native-vector-icons/Entypo';
 
 class Dashboard extends React.Component {
   onPressMenu = () => {
     this.props.navigation.openDrawer();
   };
-  componentDidMount() {
-    this.props.cambiarNombreUsuario('Evaldo Vega Vivanco');
-  }
+  componentDidMount() {}
   render() {
     return (
       <View style={styles.container}>
@@ -117,7 +115,7 @@ const mapToState = (state) => {
 const mapToActions = (dispatch) => {
   return {
     cambiarNombreUsuario: (nombre) => {
-      dispatch(usuarioCambiarNombre(nombre));
+      dispatch(CambiarNombre(nombre));
     },
   };
 };

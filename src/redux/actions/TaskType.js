@@ -8,12 +8,12 @@ import {Token} from '../Utils';
 import {SERVER_ADDRESS} from '../../constants';
 
 export const cargar = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({type: ACTION_TIPO_TAREA_CARGANDO});
-    let token = await Token();
+
     fetch(SERVER_ADDRESS + 'api/config/tipo-tarea', {
       headers: {
-        Authorization: 'Token ' + token,
+        Authorization: 'Token ' + getState().Usuario.token,
       },
     })
       .then((r) => r.json())

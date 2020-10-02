@@ -99,6 +99,7 @@ const MainNavigation = memo(() => {
                             <Screen name='CapacitacionDetalle' component={CapacitacionDetalle} options={optionNavigator}/>
                             <Screen name='Actividad' component={Actividad}  options={optionNavigator}/>
                             <Screen name='ClientSave' component={ClientSave}  options={optionNavigator}/>
+                            
                             {ContactToClient && <Screen name='ContactoAcliente' component={ContactToClient} options={optionNavigator}/>}
                             {ClientProfile && <Screen name='ClientProfile' component={ClientProfile} options={optionNavigator}/>}
                             {ProductList && <Screen name='ProductList' component={ProductList} options={optionNavigator}/>}
