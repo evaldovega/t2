@@ -84,7 +84,7 @@ class ClientSave extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Loader loading={this.state.cargando} />
+        <Loader loading={this.props.loading} />
         <StatusBar
           translucent={true}
           backgroundColor={'transparent'}

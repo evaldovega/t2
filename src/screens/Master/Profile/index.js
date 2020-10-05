@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 /*
 import SvgClient1 from 'svgs/profile/SvgClient1';
@@ -40,6 +41,7 @@ import {
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
 import {COLORS} from 'constants';
+import RNFS from 'react-native-fs';
 
 import ProfileIdentificacion from './Identificacion';
 
@@ -63,6 +65,17 @@ const dataWork = [
 class Profile extends React.Component {
   componentDidMount() {
     //this.props.initUsuario()
+    // RNFS.exists(filePath)
+    // .then(success => {
+    //     if (success) {
+    //         readFile(filePath, logData);
+    //     } else {
+    //         writeFile(filePath, logData);
+    //     }
+    // })
+    // .catch(err => {
+    //     console.log(err.message, err.code);
+    // });
   }
 
   onPressMenu = () => {
@@ -73,16 +86,17 @@ class Profile extends React.Component {
     console.log('Buscar img');
     ImagePicker.openPicker({width: 200, height: 200, mediaType: 'photo'})
       .then((image) => {
+        console.log(image);
         this.props.cambiarFotoPerfil(image);
       })
       .catch((error) => {
-        console.log(error);
+        console.log('error: ', error);
       });
   };
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <FAB
           icon="menu"
           small
@@ -92,7 +106,7 @@ class Profile extends React.Component {
         />
         <FAB icon="bullhorn" small style={styles.noti} />
 
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <TouchableNativeFeedback onPress={this.cambiarFoto}>
             <Avatar.Image
               style={styles.avatar}
@@ -154,7 +168,7 @@ class Profile extends React.Component {
             <ProfileIdentificacion />
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }
