@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux';
 import Usuario from './Usuario';
+import SeguridadSocial from './SeguridadSocial';
 import Capacitacion from './Capacitacion';
 import Capacitaciones from './Capacitaciones';
 
@@ -12,6 +13,7 @@ import TaskType from './TaskType';
 
 export default combineReducers({
   Usuario: Usuario,
+  SeguridadSocial: SeguridadSocial,
   Capacitaciones: Capacitaciones,
   Capacitacion: Capacitacion,
   Clients: Clients,

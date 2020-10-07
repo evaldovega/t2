@@ -364,7 +364,12 @@ class Actividad extends React.Component {
               alignItems: 'stretch',
             }}>
             <Card
-              style={{borderRadius: 16, marginHorizontal: 16, marginTop: 32}}
+              style={{
+                borderRadius: 16,
+                marginHorizontal: 16,
+                marginTop: 32,
+                marginBottom: 8,
+              }}
               elevation={4}>
               {this.renderVideo(data)}
               <Card.Content>
@@ -373,11 +378,9 @@ class Actividad extends React.Component {
                     paddingHorizontal: 20,
                     paddingTop: 20,
                     marginBottom: 20,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
+                    flexDirection: 'column',
                   }}>
-                  <Title style={[{flex: 1}]}>{data.titulo}</Title>
+                  <Title>{data.titulo}</Title>
 
                   {data.tipo == 'cuestionario' && (
                     <View style={{}}>

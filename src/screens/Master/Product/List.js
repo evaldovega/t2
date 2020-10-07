@@ -68,7 +68,7 @@ class ProductList extends React.Component {
             style={styleHeader.btnLeft}
           />
           <Text style={styleHeader.title}>Listado de Productos</Text>
-          <View></View>
+          <FAB style={{opacity: 0}} />
         </View>
 
         <View style={{marginHorizontal: 16}}>
