@@ -51,24 +51,8 @@ class Soporte extends React.Component {
   state = {
     usuarios: [],
     msg: '',
-    mensajes: [
-      {me: false, msn: 'Hola en este momento no podemos ayudarte'},
-      {me: true, msn: 'Oyeee usted no sabe quien soy yo'},
-      {me: false, msn: 'Si un corredor que este mes no ha vendido nada'},
-      {me: true, msn: 'JAJA que risa he sido el mejor durante meses'},
-      {me: true, msn: 'Y ahora por un mes malo me tratan asi 😡'},
-      {me: true, msn: 'Saben que quedense con su plataforma'},
-      {me: true, msn: 'De igual forma ya estaba aburrido'},
-      {me: false, msn: 'Esta bien Sr que tenga suerte'},
-      {me: true, msn: 'JAAAY wp asi no mas'},
-      {
-        me: true,
-        msn:
-          'En esta url https://google.com.co busquen como pueden irse a la mierda',
-        mb: 130,
-      },
-    ],
-    total_mensajes: 10,
+    mensajes: [],
+    total_mensajes: 0,
   };
   componentDidMount() {
     console.log('Ruta ', fs.dirs.MainBundleDir);
@@ -90,7 +74,8 @@ class Soporte extends React.Component {
           return m;
         });
         mensajes.push({me: false, msn: data.message, mb: 130});
-        this.setState({mensajes: mensajes});
+
+        this.setState({mensajes: mensajes, total_mensajes: mensajes.length});
         this.msn.play();
       }
     });
@@ -110,7 +95,11 @@ class Soporte extends React.Component {
     });
 
     mensajes.push({me: true, msn: this.state.msg, mb: 130});
-    this.setState({mensajes: mensajes, msg: ''});
+    this.setState({
+      mensajes: mensajes,
+      msg: '',
+      total_mensajes: mensajes.length,
+    });
   };
 
   transformarMensaje = (msn) => {

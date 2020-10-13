@@ -26,6 +26,8 @@ import {
   FAB,
   Card,
   Colors,
+  Caption,
+  Subheading,
 } from 'react-native-paper';
 
 import Icon from 'react-native-vector-icons/Entypo';
@@ -62,7 +64,12 @@ class Lead extends React.Component {
     const nombre = `${item.primer_nombre} ${item.segundo_nombre} ${item.primer_apellido} ${item.segundo_apellido}`;
     return (
       <Card
-        style={{marginVertical: 8, marginHorizontal: 16, borderRadius: 16}}
+        style={{
+          marginVertical: 8,
+          marginHorizontal: 16,
+          borderRadius: 16,
+          elevation: 0,
+        }}
         elevation={1}>
         <Card.Content
           style={{
@@ -71,8 +78,8 @@ class Lead extends React.Component {
           }}>
           <Avatar.Image style={{marginRight: 8}} source={genero[item.genero]} />
           <View style={{flex: 1}}>
-            <Title>{nombre}</Title>
-            <Paragraph>{item.numero_telefono}</Paragraph>
+            <Subheading>{nombre}</Subheading>
+            <Caption>{item.numero_telefono}</Caption>
           </View>
         </Card.Content>
         <Card.Actions style={{justifyContent: 'flex-end'}}>
@@ -81,17 +88,23 @@ class Lead extends React.Component {
             large
             onPress={() =>
               this.props.navigation.push('ClientProfile', {id: item.id})
-            }></Button>
+            }>
+            Detalles
+          </Button>
           <Button
             icon="pencil"
             large
             onPress={() =>
               this.props.navigation.push('ClientSave', {id: item.id})
-            }></Button>
+            }>
+            Editar
+          </Button>
           <Button
             icon="delete"
             color={Colors.red400}
-            onPress={() => this.borrar(item)}></Button>
+            onPress={() => this.borrar(item)}>
+            Borrar
+          </Button>
         </Card.Actions>
       </Card>
     );

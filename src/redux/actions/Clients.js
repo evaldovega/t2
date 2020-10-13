@@ -52,6 +52,7 @@ export const loadClients = () => {
 export const loadClient = (id) => {
   return async (dispatch, getState) => {
     dispatch({type: ACTION_CLIENT_CLEAN});
+    console.log('Cargar cliente ', id);
     if (id == '') {
       return;
     }
@@ -99,6 +100,8 @@ export const save = (props) => {
       correo_electronico: props.correo_electronico,
       genero: props.genero,
     };
+    console.log('GUARDAR CLIENTE');
+    console.log(url);
     console.log(data);
     fetch(SERVER_ADDRESS + url, {
       method: method,

@@ -292,7 +292,56 @@ class SignUp extends React.Component {
         });
     }
 
+    firmaGuardada   =   (result)  =>{
+        this.enviar(result.encoded)
+    }
+
+    enviar=(firma)=>{
+        const body=JSON.stringify({
+            user:{
+                first_name: this.state.firstname,
+                last_name: this.state.lastname,
+                email:this.state.mail,
+                password: this.state.password1,
+            },
+            firma:firma,
+            numero_whatsapp: this.state.numWhatsapp,
+            genero: this.state.pickedGenero.key,
+            departamento: this.state.pickedDepto.key,
+            municipio: this.state.pickedMpio.key,
+            direccion: this.state.direccion,
+            fecha_nacimiento: this.state.fechaNac,
+            tipo_documento_identidad: this.state.pickedTDoc.key,
+            num_documento_identidad: this.state.numDocumento,
+            contrato_aprobado: this.state.aceptacionContrato
+        })
+        fetch(SERVER_ADDRESS+"api/usuarios/", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'content-type': 'application/json'
+            },
+            body: body
+        }).then(r => r.json()).then(response => {
+            this.setState({msgAlert: "Usuario registrado"})
+        }).catch((err) => {
+            this.setState({msgAlert: err.toString()})
+        }).finally(() => {
+            this.setState({loading:false})
+            setTimeout(() => {
+                Alert.alert(this.state.msgAlert,"")
+            }, 100)
+            if(this.state.msgAlert == "Usuario registrado"){
+                setTimeout(() => {
+                    this.props.navigation.pop();    
+                }, 1500);
+            }
+        })
+    }
+
     onPressRegister = () => {
+       
+        console.log("Registrar")
 
         if(this.state.firstname == ""){
             this.setState({firstnameErrors: true})
@@ -353,51 +402,12 @@ class SignUp extends React.Component {
             return
         }
         if(!this.state.aceptacionContrato){
+            console.log("No ha aceptado el contrato")
             return
         }
         
-
-
         this.setState({loading:true})
-        fetch(SERVER_ADDRESS+"api/usuarios/", {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                user:{
-                    first_name: this.state.firstname,
-                    last_name: this.state.lastname,
-                    email:this.state.mail,
-                    password: this.state.password1,
-                },
-                numero_whatsapp: this.state.numWhatsapp,
-                genero: this.state.pickedGenero.key,
-                departamento: this.state.pickedDepto.key,
-                municipio: this.state.pickedMpio.key,
-                direccion: this.state.direccion,
-                fecha_nacimiento: this.state.fechaNac,
-                tipo_documento_identidad: this.state.pickedTDoc.key,
-                num_documento_identidad: this.state.numDocumento,
-                contrato_aprobado: this.state.aceptacionContrato
-            })
-        }).then(r => r.json()).then(response => {
-            this.setState({msgAlert: "Usuario registrado"})
-        }).catch((err) => {
-            this.setState({msgAlert: err.toString()})
-        }).finally(() => {
-            this.setState({loading:false})
-            setTimeout(() => {
-                Alert.alert(this.state.msgAlert,"")
-            }, 100)
-            if(this.state.msgAlert == "Usuario registrado"){
-                setTimeout(() => {
-                    this.props.navigation.pop();    
-                }, 1500);
-            }
-        })
-
+        this.refs["firma"].saveImage();
     }
     cerrarContrato = () => {
         this.setState({contratoVisualizacion: false})
@@ -542,7 +552,7 @@ class SignUp extends React.Component {
                         <View style={{marginTop:24,paddingHorizontal:16,paddingVertical:16,backgroundColor:COLORS.SECONDARY_COLOR,justifyContent:'center'}}>
                             <Divider/>
                             
-                            <SignatureCapture ref='firma' minStrokeWidth={1} and maxStrokeWidth={4} showNativeButtons={false} style={{width:'100%',aspectRatio:16/9,marginVertical:8}}/>
+                            <SignatureCapture ref='firma' onSaveEvent={this.firmaGuardada} saveImageFileInExtStorage={false} minStrokeWidth={1} and maxStrokeWidth={4} showNativeButtons={false} style={{width:'100%',aspectRatio:16/9,marginVertical:8}}/>
                             <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginVertical:4}}>
                                 <Caption style={{color:'white'}}>Firmar Contrato</Caption>
                                 <FAB small icon='eraser' onPress={()=>this.refs['firma'].resetImage()} label='Borrar'/>

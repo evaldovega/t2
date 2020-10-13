@@ -7,15 +7,13 @@ import {
   Text,
   StatusBar,
   Image,
+  Animated,
+  Easing,
 } from 'react-native';
-import SvgLogo from 'svgs/walkthroughs/SvgLogo';
+import LottieView from 'lottie-react-native';
+import {Button, Colors, Title, Paragraph} from 'react-native-paper';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
-import {useNavigation} from '@react-navigation/native';
-import SvgIntro1 from 'svgs/walkthroughs/SvgIntro1';
-import SvgIntro2 from 'svgs/walkthroughs/SvgIntro2';
-import SvgIntro3 from 'svgs/walkthroughs/SvgIntro3';
 import {ROUTERS} from 'utils/navigation';
-import {getItem} from 'react-native-sensitive-info';
 
 const {width: viewportWidth} = Dimensions.get('window');
 
@@ -32,23 +30,24 @@ export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 import {connect} from 'react-redux';
 import {initUsuario} from 'redux/actions/Usuario';
+import {COLORS} from 'constants';
 
 const data = [
   {
     color: '#00C48C',
-    Svg: SvgIntro1,
+    animation: require('../../animations/sales.json'),
     Titulo: 'Conéctate y gana',
     Texto: 'Conéctate y gana vendiendo seguros con Servi',
   },
   {
-    color: '#0F4C81',
-    Svg: SvgIntro2,
+    color: '#00817A',
+    animation: require('../../animations/relot.json'),
     Titulo: 'Sin horarios',
     Texto: 'Actívate cuando quieras',
   },
   {
-    color: '#6979F8',
-    Svg: SvgIntro3,
+    color: '#00C48C',
+    animation: require('../../animations/metas.json'),
     Titulo: 'Gana',
     Texto: 'Genera ingresos y cumple tus metas',
   },
@@ -60,9 +59,19 @@ class Walkthroughs extends React.Component {
   }
   state = {
     indexActive: 0,
+    progress: new Animated.Value(0),
   };
+
   componentDidMount() {
     this.props.initUsuario();
+    Animated.loop(
+      Animated.timing(this.state.progress, {
+        toValue: 1,
+        duration: 5000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+    ).start();
   }
   vendeYa = () => {
     if (this.props.logeado) {
@@ -73,14 +82,19 @@ class Walkthroughs extends React.Component {
   };
 
   renderItem = ({item}) => {
-    const Svg = item.Svg;
     return (
       <View style={[styles.item, {backgroundColor: item.color}]}>
-        <Image
+        <LottieView
+          loop={true}
+          style={{width: '100%'}}
+          source={item.animation}
+          progress={this.state.progress}
           style={styles.sliderImage}
-          source={require('screens/Walkthroughs/images/IMG-01.png')}></Image>
-        <Text style={styles.title}>{item.Titulo}</Text>
-        <Text style={styles.des}>{item.Texto}</Text>
+        />
+        <View style={{flex: 1}}>
+          <Title style={styles.title}>{item.Titulo}</Title>
+          <Paragraph style={styles.des}>{item.Texto}</Paragraph>
+        </View>
       </View>
     );
   };
@@ -111,17 +125,21 @@ class Walkthroughs extends React.Component {
             renderItem={this.renderItem}
             sliderWidth={sliderWidth}
             itemWidth={itemWidth}
-            inactiveSlideScale={0.94}
-            inactiveSlideOpacity={0.7}
+            inactiveSlideScale={0.95}
+            inactiveSlideOpacity={0.4}
             containerCustomStyle={styles.slider}
             contentContainerCustomStyle={styles.sliderContentContainer}
             onSnapToItem={(i) => this.setState({indexActive: i})}
           />
         </View>
-
-        <TouchableOpacity style={styles.btnSignIn} onPress={this.vendeYa}>
-          <Text style={styles.txtSignIn}>¡Vende ya {this.props.nombre}!</Text>
-        </TouchableOpacity>
+        <Button
+          backgroundColor={COLORS.PRIMARY_COLOR}
+          dark={true}
+          mode="contained"
+          style={{borderRadius: 16, margin: 24, padding: 8}}
+          onPress={this.vendeYa}>
+          ¡Vende ya {this.props.nombre}!
+        </Button>
       </View>
     );
   }
@@ -158,17 +176,16 @@ const styles = StyleSheet.create({
     paddingVertical: 10, // for custom animation
   },
   sliderImage: {
+    width: '80%',
     alignSelf: 'center',
-    width: '70%',
-    height: undefined,
-    aspectRatio: 1 / 1,
+    flex: 1,
   },
   dotStyle: {
     width: 8,
     height: 8,
     borderRadius: 4,
     marginHorizontal: 0,
-    backgroundColor: '#0F4C81',
+    backgroundColor: COLORS.PRIMARY_COLOR,
   },
   inactiveDotStyle: {
     width: 8,
@@ -185,11 +202,11 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
-    marginTop: 56,
+    marginVertical: 56,
     paddingHorizontal: 24,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -214,7 +231,6 @@ const styles = StyleSheet.create({
   },
   item: {
     borderRadius: 16,
-    backgroundColor: '#00C48C',
     width: itemWidth,
     height: slideHeight,
     paddingHorizontal: itemHorizontalMargin,
@@ -226,13 +242,12 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#FFF',
-    fontSize: 18,
+
     marginTop: 50,
     marginLeft: 24,
     marginRight: 16,
   },
   des: {
-    fontSize: 16,
     color: '#FFFFFF',
     marginTop: 16,
     marginLeft: 24,

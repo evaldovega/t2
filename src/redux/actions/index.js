@@ -97,10 +97,10 @@ export const actividadMarcarLeida = (
   actividad_index,
   estado,
 ) => {
+  console.log('Marcar leida ', actividad_index);
   return async (dispatch, getState) => {
     dispatch({type: ACTION_ACTIVIDAD_MARCANDO_LEIDA});
 
-    console.log('Marcar visualizada token ', token);
     fetch(
       SERVER_ADDRESS + 'api/actividades/' + actividad_index + '/visualizar/',
       {

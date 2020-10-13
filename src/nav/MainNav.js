@@ -12,6 +12,7 @@ import {StackNavigationOptions} from '@react-navigation/stack';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {Platform} from 'react-native';
 // @ts-ignore
+
 import Walkthroughs from 'screens/Walkthroughs';
 import ForgotPass from 'screens/ForgotPass';
 import SignIn from 'screens/SiginIn';

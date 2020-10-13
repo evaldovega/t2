@@ -106,6 +106,8 @@ target 'serviproteccion' do
 
   pod 'RNSound', :path => '../node_modules/react-native-sound'
 
+  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
+
   target 'serviproteccionTests' do
     inherit! :complete
     # Pods for testing

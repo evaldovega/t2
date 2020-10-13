@@ -14,10 +14,10 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loader from 'components/Loader';
 import {styleHeader, styleInput, styleButton} from 'styles';
-import {Colors} from 'react-native-paper';
+import {Colors, Button} from 'react-native-paper';
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import {loadClient, changeProp, save} from '../../../redux/actions/Clients';
-import {validar, renderErrores} from 'utils/Validar';
+import {validar, totalErrores, renderErrores} from 'utils/Validar';
 
 const styles = StyleSheet.create({
   container: {
@@ -81,10 +81,22 @@ class ClientSave extends React.Component {
     }
   }
 
+  guardar = () => {
+    Object.keys(validations).forEach((k) => {
+      validar(this, k, validations[k]);
+    });
+    console.log(this.state.error);
+    if (totalErrores(this) > 0) {
+      Alert.alert('Complete todos los campos', '');
+    } else {
+      this.props.save(this.props);
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        <Loader loading={this.state.cargando} />
+        <Loader loading={this.props.loading} />
         <StatusBar
           translucent={true}
           backgroundColor={'transparent'}
@@ -100,7 +112,7 @@ class ClientSave extends React.Component {
           <View></View>
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{paddingHorizontal: 16}}>
+          <View style={{paddingHorizontal: 16, paddingVertical: 32}}>
             <View style={styleInput.wrapper}>
               <TextInput
                 style={styleInput.input}
@@ -220,11 +232,13 @@ class ClientSave extends React.Component {
             </View>
             {renderErrores(this, 'correo_electronico')}
 
-            <TouchableNativeFeedback
+            <Button
               style={styleButton.wrapper}
-              onPress={() => this.props.save(this.props)}>
-              <Text style={styleButton.text}>Guardar</Text>
-            </TouchableNativeFeedback>
+              dark={true}
+              color="white"
+              onPress={() => this.guardar()}>
+              Guardar
+            </Button>
           </View>
         </ScrollView>
       </View>
