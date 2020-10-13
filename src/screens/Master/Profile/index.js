@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
@@ -54,16 +55,17 @@ class Profile extends React.Component {
     console.log('Buscar img');
     ImagePicker.openPicker({width: 200, height: 200, mediaType: 'photo'})
       .then((image) => {
+        console.log(image);
         this.props.cambiarFotoPerfil(image);
       })
       .catch((error) => {
-        console.log(error);
+        console.log('error: ', error);
       });
   };
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styleHeader.wrapper}>
           <FAB
             icon="menu"
@@ -74,7 +76,7 @@ class Profile extends React.Component {
           <FAB style={{opacity: 0}} />
         </View>
 
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <TouchableNativeFeedback onPress={this.cambiarFoto}>
             <Avatar.Image
               style={styles.avatar}
@@ -161,7 +163,7 @@ class Profile extends React.Component {
             </Suspense>
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }
