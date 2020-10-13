@@ -11,11 +11,16 @@ import {
   ACTION_USUARIO_SUBIENDO_IDE,
   ACTION_USUARIO_IDE_SUBIDA,
   ACTION_USUARIO_ERROR_SUBIENDO_IDE,
+  ACTION_ACTUALIZANDO_PERFIL,
+  ACTION_PERFIL_ACTUALIZADO,
+  ACTION_ERROR_ACTUALIZANDO_PERFIL,
+  ACTION_USUARIO_ACTUALIZAR_PROP,
 } from '../Constantes';
 import produce from 'immer';
 
 const initialState = {
   nombre: '',
+  num_documento_identidad: '',
   nivel: 'Agente corredor',
   estado: 'Activo',
   logeado: false,
@@ -29,6 +34,8 @@ const initialState = {
   ide_foto_frente: '',
   ide_foto_respaldo: '',
   error_subiendo_ide: '',
+  actualizando_perfil: false,
+  error_actualizando_perfil: '',
 };
 
 export default Usuario = (state = initialState, action) => {
@@ -71,11 +78,13 @@ export default Usuario = (state = initialState, action) => {
         draft.error = action.error;
         break;
       case ACTION_USUARIO_INIT:
+        draft.id = action.id;
         draft.nombre = action.nombre;
         draft.foto_perfil = action.foto;
         draft.email = action.email;
         draft.cel = action.cel;
         draft.token = action.token;
+        draft.num_documento_identidad = action.num_documento_identidad;
         draft.ide_foto_respaldo = action.ide_foto_respaldo;
         draft.ide_foto_frente = action.ide_foto_frente;
         if (action.token) {
@@ -106,6 +115,20 @@ export default Usuario = (state = initialState, action) => {
       case ACTION_USUARIO_ERROR_SUBIENDO_IDE:
         draft.subiendo_ide = false;
         draft.error_subiendo_ide = action.error;
+        break;
+      case ACTION_ACTUALIZANDO_PERFIL:
+        draft.actualizando_perfil = true;
+        draft.error_actualizando_perfil = '';
+        break;
+      case ACTION_PERFIL_ACTUALIZADO:
+        draft.actualizando_perfil = false;
+        break;
+      case ACTION_ERROR_ACTUALIZANDO_PERFIL:
+        draft.actualizando_perfil = false;
+        draft.error_actualizando_perfil = action.error;
+        break;
+      case ACTION_USUARIO_ACTUALIZAR_PROP:
+        draft[action.p] = action.v;
         break;
     }
   });

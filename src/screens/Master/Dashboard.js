@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
+  Animated,
+  Easing,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Montserrat} from 'utils/fonts';
@@ -19,12 +21,27 @@ import {styleHeader} from 'styles';
 import {connect} from 'react-redux';
 import {CambiarNombre} from '../../redux/actions/Usuario';
 import Icon from 'react-native-vector-icons/Entypo';
+import {COLORS} from 'constants';
+import LottieView from 'lottie-react-native';
 
 class Dashboard extends React.Component {
+  state = {
+    progress: new Animated.Value(0),
+  };
+
   onPressMenu = () => {
     this.props.navigation.openDrawer();
   };
-  componentDidMount() {}
+  componentDidMount() {
+    Animated.loop(
+      Animated.timing(this.state.progress, {
+        toValue: 1,
+        duration: 5000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+    ).start();
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -56,9 +73,29 @@ class Dashboard extends React.Component {
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.boxStatus}>
-            <Text style={styles.txtGood}>Good Healh 👍</Text>
-            <Text style={styles.txtKeep}>Keep track it everyday!</Text>
+          <View
+            style={[
+              styles.boxStatus,
+              {
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+              },
+            ]}>
+            <View style={{width: 64}}>
+              <LottieView
+                loop={true}
+                style={{width: '100%'}}
+                source={require('../../animations/cohete.json')}
+                progress={this.state.progress}
+              />
+            </View>
+            <View style={{flex: 1}}>
+              <Text style={styles.txtGood}>Buen trabajo 👍</Text>
+              <Text style={styles.txtKeep}>
+                Este mes haz alcanzado tus metas!
+              </Text>
+            </View>
           </View>
 
           <View style={styles.containerChart}>

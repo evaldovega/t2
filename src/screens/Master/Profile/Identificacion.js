@@ -1,10 +1,11 @@
 import React from 'react';
-import {Title, Subheading, Button, Text} from 'react-native-paper';
-import {Image, View, StyleSheet, Alert} from 'react-native';
+import {Title, Subheading, Button, Text, Card} from 'react-native-paper';
+import {Image, View, StyleSheet, Alert, Linking} from 'react-native';
 import {connect} from 'react-redux';
 import {subirFotoIde} from 'redux/actions/Usuario';
 import {COLORS} from 'constants';
 import ImagePicker from 'react-native-image-crop-picker';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 class ProfileIdentificacion extends React.Component {
   capturar = (lado) => {
@@ -30,42 +31,43 @@ class ProfileIdentificacion extends React.Component {
   render() {
     return (
       <>
-        <Title style={{color: COLORS.PRIMARY_COLOR}}>Documentación</Title>
-        <Subheading>Identificación</Subheading>
-        <View style={{position: 'relative'}}>
-          <Image
-            style={{
-              width: '100%',
-              aspectRatio: 16 / 9,
-              borderRadius: 16,
-              backgroundColor: 'gray',
-            }}
-            source={{uri: this.props.ide_foto_frente}}
-          />
-        </View>
+        <Title style={{color: COLORS.PRIMARY_COLOR, marginTop: 16}}>
+          Documento de Identificación
+        </Title>
 
-        <Button
-          icon="camera"
-          loading={this.props.subiendo_ide}
-          onPress={() => this.capturar('frente')}>
-          Foto Frente
-        </Button>
+        <Card style={{marginTop: 8, borderRadius: 16, overflow: 'hidden'}}>
+          <TouchableOpacity
+            onProgress={() => {
+              Linking.openURL(this.props.ide_foto_frente);
+            }}>
+            <Card.Cover source={{uri: this.props.ide_foto_frente}} />
+          </TouchableOpacity>
 
-        <Image
-          style={{
-            width: '100%',
-            aspectRatio: 16 / 9,
-            borderRadius: 16,
-            backgroundColor: 'gray',
-          }}
-          source={{uri: this.props.ide_foto_respaldo}}
-        />
-        <Button
-          icon="camera"
-          loading={this.props.subiendo_ide}
-          onPress={() => this.capturar('respaldo')}>
-          Foto Respaldo
-        </Button>
+          <Card.Title title="Frente"></Card.Title>
+          <Card.Content></Card.Content>
+          <Card.Actions>
+            <Button
+              icon="camera"
+              loading={this.props.subiendo_ide}
+              onPress={() => this.capturar('frente')}>
+              Capturar Foto
+            </Button>
+          </Card.Actions>
+        </Card>
+
+        <Card style={{marginTop: 8, borderRadius: 16, overflow: 'hidden'}}>
+          <Card.Cover source={{uri: this.props.ide_foto_respaldo}} />
+          <Card.Title title="Respaldo"></Card.Title>
+          <Card.Content></Card.Content>
+          <Card.Actions>
+            <Button
+              icon="camera"
+              loading={this.props.subiendo_ide}
+              onPress={() => this.capturar('respaldo')}>
+              Capturar Foto
+            </Button>
+          </Card.Actions>
+        </Card>
       </>
     );
   }

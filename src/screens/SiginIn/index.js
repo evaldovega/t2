@@ -1,9 +1,18 @@
 import React, {memo, useCallback, useState, useEffect} from 'react';
-import {View, StyleSheet, TouchableOpacity, Text, Alert} from 'react-native';
-import Header from 'screens/SiginIn/components/Header';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Alert,
+  Image,
+  Animated,
+  Easing,
+} from 'react-native';
 import Input from 'screens/SiginIn/components/Input';
 import {Montserrat} from 'utils/fonts';
-import SvgFaceId from 'svgs/signIn/SvgFaceId';
+import LottieView from 'lottie-react-native';
+import {Colors, Paragraph, Title} from 'react-native-paper';
 import {getBottomSpace} from 'react-native-iphone-x-helper';
 import {ROUTERS} from 'utils/navigation';
 import {SERVER_ADDRESS} from 'constants';
@@ -23,10 +32,18 @@ class SignIn extends React.Component {
       passborderColor: '#EAE8EA',
       errorMsgUser: '',
       errorMsgPass: '',
+      progress: new Animated.Value(0),
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    Animated.timing(this.state.progress, {
+      toValue: 1,
+      duration: 5000,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
+  }
   componentDidUpdate(prev) {
     if (prev != this.props.logeado && this.props.logeado) {
       this.props.initUsuario();
@@ -66,49 +83,79 @@ class SignIn extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Header />
+        <LottieView
+          loop={true}
+          style={{width: '60%', alignSelf: 'center'}}
+          source={require('../../animations/dinero.json')}
+          progress={this.state.progress}
+        />
+
         <Loader loading={this.props.accediendo}></Loader>
-        <Input
-          mt={40}
-          pass={false}
-          errorMsg={this.state.errorMsgUser}
-          borderColor={this.state.userborderColor}
-          placeholder={'Usuario'}
-          value={this.state.u}
-          onChangeText={(t) => this.setState({u: t})}
-        />
-        <Input
-          mt={16}
-          pass={true}
-          errorMsg={this.state.errorMsgPass}
-          borderColor={this.state.passborderColor}
-          placeholder={'Contraseña'}
-          value={this.state.k}
-          onChangeText={(p) => this.setState({k: p})}
-        />
-        <View style={styles.containerSignIn}>
+        <View
+          style={{
+            borderTopStartRadius: 24,
+            borderTopEndRadius: 24,
+            backgroundColor: 'white',
+            paddingVertical: 16,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 32,
+            }}>
+            <Image
+              style={styles.logo}
+              source={require('utils/images/ISO.png')}></Image>
+            <View>
+              <Title>Hola</Title>
+              <Paragraph>Bienvenido a Servi</Paragraph>
+            </View>
+          </View>
+          <Input
+            mt={40}
+            pass={false}
+            errorMsg={this.state.errorMsgUser}
+            borderColor={this.state.userborderColor}
+            placeholder={'Usuario'}
+            value={this.state.u}
+            onChangeText={(t) => this.setState({u: t})}
+          />
+          <Input
+            mt={16}
+            pass={true}
+            errorMsg={this.state.errorMsgPass}
+            borderColor={this.state.passborderColor}
+            placeholder={'Contraseña'}
+            value={this.state.k}
+            onChangeText={(p) => this.setState({k: p})}
+          />
+          <View style={styles.containerSignIn}>
+            <TouchableOpacity
+              style={styles.btnSignIn}
+              onPress={this.onPressSignIn}>
+              <Text style={styles.txtSignIn}>Iniciar sesión</Text>
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity
-            style={styles.btnSignIn}
-            onPress={this.onPressSignIn}>
-            <Text style={styles.txtSignIn}>Iniciar sesión</Text>
+            style={styles.btnForgot}
+            onPress={this.onPressForgot}>
+            <Text style={styles.txtForgot}>¿Olvidaste tu contraseña?</Text>
+          </TouchableOpacity>
+
+          <View style={styles.containerOr}>
+            <View style={styles.line} />
+            <Text style={styles.txtOr}>o</Text>
+            <View style={styles.line} />
+          </View>
+
+          <TouchableOpacity
+            style={styles.btnSignFb}
+            onPress={this.onPressRegister}>
+            <Text style={styles.txtSignInFb}>Regístrate</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.btnForgot} onPress={this.onPressForgot}>
-          <Text style={styles.txtForgot}>¿Olvidaste tu contraseña?</Text>
-        </TouchableOpacity>
-
-        <View style={styles.containerOr}>
-          <View style={styles.line} />
-          <Text style={styles.txtOr}>o</Text>
-          <View style={styles.line} />
-        </View>
-
-        <TouchableOpacity
-          style={styles.btnSignFb}
-          onPress={this.onPressRegister}>
-          <Text style={styles.txtSignInFb}>Regístrate</Text>
-        </TouchableOpacity>
-
         {/*
                 <TouchableOpacity style={styles.btnSignInGoogle}>
                     <Text style={styles.txtSignInFb}>Sign In With Google</Text>
@@ -141,7 +188,8 @@ export default connect(mapToState, mapToActions)(SignIn);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.grey100,
+    justifyContent: 'flex-end',
   },
   containerSignIn: {
     flexDirection: 'row',

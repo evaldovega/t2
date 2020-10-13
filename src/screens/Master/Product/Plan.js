@@ -44,6 +44,7 @@ import {addOrden} from '../../../redux/actions/Clients';
 import {COLORS} from 'constants';
 import {Token} from 'redux/Utils';
 import {SERVER_ADDRESS} from 'constants';
+import {getSharedPreference} from 'utils/SharedPreference';
 
 class Plan extends React.Component {
   state = {
@@ -270,7 +271,7 @@ class Plan extends React.Component {
       return;
     }
     this.setState({guardando: true});
-    const token = await Token();
+    const token = await getSharedPreference('auth-token');
     console.log(token);
     const data = {
       plan: this.props.route.params.plan_id,

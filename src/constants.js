@@ -1,5 +1,5 @@
 export const SERVER_ADDRESS = 'http://servi.ufotech.co/';
-export const SOCKET_ADDRESS = 'http://10.0.82.91:3000';
+export const SOCKET_ADDRESS = 'http://servi.ufotech.co:8080';
 
 export const COLORS = {
   PRIMARY_COLOR: '#209A91',

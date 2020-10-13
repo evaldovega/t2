@@ -11,6 +11,10 @@ import {
   ACTION_USUARIO_SUBIENDO_IDE,
   ACTION_USUARIO_IDE_SUBIDA,
   ACTION_USUARIO_ERROR_SUBIENDO_IDE,
+  ACTION_ACTUALIZANDO_PERFIL,
+  ACTION_PERFIL_ACTUALIZADO,
+  ACTION_ERROR_ACTUALIZANDO_PERFIL,
+  ACTION_USUARIO_ACTUALIZAR_PROP,
 } from '../Constantes';
 import {SERVER_ADDRESS} from '../../constants';
 import {
@@ -34,6 +38,7 @@ export const acceder = (data) => {
       .then((r) => r.json())
       .then(async (r) => {
         if (r.token) {
+          console.log('********************LOGIN*******************');
           console.log(JSON.stringify(r.data));
           await setSharedPreference('auth-token', r.token);
           await setSharedPreference('data-user', JSON.stringify(r.data));
@@ -62,6 +67,7 @@ export const salir = () => {
     navigationRef?.current?.navigate('Onboarding');
   };
 };
+
 export const CambiarNombre = (nombre) => {
   console.log('Cambiar nombre ', nombre);
   return (dispatch) => {
@@ -75,8 +81,9 @@ export const initUsuario = () => {
     let data_user = await getSharedPreference('data-user');
     if (data_user) {
       data_user = JSON.parse(data_user);
-      d.id = data_user.user_id;
-      d.foto = data_user.foto_perfil;
+      d.id = data_user.user.id;
+      d.num_documento_identidad = data_user.num_documento_identidad;
+      d.foto = SERVER_ADDRESS + data_user.foto_perfil;
       d.nombre = data_user.user.first_name + ' ' + data_user.user.last_name;
       d.email = data_user.user.email;
       d.cel = data_user.numero_whatsapp;
@@ -134,15 +141,17 @@ export const cambiarFotoPerfil = (data) => {
       begin: uploadBegin,
       progress: uploadProgress,
     })
-      .promise.then((response) => {
+      .promise.then(async (response) => {
         if (response.statusCode == 200) {
           console.log('FILES UPLOADED!'); // response.statusCode, response.headers, response.body
           console.log(response.body);
           const body = JSON.parse(response.body);
-          SInfo.setItem('foto-perfil', SERVER_ADDRESS + body.foto_perfil, {
-            sharedPreferencesName: 'ServiSharedPreferences',
-            keychainService: 'ServiKeyChain',
-          });
+
+          let data_user = await getSharedPreference('data-user');
+          data_user = JSON.parse(data_user);
+          data_user.foto_perfil = body.foto_perfil;
+          setSharedPreference('data-user', JSON.stringify(data_user));
+
           dispatch({
             type: ACTION_USUARIO_FOTO_PERFIL_CAMBIADA,
             foto: SERVER_ADDRESS + body.foto_perfil,
@@ -251,6 +260,58 @@ export const subirFotoIde = (image, lado) => {
     } catch (error) {
       dispatch({
         type: ACTION_USUARIO_ERROR_SUBIENDO_IDE,
+        error: error.toString(),
+      });
+    }
+  };
+};
+
+export const cambiarProp = (p, v) => {
+  return (dispatch) => {
+    dispatch({type: ACTION_USUARIO_ACTUALIZAR_PROP, p, v});
+  };
+};
+
+export const actualizarDatos = () => {
+  return async (dispatch, getState) => {
+    try {
+      let cambios = {
+        num_documento_identidad: getState().Usuario.num_documento_identidad,
+        email: getState().Usuario.email,
+        numero_whatsapp: getState().Usuario.cel,
+      };
+      console.log(cambios);
+      dispatch({type: ACTION_ACTUALIZANDO_PERFIL});
+      fetch(SERVER_ADDRESS + 'api/usuarios/editar/', {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'content-type': 'application/json',
+          Authorization: 'Token ' + getState().Usuario.token,
+        },
+        body: JSON.stringify(cambios),
+      })
+        .then((r) => r.json())
+        .then(async (data) => {
+          console.log(data);
+          let data_user = await getSharedPreference('data-user');
+          data_user = JSON.parse(data_user);
+          data_user = {...cambios};
+          console.log(data_user);
+          setSharedPreference('data-user', JSON.stringify(data_user));
+          dispatch({type: ACTION_PERFIL_ACTUALIZADO});
+        })
+        .catch((error) => {
+          console.log(error);
+          dispatch({
+            type: ACTION_ERROR_ACTUALIZANDO_PERFIL,
+            error: error.toString(),
+          });
+        });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: ACTION_ERROR_ACTUALIZANDO_PERFIL,
         error: error.toString(),
       });
     }

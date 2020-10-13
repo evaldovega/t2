@@ -1,23 +1,13 @@
-import React, {memo} from 'react';
+import React, {Suspense} from 'react';
 import {
   View,
   StyleSheet,
   Text,
   TouchableOpacity,
   ScrollView,
+  Alert,
   SafeAreaView,
 } from 'react-native';
-/*
-import SvgClient1 from 'svgs/profile/SvgClient1';
-import SvgClient2 from 'svgs/profile/SvgClient2';
-import SvgClient3 from 'svgs/profile/SvgClient3';
-import SvgClient4 from 'svgs/profile/SvgClient4';
-import SvgClient5 from 'svgs/profile/SvgClient5';*/
-
-/*
-import SvgWork1 from 'svgs/profile/SvgWork1';
-import SvgWork2 from 'svgs/profile/SvgWork2';
-import SvgWork3 from 'svgs/profile/SvgWork3';*/
 
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
@@ -41,41 +31,20 @@ import {
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
 import {COLORS} from 'constants';
-import RNFS from 'react-native-fs';
-
+import {styleHeader} from 'styles';
 import ProfileIdentificacion from './Identificacion';
-
-//const dataClient = [SvgClient1, SvgClient2, SvgClient3, SvgClient4, SvgClient5];
-/*
-const dataWork = [
-  {
-    title: 'Illustration Collection #2',
-    Svg: SvgWork1,
-  },
-  {
-    title: 'Work Form Home #1',
-    Svg: SvgWork2,
-  },
-  {
-    title: 'Illustration Collection #2',
-    Svg: SvgWork3,
-  },
-];*/
+import {actualizarDatos, cambiarProp} from 'redux/actions/Usuario';
+const SeguridadSocial = React.lazy(() => import('./SeguridadSocial'));
 
 class Profile extends React.Component {
-  componentDidMount() {
-    //this.props.initUsuario()
-    // RNFS.exists(filePath)
-    // .then(success => {
-    //     if (success) {
-    //         readFile(filePath, logData);
-    //     } else {
-    //         writeFile(filePath, logData);
-    //     }
-    // })
-    // .catch(err => {
-    //     console.log(err.message, err.code);
-    // });
+  componentDidMount() {}
+  componentDidUpdate(prev) {
+    if (
+      prev.error_actualizando_perfil != this.props.error_actualizando_perfil &&
+      this.props.error_actualizando_perfil != ''
+    ) {
+      Alert.alert('Algo anda mal', this.props.error_actualizando_perfil);
+    }
   }
 
   onPressMenu = () => {
@@ -97,14 +66,15 @@ class Profile extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <FAB
-          icon="menu"
-          small
-          style={styles.back}
-          elevation={0}
-          onPress={this.onPressMenu}
-        />
-        <FAB icon="bullhorn" small style={styles.noti} />
+        <View style={styleHeader.wrapper}>
+          <FAB
+            icon="menu"
+            onPress={() => this.props.navigation.openDrawer()}
+            style={styleHeader.btnLeft}
+          />
+          <Text style={styleHeader.title}>Perfil</Text>
+          <FAB style={{opacity: 0}} />
+        </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <TouchableNativeFeedback onPress={this.cambiarFoto}>
@@ -118,7 +88,7 @@ class Profile extends React.Component {
             {this.props.usuario.nombre}
           </Title>
           <Subheading style={{textAlign: 'center'}}>
-            {this.props.usuario.nivel}
+            {this.props.usuario.num_documento_identidad}
           </Subheading>
           {!this.props.usuario.entrenamiento_completado ? (
             <TouchableOpacity
@@ -149,23 +119,48 @@ class Profile extends React.Component {
             <Title style={{color: COLORS.PRIMARY_COLOR}}>
               Datos Personales
             </Title>
+
+            <TextInput
+              label="Número de Documento"
+              textContentType="number"
+              onChangeText={(t) =>
+                this.props.cambiarProp('num_documento_identidad', t)
+              }
+              value={this.props.usuario.num_documento_identidad}
+              style={{backgroundColor: 'transparent'}}
+            />
+
             <TextInput
               label="Correo Electrónico"
               textContentType="emailAddress"
               value={this.props.usuario.email}
+              onChangeText={(t) => this.props.cambiarProp('email', t)}
               style={{backgroundColor: 'transparent'}}
             />
             <TextInput
               label="Número de Celular"
               textContentType="telephoneNumber"
+              onChangeText={(t) => this.props.cambiarProp('cel', t)}
               value={this.props.usuario.cel}
               style={{backgroundColor: 'transparent'}}
             />
-            <Button icon="pencil" style={{marginVertical: 16}}>
+
+            <Button
+              icon="pencil"
+              style={{marginVertical: 16}}
+              onPress={this.props.actualizarDatos}
+              loading={this.props.usuario.actualizando_perfil}>
               Actualizar Datos
             </Button>
 
             <ProfileIdentificacion />
+
+            <Suspense
+              fallback={() => <Text>Cargando Seguridad Social...</Text>}>
+              {SeguridadSocial && (
+                <SeguridadSocial style={{marginTop: 32}} {...this.props} />
+              )}
+            </Suspense>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -175,10 +170,17 @@ class Profile extends React.Component {
 const mapToState = (state) => {
   return {
     usuario: state.Usuario,
+    error_actualizando_perfil: state.Usuario.error_actualizando_perfil,
   };
 };
 const mapTopActions = (dispatch) => {
   return {
+    cambiarProp: (p, v) => {
+      dispatch(cambiarProp(p, v));
+    },
+    actualizarDatos: () => {
+      dispatch(actualizarDatos());
+    },
     cambiarNombre: (nombre) => {
       dispatch(CambiarNombre(nombre));
     },

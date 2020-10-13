@@ -8,27 +8,36 @@ import {
   TextInput,
   Linking,
 } from 'react-native';
-import {Text, FAB, List, Colors} from 'react-native-paper';
+import {Text, FAB, List, Colors, Card, Caption} from 'react-native-paper';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
-import {SOCKET_ADDRESS} from '../../../constants';
+import {COLORS, SOCKET_ADDRESS} from '../../../constants';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 import {connect} from 'react-redux';
+import RNFetchBlob from 'rn-fetch-blob';
+
+const Sound = require('react-native-sound');
+const {fs} = RNFetchBlob;
+Sound.setCategory('Playback');
 
 const styles = StyleSheet.create({
   item: {
     flex: 1,
     padding: 16,
   },
+  text: {
+    fontSize: 11,
+  },
   mensaje: {
     padding: 12,
-    backgroundColor: Colors.lightGreen100,
+    backgroundColor: 'white',
     borderRadius: 16,
     marginTop: 16,
     maxWidth: '90%',
     marginHorizontal: 16,
   },
   me: {
-    backgroundColor: Colors.lightGreen300,
+    color: 'white',
+    backgroundColor: Colors.grey300,
     alignSelf: 'flex-end',
   },
   link: {
@@ -41,34 +50,57 @@ const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&
 class Soporte extends React.Component {
   state = {
     usuarios: [],
-    mensajes: [
-      {me: false, msn: 'Hola en este momento no podemos ayudarte'},
-      {me: true, msn: 'Oyeee usted no sabe quien soy yo'},
-      {me: false, msn: 'Si un corredor que este mes no ha vendido nada'},
-      {me: true, msn: 'JAJA que risa he sido el mejor durante meses'},
-      {me: true, msn: 'Y ahora por un mes malo me tratan asi 😡'},
-      {me: true, msn: 'Saben que quedense con su plataforma'},
-      {me: true, msn: 'De igual forma ya estaba aburrido'},
-      {me: false, msn: 'Esta bien Sr que tenga suerte'},
-      {me: true, msn: 'JAAAY wp asi no mas'},
-      {
-        me: true,
-        msn:
-          'En esta url https://google.com.co busquen como pueden irse a la mierda',
-      },
-    ],
-    total_mensajes: 10,
+    msg: '',
+    mensajes: [],
+    total_mensajes: 0,
   };
   componentDidMount() {
-    this.socket = SocketIOClient(
-      SOCKET_ADDRESS + '?userName=' + this.props.nombre,
-    );
-    /*
-    this.socket.on('usuarios',(usuarios)=>{
-      console.log(usuarios)
-      this.setState({usuarios:usuarios})
-    })*/
+    console.log('Ruta ', fs.dirs.MainBundleDir);
+    this.msn = new Sound(require('../../../sms.mp3'), (error) => {
+      if (error) {
+        console.log('failed to load the sound', error);
+        return;
+      }
+    });
+
+    this.socket = SocketIOClient(SOCKET_ADDRESS, {transports: ['websocket']});
+    console.log('Room ' + this.props.id);
+
+    this.socket.on('message', (data) => {
+      if (data.id != this.props.id) {
+        let mensajes = this.state.mensajes;
+        mensajes = mensajes.map((m) => {
+          m.mb = null;
+          return m;
+        });
+        mensajes.push({me: false, msn: data.message, mb: 130});
+
+        this.setState({mensajes: mensajes, total_mensajes: mensajes.length});
+        this.msn.play();
+      }
+    });
   }
+
+  componentWillUnmount() {
+    try {
+      this.msn.release();
+    } catch (e) {}
+  }
+  enviar = () => {
+    this.socket.emit('onmessage', {msg: this.state.msg, id: this.props.id});
+    let mensajes = this.state.mensajes;
+    mensajes = mensajes.map((m) => {
+      m.mb = null;
+      return m;
+    });
+
+    mensajes.push({me: true, msn: this.state.msg, mb: 130});
+    this.setState({
+      mensajes: mensajes,
+      msg: '',
+      total_mensajes: mensajes.length,
+    });
+  };
 
   transformarMensaje = (msn) => {
     return msn.split(' ').map((palabra) => {
@@ -86,16 +118,17 @@ class Soporte extends React.Component {
     });
   };
   renderItem = ({item, index}) => {
+    const igual = index > 0 && this.state.mensajes[index - 1].me == item.me;
     return (
       <View
         style={[
           styles.mensaje,
           item.me && styles.me,
-          index + 1 == this.state.total_mensajes && {marginBottom: 120},
-          index > 0 &&
-            this.state.mensajes[index - 1].me == item.me && {marginTop: 1},
+          item.mb && {marginBottom: item.mb},
+          igual && {marginTop: 1},
         ]}>
-        <Text>{this.transformarMensaje(item.msn)}</Text>
+        {!item.me && !igual && <Caption>Asesor</Caption>}
+        <Text style={styles.text}>{this.transformarMensaje(item.msn)}</Text>
       </View>
     );
   };
@@ -124,31 +157,32 @@ class Soporte extends React.Component {
             keyExtractor={(item) => item.id}
           />
         </SafeAreaView>
-        <View
+        <Card
           style={{
             flex: 1,
             width: '100%',
             position: 'absolute',
             bottom: 0,
             left: 0,
+            elevation: 8,
+            borderTopRightRadius: 32,
+            borderTopLeftRadius: 32,
           }}>
-          <View
+          <Card.Content
             style={{
               flexDirection: 'row',
-              marginVertical: 16,
-              marginLeft: 16,
-              marginRight: 8,
               justifyContent: 'center',
               alignItems: 'center',
             }}>
             <View
               style={{
                 flex: 1,
-                borderRadius: 16,
-                backgroundColor: 'white',
-                paddingHorizontal: 16,
               }}>
               <TextInput
+                value={this.state.msg}
+                placeholder="Escribe un mensaje..."
+                placeholderTextColor={COLORS.PRIMARY_COLOR}
+                onChangeText={(t) => this.setState({msg: t})}
                 style={{backgroundColor: 'transparent'}}
                 multiline={true}
                 numberOfLines={4}
@@ -157,15 +191,16 @@ class Soporte extends React.Component {
               />
             </View>
 
-            <FAB icon="send" style={{marginLeft: -16}} />
-          </View>
-        </View>
+            <FAB icon="send" onPress={this.enviar} style={{marginLeft: -16}} />
+          </Card.Content>
+        </Card>
       </View>
     );
   }
 }
 const mapearEstado = (state) => {
   return {
+    id: state.Usuario.id,
     nombre: state.Usuario.nombre,
   };
 };

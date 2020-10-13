@@ -163,7 +163,9 @@ class ClientProfile extends React.Component {
 
             {!this.props.loading ? this.renderInfoClient() : null}
 
-            <Card style={{borderRadius: 16, marginTop: 32}} elevation={2}>
+            <Card
+              style={{borderRadius: 16, marginTop: 32, elevation: 0}}
+              elevation={2}>
               <Card.Title
                 title="Productos Adquiridos"
                 subtitle={
@@ -192,7 +194,9 @@ class ClientProfile extends React.Component {
               </Card.Actions>
             </Card>
 
-            <Card style={{borderRadius: 16, marginTop: 32}} elevation={2}>
+            <Card
+              style={{borderRadius: 16, marginTop: 32, elevation: 0}}
+              elevation={2}>
               <Card.Title title="Tareas" subtitle=""></Card.Title>
               <Card.Content>
                 <TaskList {...this.props} />

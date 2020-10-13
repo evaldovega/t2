@@ -73,7 +73,7 @@ class MenuLateral extends React.Component {
         </Drawer.Section>
 
         <Drawer.Item
-          label="Cerrar Seción"
+          label="Cerrar Sesión"
           icon="logout"
           style={{marginTop: 32}}
           onPress={() => this.props.salir()}

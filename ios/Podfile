@@ -92,6 +92,22 @@ target 'serviproteccion' do
 
   pod 'react-native-signature-capture', :path => '../node_modules/react-native-signature-capture'
 
+  pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
+
+  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
+
+  pod 'react-native-progress-bar-android', :path => '../node_modules/@react-native-community/progress-bar-android'
+
+  pod 'react-native-progress-view', :path => '../node_modules/@react-native-community/progress-view'
+
+  pod 'react-native-pdf', :path => '../node_modules/react-native-pdf'
+
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+
+  pod 'RNSound', :path => '../node_modules/react-native-sound'
+
+  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
+
   target 'serviproteccionTests' do
     inherit! :complete
     # Pods for testing

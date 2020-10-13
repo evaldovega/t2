@@ -4,6 +4,8 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:textColor">#000000</item>
+        <item name="android:navigationBarColor">#209A91</item>
+        <item name="colorPrimary">#209A91</item>
     </style>
 
 </resources>
