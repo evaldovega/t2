@@ -1,38 +1,36 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {
-  ScrollView,
+  Animated,
+  Easing,
   StatusBar,
   View,
   Text,
+  Platform,
+  Linking,
   TouchableOpacity,
   StyleSheet,
-  Platform,
   Alert,
   VirtualizedList,
   RefreshControl,
   SafeAreaView,
 } from 'react-native';
-
+import LottieView from 'lottie-react-native';
 import {
-  Modal,
   Avatar,
   Title,
-  Paragraph,
-  Button,
-  Searchbar,
-  List,
-  Provider,
   FAB,
   Card,
   Colors,
   Caption,
-  Subheading,
+  Divider,
 } from 'react-native-paper';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import Icon from 'react-native-vector-icons/Entypo';
 import {styleHeader} from 'styles';
 import {loadClients, trash} from 'redux/actions/Clients';
+import Swipeout from 'react-native-swipeout';
 import {COLORS} from 'constants';
 
 const genero = {
@@ -43,13 +41,15 @@ const genero = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F8F9',
+    backgroundColor: Colors.grey100,
   },
 });
 
 class Lead extends React.Component {
   state = {
     open_fab: false,
+    progress: new Animated.Value(0),
+    mostrar_ayuda: false,
   };
 
   getItem = (data, index) => {
@@ -61,51 +61,105 @@ class Lead extends React.Component {
   };
 
   Item = (item) => {
+    const acciones = [
+      {
+        onPress: () => {
+          this.props.navigation.push('ClientSave', {id: item.id});
+        },
+        text: 'Editar',
+        color: COLORS.PRIMARY_COLOR,
+        backgroundColor: Colors.grey100,
+        component: (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <FAB icon="pencil" />
+          </View>
+        ),
+      },
+      {
+        onPress: () => {
+          this.props.navigation.push('ClientProfile', {id: item.id});
+        },
+        backgroundColor: Colors.grey100,
+        text: 'Detalles',
+        component: (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <FAB icon="account-details" />
+          </View>
+        ),
+      },
+      {
+        onPress: () => {
+          let tel = item.numero_telefono.split(',')[0];
+          Linking.openURL(
+            Platform.OS === 'android' ? `tel:${tel}` : `telprompt:${tel}`,
+          );
+        },
+        disabled: item.numero_telefono == '',
+        text: 'Llamar',
+        backgroundColor: Colors.grey100,
+        color: '#ffff',
+        component: (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <FAB icon="phone" />
+          </View>
+        ),
+      },
+      {
+        onPress: () => {
+          this.borrar(item);
+        },
+        text: 'Borrar',
+        backgroundColor: Colors.grey100,
+        component: (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <FAB
+              color="#ffff"
+              style={{backgroundColor: Colors.red400}}
+              icon="delete"
+            />
+          </View>
+        ),
+      },
+    ];
+
     const nombre = `${item.primer_nombre} ${item.segundo_nombre} ${item.primer_apellido} ${item.segundo_apellido}`;
     return (
       <Card
         style={{
-          marginVertical: 8,
           marginHorizontal: 16,
-          borderRadius: 16,
-          elevation: 0,
+          borderRadius: 8,
+          elevation: 1,
+          overflow: 'hidden',
+          padding: 0,
+          marginBottom: 8,
         }}
         elevation={1}>
-        <Card.Content
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Avatar.Image style={{marginRight: 8}} source={genero[item.genero]} />
-          <View style={{flex: 1}}>
-            <Subheading>{nombre}</Subheading>
-            <Caption>{item.numero_telefono}</Caption>
-          </View>
-        </Card.Content>
-        <Card.Actions style={{justifyContent: 'flex-end'}}>
-          <Button
-            icon="account-details"
-            large
-            onPress={() =>
-              this.props.navigation.push('ClientProfile', {id: item.id})
-            }>
-            Detalles
-          </Button>
-          <Button
-            icon="pencil"
-            large
-            onPress={() =>
-              this.props.navigation.push('ClientSave', {id: item.id})
-            }>
-            Editar
-          </Button>
-          <Button
-            icon="delete"
-            color={Colors.red400}
-            onPress={() => this.borrar(item)}>
-            Borrar
-          </Button>
-        </Card.Actions>
+        <Swipeout
+          backgroundColor="transparent"
+          right={acciones}
+          autoClose={true}>
+          <Card.Content
+            style={{
+              paddingVertical: 8,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Avatar.Image
+              style={{marginRight: 16}}
+              source={genero[item.genero]}
+            />
+            <View style={{flex: 1}}>
+              <Title>{nombre}</Title>
+              <Caption style={{color: COLORS.PRIMARY_COLOR}}>
+                {item.numero_telefono}
+              </Caption>
+            </View>
+          </Card.Content>
+        </Swipeout>
       </Card>
     );
   };
@@ -137,6 +191,25 @@ class Lead extends React.Component {
     if (prev.success != this.props.success && this.props.success != '') {
       Alert.alert('Buen trabajo', this.props.success);
     }
+
+    if (prev.items.length == 0 && this.props.items.length > 0) {
+      AsyncStorage.getItem('ayuda1').then((a) => {
+        console.log('Storage ', a);
+        if (!a) {
+          this.setState({mostrar_ayuda: true});
+          Animated.timing(this.state.progress, {
+            toValue: 1,
+            duration: 5000,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          }).start();
+          setTimeout(() => {
+            this.setState({mostrar_ayuda: false});
+          }, 5000);
+          AsyncStorage.setItem('ayuda1', '1');
+        }
+      });
+    }
   }
 
   render() {
@@ -157,7 +230,7 @@ class Lead extends React.Component {
           <View></View>
         </View>
 
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, marginTop: 8}}>
           <VirtualizedList
             style={{flex: 1}}
             data={this.props.items}
@@ -174,6 +247,15 @@ class Lead extends React.Component {
             }
           />
         </SafeAreaView>
+
+        {this.state.mostrar_ayuda && (
+          <LottieView
+            style={{width: '100%'}}
+            source={require('../../../animations/swipe.json')}
+            progress={this.state.progress}
+            style={styles.sliderImage}
+          />
+        )}
 
         <FAB.Group
           open={this.state.open_fab}

@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   StyleSheet,
-  Text,
   TouchableOpacity,
   ScrollView,
   StatusBar,
@@ -10,7 +9,6 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/Entypo';
 import {Montserrat} from 'utils/fonts';
 import {
@@ -21,13 +19,13 @@ import {
   Paragraph,
   ProgressBar,
   Colors,
+  Text,
+  HelperText,
+  FAB,
 } from 'react-native-paper';
-
 import Loader from 'components/Loader';
 import {COLORS} from 'constants';
 import {styelCard, styleHeader} from 'styles';
-const dataTime = ['DAYS', 'WEEKS', 'MONTHS', 'YEARS'];
-
 import {connect} from 'react-redux';
 import {capacitacionesCargar} from '../../../redux/actions';
 
@@ -59,28 +57,46 @@ class CapacitacionListado extends React.Component {
       return <Text>No hay capacitaciones</Text>;
     }
 
-    console.log(this.props.listado);
     return this.props.listado.map((l, k) => (
       <Card
-        elevation={0}
+        elevation={1}
         style={{marginTop: 16, borderRadius: 16, overflow: 'hidden'}}>
-        <ProgressBar
-          progress={parseFloat(l.progreso) / 100}
-          color={Colors.amber600}
-        />
-        <Card.Cover source={{uri: l.imagen_portada}} />
-        <Card.Content>
-          <Title>{l.tiutlo}</Title>
-          <Paragraph>{l.descripcion}</Paragraph>
-          {parseFloat(l.progreso) >= 100 && (
-            <Text style={{marginVertical: 8, color: Colors.green400}}>
-              Capacitación completada <Icon name="check" />
-              <Icon name="check" />
-            </Text>
-          )}
+        <Card.Content style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+          <Image
+            source={{uri: l.imagen_portada}}
+            style={{
+              width: '30%',
+              height: undefined,
+              aspectRatio: 4 / 3,
+              borderRadius: 16,
+              marginRight: 16,
+            }}
+          />
+          <View style={{flex: 1}}>
+            <Title style={{marginBottom: 8}}>{l.tiutlo}</Title>
+            <Paragraph style={{marginBottom: 4}}>{l.descripcion}</Paragraph>
+            {parseFloat(l.progreso) >= 100 && (
+              <Text style={{marginVertical: 8, color: Colors.green400}}>
+                Capacitación completada <Icon name="check" />
+                <Icon name="check" />
+              </Text>
+            )}
+            <ProgressBar
+              style={{flex: 1}}
+              progress={parseFloat(l.progreso) / 100}
+              color={COLORS.PRIMARY_COLOR}
+            />
+            <HelperText type="info">Progreso {l.progreso} %</HelperText>
+          </View>
         </Card.Content>
-        <Card.Actions>
-          <Button onPress={() => this.detalle(l)}>Capacitarme</Button>
+
+        <Card.Actions style={{justifyContent: 'flex-end'}}>
+          <Button
+            icon="arrow-right"
+            contentStyle={{flexDirection: 'row-reverse'}}
+            onPress={() => this.detalle(l)}>
+            Capacitarme
+          </Button>
         </Card.Actions>
       </Card>
     ));
@@ -95,12 +111,11 @@ class CapacitacionListado extends React.Component {
         />
 
         <View style={styleHeader.wrapper}>
-          <TouchableOpacity
-            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
+          <FAB
+            onPress={this.onPressMenu}
             style={styleHeader.btnLeft}
-            onPress={this.onPressMenu}>
-            <Icon name="menu" size={24} color="white" />
-          </TouchableOpacity>
+            icon="menu"
+          />
           <Text style={styleHeader.title}>
             Capacitaciones {this.props.cargando}
           </Text>

@@ -198,7 +198,6 @@ android {
 }
 
 dependencies {
-    
     implementation project(':react-native-fs')
     implementation project(':@react-native-community_datetimepicker')
     implementation project(':react-native-contacts')

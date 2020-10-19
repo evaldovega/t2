@@ -19,6 +19,7 @@ export const setMetaData = (cliente_id, producto_id, plan_id) => {
     });
   };
 };
+
 export const cargar = (producto_id) => {
   return async (dispatch, getState) => {
     dispatch({type: ACTION_PRODUCTOS_CARGANDO_DETALLE});

@@ -108,6 +108,8 @@ target 'serviproteccion' do
 
   pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
   target 'serviproteccionTests' do
     inherit! :complete
     # Pods for testing
