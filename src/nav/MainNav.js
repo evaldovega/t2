@@ -47,6 +47,12 @@ const Plan = React.lazy(() => {
   });
 });
 
+const Planes = React.lazy(() =>
+  import('../screens/Master/AdquirirPlan/Planes'),
+);
+const AdquirirPlan = React.lazy(() =>
+  import('../screens/Master/AdquirirPlan/Completar'),
+);
 const TaskSave = React.lazy(() => {
   return new Promise((resolve) => {
     setTimeout(() => resolve(import('../screens/Master/Task/Save')), 300);
@@ -209,6 +215,20 @@ const MainNavigation = memo(() => {
                 <Screen
                   name="SelecctorArchivo"
                   component={SelecctorArchivo}
+                  options={optionNavigator}
+                />
+              )}
+              {Planes && (
+                <Screen
+                  name="Planes"
+                  component={Planes}
+                  options={optionNavigator}
+                />
+              )}
+              {AdquirirPlan && (
+                <Screen
+                  name="AdquirirPlan"
+                  component={AdquirirPlan}
                   options={optionNavigator}
                 />
               )}

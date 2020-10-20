@@ -167,10 +167,10 @@ class ClientProfile extends React.Component {
               style={{borderRadius: 16, marginTop: 32, elevation: 0}}
               elevation={2}>
               <Card.Title
-                title="Productos Adquiridos"
+                title="Planes Adquiridos"
                 subtitle={
                   this.props.ordenes.length == 0 &&
-                  'El cliente no ha adquirido ningún producto'
+                  'El cliente no ha adquirido ningún plan'
                 }></Card.Title>
               <Card.Content>
                 <FlatList
@@ -183,13 +183,13 @@ class ClientProfile extends React.Component {
                 <Button
                   icon="plus"
                   onPress={() =>
-                    this.props.navigation.push('ProductList', {
+                    this.props.navigation.push('Planes', {
                       cliente_id: this.props.id,
                       nombre_cliente: nombre,
                     })
                   }>
                   {' '}
-                  Añadir producto
+                  Añadir plan
                 </Button>
               </Card.Actions>
             </Card>
