@@ -15,7 +15,7 @@ import LottieView from 'lottie-react-native';
 import {Colors, Paragraph, Title} from 'react-native-paper';
 import {getBottomSpace} from 'react-native-iphone-x-helper';
 import {ROUTERS} from 'utils/navigation';
-import {SERVER_ADDRESS} from 'constants';
+import {SERVER_ADDRESS, COLORS} from 'constants';
 import Loader from 'components/Loader';
 
 import {connect} from 'react-redux';
@@ -85,7 +85,7 @@ class SignIn extends React.Component {
       <View style={styles.container}>
         <LottieView
           loop={true}
-          style={{width: '60%', alignSelf: 'center'}}
+          style={{width: '60%', alignSelf: 'center', flex: 2}}
           source={require('../../animations/dinero.json')}
           progress={this.state.progress}
         />
@@ -97,6 +97,7 @@ class SignIn extends React.Component {
             borderTopEndRadius: 24,
             backgroundColor: 'white',
             paddingVertical: 16,
+            flex: 3,
           }}>
           <View
             style={{
@@ -109,8 +110,12 @@ class SignIn extends React.Component {
               style={styles.logo}
               source={require('utils/images/ISO.png')}></Image>
             <View>
-              <Title>Hola</Title>
-              <Paragraph>Bienvenido a Servi</Paragraph>
+              <Title style={{color: COLORS.PRIMARY_COLOR, fontSize: 24}}>
+                Hola
+              </Title>
+              <Paragraph style={{fontSize: 20, fontWeight: 'bold'}}>
+                Bienvenido a Servi
+              </Paragraph>
             </View>
           </View>
           <Input
@@ -188,7 +193,7 @@ export default connect(mapToState, mapToActions)(SignIn);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.grey100,
+    backgroundColor: COLORS.PRIMARY_COLOR,
     justifyContent: 'flex-end',
   },
   containerSignIn: {

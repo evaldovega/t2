@@ -33,14 +33,14 @@ class Dashboard extends React.Component {
     this.props.navigation.openDrawer();
   };
   componentDidMount() {
-    Animated.loop(
-      Animated.timing(this.state.progress, {
-        toValue: 1,
-        duration: 5000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ).start();
+    // Animated.loop(
+    //   Animated.timing(this.state.progress, {
+    //     toValue: 1,
+    //     duration: 5000,
+    //     easing: Easing.linear,
+    //     useNativeDriver: true,
+    //   }),
+    // ).start();
   }
   render() {
     return (
@@ -82,14 +82,6 @@ class Dashboard extends React.Component {
                 alignItems: 'center',
               },
             ]}>
-            <View style={{width: 64}}>
-              <LottieView
-                loop={true}
-                style={{width: '100%'}}
-                source={require('../../animations/cohete.json')}
-                progress={this.state.progress}
-              />
-            </View>
             <View style={{flex: 1}}>
               <Text style={styles.txtGood}>Buen trabajo 👍</Text>
               <Text style={styles.txtKeep}>

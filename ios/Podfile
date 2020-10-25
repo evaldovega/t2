@@ -102,7 +102,7 @@ target 'serviproteccion' do
 
   pod 'react-native-pdf', :path => '../node_modules/react-native-pdf'
 
-  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
 
   pod 'RNSound', :path => '../node_modules/react-native-sound'
 

@@ -14,6 +14,7 @@ import {
 import {Button} from 'react-native-paper';
 import {Montserrat} from 'utils/fonts';
 import WebView from 'react-native-webview';
+import SvgClose from 'svgs/forgotPass/SvgClose';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {COLORS} from 'constants';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
@@ -41,6 +42,9 @@ const ModalPrompt = memo((props: Props) => {
       }}>
       <View style={styles.modalBackground}>
         <View style={styles.cardOverlay}>
+          <TouchableOpacity onPress={props.dismissModal}>
+            <SvgClose />
+          </TouchableOpacity>
           <Image
             style={styles.forgotImage}
             source={

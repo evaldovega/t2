@@ -31,7 +31,12 @@ class ProfileIdentificacion extends React.Component {
   render() {
     return (
       <>
-        <Title style={{color: COLORS.PRIMARY_COLOR, marginTop: 16}}>
+        <Title
+          style={{
+            color: COLORS.PRIMARY_COLOR,
+            marginTop: 16,
+            textAlign: 'center',
+          }}>
           Documento de Identificación
         </Title>
 
@@ -43,31 +48,33 @@ class ProfileIdentificacion extends React.Component {
             <Card.Cover source={{uri: this.props.ide_foto_frente}} />
           </TouchableOpacity>
 
-          <Card.Title title="Frente"></Card.Title>
-          <Card.Content></Card.Content>
+          {/* <Card.Title title="Frente"></Card.Title> */}
+          {/* <Card.Content></Card.Content>
           <Card.Actions>
-            <Button
-              icon="camera"
-              loading={this.props.subiendo_ide}
-              onPress={() => this.capturar('frente')}>
-              Capturar Foto
-            </Button>
-          </Card.Actions>
+            
+          </Card.Actions> */}
         </Card>
+        <Button
+          icon="camera"
+          loading={this.props.subiendo_ide}
+          onPress={() => this.capturar('frente')}>
+          Capturar Foto de frente
+        </Button>
 
         <Card style={{marginTop: 8, borderRadius: 16, overflow: 'hidden'}}>
           <Card.Cover source={{uri: this.props.ide_foto_respaldo}} />
-          <Card.Title title="Respaldo"></Card.Title>
-          <Card.Content></Card.Content>
+          {/* <Card.Title title="Respaldo"></Card.Title> */}
+          {/* <Card.Content></Card.Content>
           <Card.Actions>
-            <Button
-              icon="camera"
-              loading={this.props.subiendo_ide}
-              onPress={() => this.capturar('respaldo')}>
-              Capturar Foto
-            </Button>
-          </Card.Actions>
+            
+          </Card.Actions> */}
         </Card>
+        <Button
+          icon="camera"
+          loading={this.props.subiendo_ide}
+          onPress={() => this.capturar('respaldo')}>
+          Capturar Foto de respaldo
+        </Button>
       </>
     );
   }

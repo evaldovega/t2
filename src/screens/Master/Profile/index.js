@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
   Alert,
   SafeAreaView,
 } from 'react-native';
@@ -27,6 +28,7 @@ import {
   Title,
   Caption,
   Button,
+  Colors,
 } from 'react-native-paper';
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -65,7 +67,12 @@ class Profile extends React.Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <StatusBar
+          translucent={true}
+          backgroundColor={'transparent'}
+          barStyle={'light-content'}
+        />
         <View style={styleHeader.wrapper}>
           <FAB
             icon="menu"
@@ -84,10 +91,10 @@ class Profile extends React.Component {
             />
           </TouchableNativeFeedback>
 
-          <Title style={{textAlign: 'center'}}>
+          <Title style={{textAlign: 'center', color: Colors.white}}>
             {this.props.usuario.nombre}
           </Title>
-          <Subheading style={{textAlign: 'center'}}>
+          <Subheading style={{textAlign: 'center', color: Colors.white}}>
             {this.props.usuario.num_documento_identidad}
           </Subheading>
           {!this.props.usuario.entrenamiento_completado ? (
@@ -100,23 +107,23 @@ class Profile extends React.Component {
 
           <View style={styles.containerInfo}>
             <View style={styles.col}>
-              <Subheading>3.890</Subheading>
-              <Caption>Clientes</Caption>
+              <Subheading style={{color: Colors.white}}>3.890</Subheading>
+              <Caption style={{color: Colors.white}}>Clientes</Caption>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Subheading>257</Subheading>
-              <Caption>Ventas</Caption>
+              <Subheading style={{color: Colors.white}}>257</Subheading>
+              <Caption style={{color: Colors.white}}>Ventas</Caption>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Subheading>1.000.468</Subheading>
-              <Caption>Ganancias</Caption>
+              <Subheading style={{color: Colors.white}}>1.000.468</Subheading>
+              <Caption style={{color: Colors.white}}>Ganancias</Caption>
             </View>
           </View>
 
           <View style={styles.content}>
-            <Title style={{color: COLORS.PRIMARY_COLOR}}>
+            <Title style={{color: COLORS.PRIMARY_COLOR, textAlign: 'center'}}>
               Datos Personales
             </Title>
 
@@ -163,7 +170,7 @@ class Profile extends React.Component {
             </Suspense>
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -197,7 +204,7 @@ export default connect(mapToState, mapTopActions)(Profile);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F8F9',
+    backgroundColor: COLORS.PRIMARY_COLOR_DARK_1,
     elevation: 0,
   },
   avatar: {
