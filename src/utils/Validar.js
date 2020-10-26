@@ -10,13 +10,23 @@ export const totalErrores = (scope) => {
   });
   return total;
 };
-export const validar = (scope, input, constraint) => {
+export const validar = (scope, input, constraint, por_props = true) => {
   let errores = {};
   let object = {};
-  object[input] = scope.props[input];
+  if (por_props) {
+    console.log('Buscar en props');
+    object[input] = scope.props[input];
+  } else {
+    console.log('Buscar en state');
+    object[input] = scope.state[input];
+  }
+  console.log(object[input]);
+
   let constraints = {};
   constraints[input] = constraint;
+  console.log('Restricciones ', constraint);
   errores = validate(object, constraints);
+  console.log('Error de validacion ', errores);
   if (errores && errores[input]) {
     console.log(errores);
     let r = {};

@@ -75,7 +75,7 @@ export default Client = (state = initial_state, action) => {
         draft.numero_telefono = action.data.numero_telefono;
         draft.genero = action.data.genero;
         draft.correo_electronico = action.data.correo_electronico;
-        draft.ordenes = action.data.ordenes;
+        draft.ordenes = action.data.ordenes ? action.data.ordenes : [];
         draft.tareas = action.data.tareas;
         draft.success = '';
         break;

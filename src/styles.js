@@ -93,7 +93,6 @@ const styleButton = StyleSheet.create({
 
 const styleInput = StyleSheet.create({
   wrapper: {
-    flex: 1,
     padding: 8,
     borderRadius: 24,
     borderWidth: 1,

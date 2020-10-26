@@ -14,7 +14,40 @@ import ModalWebView from 'components/ModalWebView';
 import ModalPrompt from 'components/ModalPrompt';
 import SignatureCapture from 'react-native-signature-capture';
 import { Caption, Divider, FAB,Colors } from 'react-native-paper';
+import {validar, totalErrores, renderErrores} from 'utils/Validar';
 
+
+const validations = {
+    firstname:{
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+    lastname:{
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+    mail: {
+        email:{message:'^Email invalido'},
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+    password1:{
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+    password2:{
+        equality:{
+            attribute:"password1",
+            message:'^Las contraseñas introducidas no coinciden!'
+        },
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+    direccion:{
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+    numWhatsapp:{
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+    numDocumento:{
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+}
 
 class SignUp extends React.Component {
     constructor(props) {
@@ -35,7 +68,7 @@ class SignUp extends React.Component {
             firstnameErrors: false,
             lastname: "",
             lastnameErrors: false,
-            mail: "evaldo.vega@gmail.com",
+            mail: "",
             mailErrors: false,
             password1: "",
             password1Errors: false,
@@ -77,6 +110,7 @@ class SignUp extends React.Component {
             contratoValidationVisible: false,
             contratoValidated: false,
             textResponseCodeValidation: "",
+            error:{}
         }
     }
 
@@ -342,41 +376,19 @@ class SignUp extends React.Component {
     onPressRegister = () => {
        
         console.log("Registrar")
-
-        if(this.state.firstname == ""){
-            this.setState({firstnameErrors: true})
-            return
-        }
-        if(this.state.lastname == ""){
-            this.setState({lastnameErrors: true})
-            return
-        }
-        if(this.state.mail == ""){
-            this.setState({mailErrors: true})
-            return
-        }
-        if(this.state.password1 == ""){
-            this.setState({password1Errors: true})
-            return
-        }
-        if(this.state.password2 == ""){
-            this.setState({password2Errors: true})
+        Object.keys(validations).forEach((k) => {
+            validar(this, k, validations[k]);
+        });
+        if (totalErrores(this) > 0) {
+            Alert.alert('Corrija los errores', '');
             return
         }
 
-        if(this.state.password1 != this.state.password2){
-            Alert.alert("Las contraseñas no coinciden", "")
-            return
-        }
 
         if(this.state.pickedGenero == null){
             return
         }
 
-        if(this.state.numWhatsapp == ""){
-            this.setState({numWhatsappErrors: true})
-            return
-        }
 
         if(this.state.pickedDepto == null){
             return
@@ -384,20 +396,14 @@ class SignUp extends React.Component {
         if(this.state.pickedMpio == null){
             return
         }
-        if(this.state.direccion == ""){
-            this.setState({direccionErrors: true})
-            return
-        }
+       
         if(this.state.fechaNac == ""){
             return
         }
         if(this.state.pickedTDoc == null){
             return
         }
-        if(this.state.numDocumento == ""){
-            this.setState({numDocumentoErrors: true})
-            return
-        }
+       
         if(!this.state.isEnabled){
             return
         }
@@ -409,6 +415,7 @@ class SignUp extends React.Component {
         this.setState({loading:true})
         this.refs["firma"].saveImage();
     }
+
     cerrarContrato = () => {
         this.setState({contratoVisualizacion: false})
     } 
@@ -423,20 +430,36 @@ class SignUp extends React.Component {
                     <View>
                         <Header/>
                         <Loader loading={this.state.loading}></Loader>
-                        <Input mt={60} pass={false} error={this.state.firstnameErrors} placeholder={'Nombres'} value={this.state.firstname} onChangeText={firstName=>this.setState({firstname:firstName})} />
-                        <Input mt={16} pass={false} error={this.state.lastnameErrors} placeholder={'Apellidos'} value={this.state.lastname} onChangeText={lastName=>this.setState({lastname:lastName})} />
-                        <Input mt={16} pass={false} error={this.state.mailErrors} placeholder={'Correo electrónico'} value={this.state.mail} onChangeText={email=>this.setState({mail:email})} />
-                        <Input mt={16} pass={true} error={this.state.password1Errors} placeholder={'Contraseña'} value={this.state.password1} onChangeText={p1=>this.setState({password1:p1})} />
-                        <Input mt={16} pass={true} error={this.state.password2Errors} placeholder={'Confirma tu contraseña'} value={this.state.password2} onChangeText={p2=>this.setState({password2:p2})} />
+                        <Input mt={60} pass={false} placeholder={'Nombres'} value={this.state.firstname} onChangeText={firstName=>this.setState({firstname:firstName})} onBlur={() =>validar(this, 'firstname', validations.firstname,false)}/>
+                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'firstname')}</View>
                         
+                        <Input mt={16} pass={false}  placeholder={'Apellidos'} value={this.state.lastname} onChangeText={lastName=>this.setState({lastname:lastName})} onBlur={() =>validar(this, 'lastname', validations.lastname,false)} />
+                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'lastname')}</View>
+
+                        <Input 
+                        mt={16} 
+                        pass={false} 
+                        placeholder={'Correo electrónico'} 
+                        value={this.state.mail} 
+                        onChangeText={email=>this.setState({mail:email})} 
+                        onBlur={() =>validar(this, 'mail', validations.mail,false)} />
+                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'mail')}</View>
+
+                        <Input mt={16} pass={true}  placeholder={'Contraseña'} value={this.state.password1} onChangeText={p1=>this.setState({password1:p1})} onBlur={()=>validar(this,'password1',validations.password1,false)} />
+                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'password1')}</View>
+
+                        <Input mt={16} pass={true} error={this.state.password2Errors} placeholder={'Confirma tu contraseña'} value={this.state.password2} onChangeText={p2=>this.setState({password2:p2})} onBlur={()=>validar(this,'password2',validations.password2,false)}/>
+                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'password2')}</View>
+
                         <View style={[styles.line, {marginTop:20}]}></View>
                         <View style={styles.containerSignIn}>
                             <Text>INFORMACIÓN COMPLEMENTARIA</Text>
                         </View>
                         
                         {/* Formulario complementario */}
-                        <Input mt={30} pass={false} placeholder={'Número de WhatsApp'} error={this.state.numWhatsappErrors} value={this.state.numWhatsapp} onChangeText={whatsapp=>this.setState({numWhatsapp:whatsapp})} />
-                        
+                        <Input mt={30} pass={false} placeholder={'Número de WhatsApp'} value={this.state.numWhatsapp} onChangeText={whatsapp=>this.setState({numWhatsapp:whatsapp})} onBlur={()=>validar(this,'numWhatsapp',validations.numWhatsapp,false)} />
+                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'numWhatsapp')}</View>
+
                         <View style={[styles.containerDropdown, this.state.pickedGenero ? null : styles.errorDropDown]}>
                             <TouchableOpacity style={styles.btnInputSelect} onPress={this.generoOnShow}>
                                 <Text>{this.state.pickedGenero ? this.state.pickedGenero.label : "Seleccionar género" }</Text>
@@ -473,7 +496,9 @@ class SignUp extends React.Component {
                             />
                         </View>
                         
-                        <Input mt={16} pass={false} errorMsg={this.state.direccionErrors} borderColor={this.state.direccionBorderColor} placeholder={'Dirección'} value={this.state.direccion} onChangeText={dir=>this.setState({direccion:dir})} />
+                        <Input mt={16} pass={false}  placeholder={'Dirección'} value={this.state.direccion} onChangeText={dir=>this.setState({direccion:dir})} onBlur={()=>validar(this,'direccion',validations.direccion,false)} />
+                        <View style={{paddingHorizontal:32}}>{renderErrores(this,'direccion')}</View>
+
                         <View style={styles.inputDatePickerContainer}>
                             <DatePicker
                                 style={styles.inputDatePicker}

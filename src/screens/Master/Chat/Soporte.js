@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     maxWidth: '90%',
     marginHorizontal: 16,
+    alignSelf: 'flex-start',
   },
   me: {
     color: 'white',
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
 const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 class Soporte extends React.Component {
   state = {
+    entrando: true,
     usuarios: [],
     msg: '',
     mensajes: [],
@@ -66,6 +68,15 @@ class Soporte extends React.Component {
     this.socket = SocketIOClient(SOCKET_ADDRESS, {transports: ['websocket']});
     console.log('Room ' + this.props.id);
 
+    this.socket.on('disconnect', () => {
+      this.setState({entrando: true});
+    });
+    this.socket.on('connect', () => {
+      this.socket.emit('enter', {user: this.props.id});
+    });
+    this.socket.on('message_enter', (data) => {
+      this.setState({entrando: false});
+    });
     this.socket.on('message', (data) => {
       if (data.id != this.props.id) {
         let mensajes = this.state.mensajes;
@@ -87,7 +98,11 @@ class Soporte extends React.Component {
     } catch (e) {}
   }
   enviar = () => {
-    this.socket.emit('onmessage', {msg: this.state.msg, id: this.props.id});
+    this.socket.emit('onmessage', {
+      msg: this.state.msg,
+      id: this.props.id,
+      sala: this.props.id,
+    });
     let mensajes = this.state.mensajes;
     mensajes = mensajes.map((m) => {
       m.mb = null;
@@ -151,7 +166,6 @@ class Soporte extends React.Component {
         </View>
         <SafeAreaView style={{flex: 1}}>
           <FlatList
-            initialScrollIndex={this.state.total_mensajes - 1}
             data={this.state.mensajes}
             renderItem={this.renderItem}
             keyExtractor={(item) => item.id}
@@ -174,24 +188,33 @@ class Soporte extends React.Component {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <View
-              style={{
-                flex: 1,
-              }}>
-              <TextInput
-                value={this.state.msg}
-                placeholder="Escribe un mensaje..."
-                placeholderTextColor={COLORS.PRIMARY_COLOR}
-                onChangeText={(t) => this.setState({msg: t})}
-                style={{backgroundColor: 'transparent'}}
-                multiline={true}
-                numberOfLines={4}
-                underlineColor="transparent"
-                underlineColorAndroid={'rgba(0,0,0,0)'}
-              />
-            </View>
-
-            <FAB icon="send" onPress={this.enviar} style={{marginLeft: -16}} />
+            {this.state.entrando ? (
+              <Text>Conectando...</Text>
+            ) : (
+              <>
+                <View
+                  style={{
+                    flex: 1,
+                  }}>
+                  <TextInput
+                    value={this.state.msg}
+                    placeholder="Escribe un mensaje..."
+                    placeholderTextColor={COLORS.PRIMARY_COLOR}
+                    onChangeText={(t) => this.setState({msg: t})}
+                    style={{backgroundColor: 'transparent'}}
+                    multiline={true}
+                    numberOfLines={4}
+                    underlineColor="transparent"
+                    underlineColorAndroid={'rgba(0,0,0,0)'}
+                  />
+                </View>
+                <FAB
+                  icon="send"
+                  onPress={this.enviar}
+                  style={{marginLeft: -16}}
+                />
+              </>
+            )}
           </Card.Content>
         </Card>
       </View>

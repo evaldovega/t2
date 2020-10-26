@@ -8,6 +8,7 @@ import {
   Image,
   Animated,
   Easing,
+  ScrollView,
 } from 'react-native';
 import Input from 'screens/SiginIn/components/Input';
 import {Montserrat} from 'utils/fonts';
@@ -36,14 +37,7 @@ class SignIn extends React.Component {
     };
   }
 
-  componentDidMount() {
-    Animated.timing(this.state.progress, {
-      toValue: 1,
-      duration: 5000,
-      easing: Easing.linear,
-      useNativeDriver: true,
-    }).start();
-  }
+  componentDidMount() {}
   componentDidUpdate(prev) {
     if (prev != this.props.logeado && this.props.logeado) {
       this.props.initUsuario();
@@ -84,10 +78,10 @@ class SignIn extends React.Component {
     return (
       <View style={styles.container}>
         <LottieView
-          loop={true}
-          style={{width: '60%', alignSelf: 'center', flex: 2}}
+          autoPlay
+          autoSize
+          style={{width: '50%'}}
           source={require('../../animations/dinero.json')}
-          progress={this.state.progress}
         />
 
         <Loader loading={this.props.accediendo}></Loader>
@@ -194,7 +188,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.PRIMARY_COLOR,
-    justifyContent: 'flex-end',
   },
   containerSignIn: {
     flexDirection: 'row',
