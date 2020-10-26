@@ -61,7 +61,7 @@ export const subir = (file) => {
     dispatch({type: ACTION_SUBIENDO_SC});
     RNFetchBlob.fetch(
       'POST',
-      'http://10.0.82.154:3400/sc',
+      'http://10.0.82.78:3400/sc',
       {
         Authorization: 'Bearer access-token',
         'Content-Type': 'multipart/form-data',

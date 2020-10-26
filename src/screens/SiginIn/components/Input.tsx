@@ -33,6 +33,7 @@ const Input = memo((props: Props) => {
                             secureTextEntry={secure}
                             value={props.value}
                             onChangeText={props.onChangeText}
+                            onBlur={props.onBlur}
                             autoCapitalize={false}
 
                         />
@@ -51,6 +52,7 @@ const Input = memo((props: Props) => {
                         secureTextEntry={secure}
                         value={props.value}
                         onChangeText={props.onChangeText}
+                        onBlur={props.onBlur}
                         autoCapitalize={false}
 
                     />

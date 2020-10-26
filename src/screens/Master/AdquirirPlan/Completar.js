@@ -1,5 +1,14 @@
 import React from 'react';
-import {TouchableHighlight, View, Alert, TextInput} from 'react-native';
+import {
+  TouchableHighlight,
+  View,
+  Alert,
+  TextInput,
+  Dimensions,
+  StyleSheet,
+  ScrollView,
+  Animated,
+} from 'react-native';
 import {
   Text,
   FAB,
@@ -8,8 +17,12 @@ import {
   Checkbox,
   Colors,
   Card,
+  Divider,
   Button,
 } from 'react-native-paper';
+import NumberFormat from 'react-number-format';
+import TextInputMask from 'react-native-text-input-mask';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
 import Loader from 'components/Loader';
 import {
   styleHeader,
@@ -20,17 +33,28 @@ import {
 } from 'styles';
 import {COLORS, SERVER_ADDRESS} from 'constants';
 import {connect} from 'react-redux';
-import {ScrollView} from 'react-native-gesture-handler';
 import {addOrden} from 'redux/actions/Clients';
+
+const {width: viewportWidth} = Dimensions.get('window');
+function wp(percentage) {
+  const value = (percentage * viewportWidth) / 100;
+  return Math.round(value);
+}
+
+const slideHeight = '100%';
+const slideWidth = wp(80);
+const itemHorizontalMargin = wp(2);
+const sliderWidth = viewportWidth;
+const itemWidth = slideWidth + itemHorizontalMargin * 2;
+let amount = 0;
 
 class AdquirirPlan extends React.Component {
   state = {
+    amount: 0,
+    indexActive: 0,
     nombre_plan: '',
     cargando: false,
     formularios: [],
-    data: {
-      form_plan: [],
-    },
   };
   componentDidMount() {
     const {id, name, productos} = this.props.route.params;
@@ -103,6 +127,7 @@ class AdquirirPlan extends React.Component {
       );
     });
   };
+
   buscarPreguntaDiligenciada = (id, pregunta) => {
     const formularios = this.state.formularios;
     let encontrada = '';
@@ -119,6 +144,7 @@ class AdquirirPlan extends React.Component {
     }
     return encontrada;
   };
+
   completar = () => {
     this.setState((state) => {
       const formularios = state.formularios;
@@ -142,12 +168,14 @@ class AdquirirPlan extends React.Component {
       return {...state, ...formularios};
     });
   };
-  renderInput = (formulario_id, pregunta_id) => {
+
+  renderInput = (formulario_id, pregunta_id, type = 'default') => {
     return (
       <View style={styleInput.wrapper}>
         <TextInput
           style={styleInput.input}
           returnKeyType="next"
+          keyboardType={type}
           value={this.getValue(formulario_id, pregunta_id)}
           onFocus={this.completar}
           onChangeText={(t) =>
@@ -158,26 +186,39 @@ class AdquirirPlan extends React.Component {
     );
   };
 
-  rendeformulario = (formulario) => {
+  renderformulario = ({item}) => {
+    const formulario = item;
+    console.log('RENDER FORM ', formulario);
     return (
-      <Card style={{borderRadius: 16, marginTop: 16}}>
-        <Card.Title title={formulario.titulo} />
-        <Card.Content>
-          {formulario.preguntas.map((p) => {
-            return (
-              <>
-                <Subheading>{p.pregunta}</Subheading>
-                {p.tipo_pregunta == 'radiochoices'
-                  ? this.renderChoices(formulario.id, p.id, p.opciones)
-                  : null}
-                {p.tipo_pregunta == 'input'
-                  ? this.renderInput(formulario.id, p.id)
-                  : null}
-              </>
-            );
-          })}
-        </Card.Content>
-      </Card>
+      <View style={styles.item}>
+        <View
+          style={{overflow: 'hidden', padding: 16, backgroundColor: '#ffff'}}>
+          <Title style={{color: COLORS.PRIMARY_COLOR}}>
+            {formulario.titulo}
+          </Title>
+        </View>
+        <Divider />
+        <View style={{padding: 16, flex: 1}}>
+          <ScrollView style={{flex: 1}}>
+            {formulario.preguntas.map((p) => {
+              return (
+                <>
+                  <Subheading>{p.pregunta}</Subheading>
+                  {p.tipo_pregunta == 'radiochoices'
+                    ? this.renderChoices(formulario.id, p.id, p.opciones)
+                    : null}
+                  {p.tipo_pregunta == 'input'
+                    ? this.renderInput(formulario.id, p.id)
+                    : null}
+                  {p.tipo_pregunta == 'inputnumber'
+                    ? this.renderInput(formulario.id, p.id, 'decimal-pad')
+                    : null}
+                </>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </View>
     );
   };
 
@@ -198,6 +239,24 @@ class AdquirirPlan extends React.Component {
   };
 
   guardar = () => {
+    let next = true;
+    for (let key in this.state.formularios) {
+      const form = this.state.formularios[key];
+      let p = form.preguntas.find((p) => p.respuesta == '' || !p.respuesta);
+      if (p) {
+        this.setState({indexActive: key});
+        Alert.alert(
+          'Debes completar todo el formulario',
+          'Diligencia: ' + p.pregunta,
+        );
+        this.refs['carousel'].snapToItem(key, true, false);
+        next = false;
+        break;
+      }
+    }
+    if (!next) {
+      return;
+    }
     this.setState({cargando: true});
     const data = {
       cliente: this.props.route.params.cliente,
@@ -260,6 +319,10 @@ class AdquirirPlan extends React.Component {
       });
   };
 
+  handleChange = (amount) => {
+    this.setState({amount});
+  };
+
   render() {
     return (
       <View style={{flex: 1, backgroundColor: Colors.grey100}}>
@@ -273,20 +336,48 @@ class AdquirirPlan extends React.Component {
           <Text style={styleHeader.title}>{this.state.nombre_plan}</Text>
           <FAB style={{opacity: 0}} />
         </View>
-        <ScrollView
-          style={{flex: 1, paddingHorizontal: 16}}
-          showsVerticalScrollIndicator={false}>
-          {this.state.formularios.map((f) => {
-            return <>{this.rendeformulario(f)}</>;
-          })}
+        <View style={{flex: 1}}>
+          <View style={styleInput.wrapper}>
+            <NumberFormat
+              value={this.state.amount}
+              displayType={'text'}
+              thousandSeparator="."
+              decimalSeparator=","
+              prefix={'$ '}
+              renderText={(value) => (
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  style={styleInput.input}
+                  onChangeText={this.handleChange}
+                  value={value}
+                  keyboardType="numeric"
+                />
+              )}
+            />
+          </View>
+          <Carousel
+            ref="carousel"
+            data={this.state.formularios}
+            renderItem={this.renderformulario}
+            sliderWidth={sliderWidth}
+            itemWidth={itemWidth}
+            inactiveSlideScale={0.92}
+            inactiveSlideOpacity={0.4}
+            containerCustomStyle={styles.slider}
+            contentContainerCustomStyle={styles.sliderContentContainer}
+            onSnapToItem={(i) => {
+              console.log('ITEM ' + i);
+              this.setState({indexActive: i});
+            }}
+          />
           <Button
-            style={[styleButton.wrapper, {marginVertical: 16}]}
+            style={[styleButton.wrapper, {padding: 24, marginVertical: 16}]}
             dark={true}
             color="white"
             onPress={() => this.guardar()}>
             Guardar
           </Button>
-        </ScrollView>
+        </View>
       </View>
     );
   }
@@ -306,3 +397,49 @@ const mapToAction = (dispatch) => {
 };
 
 export default connect(mapearEstado, mapToAction)(AdquirirPlan);
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    marginVertical: 16,
+    paddingHorizontal: 16,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dotStyle: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 0,
+    backgroundColor: COLORS.PRIMARY_COLOR,
+  },
+  inactiveDotStyle: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 0,
+    backgroundColor: '#6D5F6F',
+  },
+  containerStyle: {
+    padding: 0,
+    margin: 0,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+  },
+  item: {
+    elevation: 1,
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    width: itemWidth,
+    overflow: 'hidden',
+  },
+  slider: {
+    marginTop: 15,
+    height: '80%',
+    overflow: 'visible',
+  },
+  sliderContentContainer: {
+    paddingVertical: 10, // for custom animation
+  },
+});
