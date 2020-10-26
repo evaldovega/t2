@@ -81,6 +81,7 @@ export const initUsuario = () => {
     let data_user = await getSharedPreference('data-user');
     if (data_user) {
       data_user = JSON.parse(data_user);
+      console.log('Data user ', data_user);
       d.id = data_user.user.id;
       d.num_documento_identidad = data_user.num_documento_identidad;
       d.foto = SERVER_ADDRESS + data_user.foto_perfil;
@@ -89,6 +90,7 @@ export const initUsuario = () => {
       d.cel = data_user.numero_whatsapp;
       d.ide_foto_frente = SERVER_ADDRESS + data_user.foto_documento_cara1;
       d.ide_foto_respaldo = SERVER_ADDRESS + data_user.foto_documento_cara2;
+      d.habilitado = data_user.habilitado;
     }
     let token = await getSharedPreference('auth-token');
     if (token) {

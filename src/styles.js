@@ -99,7 +99,7 @@ const styleInput = StyleSheet.create({
     marginTop: 16,
     borderColor: '#EAE8EA',
     paddingHorizontal: 8,
-    flexDirection: 'row',
+
     alignItems: 'center',
   },
   input: {

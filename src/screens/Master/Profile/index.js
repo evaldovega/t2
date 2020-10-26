@@ -8,6 +8,7 @@ import {
   StatusBar,
   Alert,
   SafeAreaView,
+  Modal,
 } from 'react-native';
 
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
@@ -29,6 +30,7 @@ import {
   Caption,
   Button,
   Colors,
+  Paragraph,
 } from 'react-native-paper';
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -39,7 +41,14 @@ import {actualizarDatos, cambiarProp} from 'redux/actions/Usuario';
 const SeguridadSocial = React.lazy(() => import('./SeguridadSocial'));
 
 class Profile extends React.Component {
-  componentDidMount() {}
+  state = {
+    mostrar_modal_capacitacion: false,
+  };
+
+  componentDidMount() {
+    console.log('Pagina perfil montada');
+  }
+
   componentDidUpdate(prev) {
     if (
       prev.error_actualizando_perfil != this.props.error_actualizando_perfil &&
@@ -48,6 +57,8 @@ class Profile extends React.Component {
       Alert.alert('Algo anda mal', this.props.error_actualizando_perfil);
     }
   }
+
+  componentWillUnmount() {}
 
   onPressMenu = () => {
     this.props.navigation.openDrawer();
@@ -73,13 +84,16 @@ class Profile extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
+
         <View style={styleHeader.wrapper}>
           <FAB
             icon="menu"
             onPress={() => this.props.navigation.openDrawer()}
             style={styleHeader.btnLeft}
           />
-          <Text style={styleHeader.title}>Perfil</Text>
+          <Text style={styleHeader.title}>
+            Perfil {this.state.mostrar_modal_capacitacion}
+          </Text>
           <FAB style={{opacity: 0}} />
         </View>
 
@@ -97,7 +111,7 @@ class Profile extends React.Component {
           <Subheading style={{textAlign: 'center', color: Colors.white}}>
             {this.props.usuario.num_documento_identidad}
           </Subheading>
-          {!this.props.usuario.entrenamiento_completado ? (
+          {!this.props.usuario.habilitado ? (
             <TouchableOpacity
               style={styles.btnUpdate}
               onPress={() => this.props.navigation.navigate('Capacitaciones')}>
@@ -177,6 +191,7 @@ class Profile extends React.Component {
 const mapToState = (state) => {
   return {
     usuario: state.Usuario,
+    habilitado: state.Usuario.habilitado,
     error_actualizando_perfil: state.Usuario.error_actualizando_perfil,
   };
 };
@@ -292,6 +307,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingBottom: 20,
     paddingTop: 32,
+    elevation: 16,
   },
   titleContent: {
     fontFamily: Montserrat,

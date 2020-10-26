@@ -21,6 +21,7 @@ import produce from 'immer';
 const initialState = {
   nombre: '',
   num_documento_identidad: '',
+  habilitado: false,
   nivel: 'Agente corredor',
   estado: 'Activo',
   logeado: false,
@@ -87,6 +88,7 @@ export default Usuario = (state = initialState, action) => {
         draft.num_documento_identidad = action.num_documento_identidad;
         draft.ide_foto_respaldo = action.ide_foto_respaldo;
         draft.ide_foto_frente = action.ide_foto_frente;
+        draft.habilitado = action.habilitado;
         if (action.token) {
           console.log('Esta logeado');
           draft.logeado = true;

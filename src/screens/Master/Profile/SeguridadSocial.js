@@ -5,6 +5,7 @@ import {
   Alert,
   ActivityIndicator,
   View,
+  Modal,
 } from 'react-native';
 import {
   Button,
@@ -19,9 +20,13 @@ import DocumentPicker from 'react-native-document-picker';
 import {COLORS} from 'constants';
 import {connect} from 'react-redux';
 import {subir, cargar, borrar} from 'redux/actions/SeguridadSocial';
+import DropDownPicker from 'react-native-dropdown-picker';
+import Icon from 'react-native-vector-icons/Feather';
+import {TextInput} from 'react-native-gesture-handler';
+import moment from 'moment';
 
 class SeguridadSocial extends React.Component {
-  state = {pdf: null};
+  state = {pdf: null, periodo: moment().format('M'), mostrar: false};
 
   componentDidMount() {
     this.props.cargar();
@@ -41,6 +46,10 @@ class SeguridadSocial extends React.Component {
       Alert.alert('Algo anda mal', this.props.error_cargando);
     }
   }
+
+  mostrar = (v) => {
+    this.setState({mostrar: v});
+  };
 
   seleccionar = async () => {
     try {
@@ -105,9 +114,111 @@ class SeguridadSocial extends React.Component {
       });
     } catch (error) {}
   };
+  ventana = () => (
+    <Modal transparent={true} animationType="fade" visible={this.state.mostrar}>
+      <View
+        style={{
+          backgroundColor: 'rgba(0,0,0,.6)',
+          justifyContent: 'center',
+          alignContent: 'center',
+          flex: 1,
+        }}>
+        <View
+          style={{
+            backgroundColor: '#ffff',
+            overflow: 'hidden',
+            borderRadius: 24,
+            alignSelf: 'center',
+            elevation: 3,
+            width: '80%',
+            minHeight: 400,
+          }}>
+          <View
+            style={{
+              backgroundColor: '#FFA26B',
+              paddingTop: 20,
+              paddingLeft: 24,
+              paddingBottom: 23,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Title style={{color: '#ffff'}}>Seguridad Social</Title>
+              <FAB
+                icon="close"
+                onPress={() => this.mostrar(false)}
+                style={{backgroundColor: 'transparent', elevation: 0}}
+              />
+            </View>
+            <Text style={{fontSize: 20, color: '#FFF', fontWeight: '500'}}>
+              Recuerda cargarla cada mes 👍
+            </Text>
+          </View>
+          <View style={{padding: 42}}>
+            <Text>Periodo</Text>
+            <DropDownPicker
+              items={[
+                {label: 'Enero', value: 1},
+                {label: 'Febrero', value: 2},
+                {label: 'Marzo', value: 3},
+                {label: 'Abril', value: 4},
+                {label: 'Mayo', value: 5},
+                {label: 'Junio', value: 6},
+                {label: 'Julio', value: 7},
+                {label: 'Agosto', value: 8},
+                {label: 'Septiembre', value: 9},
+                {label: 'Octubre', value: '10'},
+                {label: 'Noviembre', value: 11},
+                {label: 'Diciembre', value: 12},
+              ]}
+              defaultValue={this.state.periodo}
+              containerStyle={{
+                height: 56,
+                borderRadius: 24,
+                marginTop: 16,
+              }}
+              style={{
+                backgroundColor: '#fafafa',
+                borderWidth: 1,
+                borderColor: '#fafafa',
+              }}
+              itemStyle={{
+                justifyContent: 'flex-start',
+              }}
+              dropDownStyle={{backgroundColor: '#fafafa', borderRadius: 24}}
+              onChangeItem={(item) =>
+                this.setState({
+                  periodo: item.value,
+                })
+              }
+            />
+
+            <Text>Año</Text>
+            <TextInput
+              keyboardType="decimal-pad"
+              style={{backgroundColor: '#fafafa'}}
+            />
+
+            <Button
+              icon="upload"
+              style={{marginTop: 32}}
+              loading={this.props.subiendo}
+              onPress={this.seleccionar}>
+              {this.props.subiendo ? 'Enviando...' : 'Seleccionar Archivo'}
+            </Button>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+
   render() {
     return (
       <SafeAreaView style={{marginTop: 32}}>
+        {this.ventana()}
         <View
           style={{
             flexDirection: 'row',
@@ -125,12 +236,9 @@ class SeguridadSocial extends React.Component {
 
         <Paragraph>Recuerda subir tu seguridad social cada mes.</Paragraph>
         {this.renderPeriodos()}
-        <Button
-          icon="upload"
-          style={{marginTop: 32}}
-          loading={this.props.subiendo}
-          onPress={this.seleccionar}>
-          {this.props.subiendo ? 'Subiendo archivo...' : 'Seleccionar Archivo'}
+
+        <Button onPress={() => this.mostrar(true)}>
+          Cargar seguridad social
         </Button>
       </SafeAreaView>
     );

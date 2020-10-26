@@ -37,40 +37,52 @@ class MenuLateral extends React.Component {
             icon="account-circle"
             onPress={() => this.props.navigation.navigate('Profile')}
           />
-          <Drawer.Item
-            label="Dashboard"
-            active={actual == 'Dashboard'}
-            icon="monitor-dashboard"
-            onPress={() => this.props.navigation.navigate('Dashboard')}
-          />
+          {this.props.habilitado ? (
+            <Drawer.Item
+              label="Dashboard"
+              active={actual == 'Dashboard'}
+              icon="monitor-dashboard"
+              onPress={() => this.props.navigation.navigate('Dashboard')}
+            />
+          ) : (
+            <></>
+          )}
           <Drawer.Item
             label="Capacitaciones"
             active={actual == 'Capacitaciones'}
             icon="school"
             onPress={() => this.props.navigation.navigate('Capacitaciones')}
           />
-          <Drawer.Item
-            label="Clientes"
-            active={actual == 'Clientes'}
-            icon="account-group"
-            onPress={() => this.props.navigation.navigate('Clientes')}
-          />
+          {this.props.habilitado ? (
+            <Drawer.Item
+              label="Clientes"
+              active={actual == 'Clientes'}
+              icon="account-group"
+              onPress={() => this.props.navigation.navigate('Clientes')}
+            />
+          ) : (
+            <></>
+          )}
         </Drawer.Section>
 
-        <Drawer.Section>
-          <Drawer.Item
-            label="Notificaciones"
-            active={actual == 'Notificaciones'}
-            icon="bell"
-            onPress={() => this.props.navigation.navigate('Notificaciones')}
-          />
-          <Drawer.Item
-            label="Soporte"
-            icon="face-agent"
-            active={actual == 'Soporte'}
-            onPress={() => this.props.navigation.navigate('Soporte')}
-          />
-        </Drawer.Section>
+        {this.props.habilitado ? (
+          <Drawer.Section>
+            <Drawer.Item
+              label="Notificaciones"
+              active={actual == 'Notificaciones'}
+              icon="bell"
+              onPress={() => this.props.navigation.navigate('Notificaciones')}
+            />
+            <Drawer.Item
+              label="Soporte"
+              icon="face-agent"
+              active={actual == 'Soporte'}
+              onPress={() => this.props.navigation.navigate('Soporte')}
+            />
+          </Drawer.Section>
+        ) : (
+          <></>
+        )}
 
         <Drawer.Item
           label="Cerrar Sesión"
@@ -79,7 +91,9 @@ class MenuLateral extends React.Component {
           onPress={() => this.props.salir()}
         />
 
-        <Caption style={{textAlign: 'center'}}>Serviproteccion</Caption>
+        <Caption style={{textAlign: 'center', marginTop: 64}}>
+          Serviproteccion
+        </Caption>
       </DrawerContentScrollView>
     );
   }
@@ -88,6 +102,7 @@ const mapToState = (state) => {
   return {
     nombre: state.Usuario.nombre,
     foto_perfil: state.Usuario.foto_perfil,
+    habilitado: state.Usuario.habilitado,
   };
 };
 const mapToActions = (dispatch) => {
