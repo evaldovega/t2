@@ -2,47 +2,73 @@ import React from 'react';
 import {Text} from 'react-native';
 import {styleInput} from 'styles';
 import validate from 'utils/validate.min.js';
+import produce from 'immer';
 
 export const totalErrores = (scope) => {
   let total = 0;
+  console.log(Object.keys(scope.state.error));
   Object.keys(scope.state.error).forEach((k) => {
+    console.log(k, ' Tiene ', scope.state.error[k].length, ' errores');
     total += scope.state.error[k].length;
   });
   return total;
 };
-export const validar = (scope, input, constraint, por_props = true) => {
+
+export const validar = (
+  scope,
+  input,
+  key_error,
+  constraint,
+  por_props = true,
+) => {
   let errores = {};
   let object = {};
+
+  scope.setState(
+    produce((draft) => {
+      draft.values[key_error] = input;
+    }),
+  );
+
   if (por_props) {
-    console.log('Buscar en props');
-    object[input] = scope.props[input];
+    object[key_error] = scope.props[input];
   } else {
-    console.log('Buscar en state');
-    object[input] = scope.state[input];
+    //object[input] = scope.state[input];
+    object[key_error] = input;
   }
-  console.log(object[input]);
 
   let constraints = {};
-  constraints[input] = constraint;
-  console.log('Restricciones ', constraint);
+  constraints[key_error] = constraint;
+
   errores = validate(object, constraints);
-  console.log('Error de validacion ', errores);
-  if (errores && errores[input]) {
-    console.log(errores);
-    let r = {};
-    r[input] = errores[input];
-    errores = Object.assign(scope.state.error, r);
-    scope.setState({error: errores});
+
+  if (errores && errores[key_error]) {
+    //let r = {};
+    //r[input] = errores[input];
+    //errores = Object.assign(scope.state.error, r);
+    //scope.setState({error: {...errores}});
+    scope.setState(
+      produce((draft) => {
+        console.log('Input ', key_error, 'Error ');
+        draft.error[key_error] = errores[key_error];
+      }),
+    );
   } else {
+    scope.setState(
+      produce((draft) => {
+        draft.error[key_error] = [];
+      }),
+    );
     let r = {};
     r[input] = [];
-    errores = Object.assign(scope.state.error, r);
-    scope.setState({error: errores});
+    //errores = Object.assign(scope.state.error, r);
+    //scope.setState({error: errores});
   }
 };
 
 export const renderErrores = (scope, input) => {
   if (!scope.state.error[input]) {
+    console.log(input, 'No encontrado');
     return;
   }
   return scope.state.error[input].map((e) => {

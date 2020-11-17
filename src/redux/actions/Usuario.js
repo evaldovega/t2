@@ -26,36 +26,49 @@ import {navigationRef} from 'utils/navigation';
 
 export const acceder = (data) => {
   return async (dispatch) => {
-    dispatch({type: ACTION_USUARIO_ACCEDER});
-    fetch(SERVER_ADDRESS + 'api/login/', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      .then((r) => r.json())
-      .then(async (r) => {
-        if (r.token) {
-          console.log('********************LOGIN*******************');
-          console.log(JSON.stringify(r.data));
-          await setSharedPreference('auth-token', r.token);
-          await setSharedPreference('data-user', JSON.stringify(r.data));
-          dispatch({type: ACTION_USUARIO_ACCESO_CORRECTO, token: r.token});
-          navigationRef?.current?.navigate('Master');
-        } else if (r.non_field_errors) {
-          dispatch({
-            type: ACTION_USUARIO_ERROR_ACCEDIENDO,
-            error: r.non_field_errors[0],
-          });
-        } else {
+    console.log('Accediendo...');
+    try {
+      dispatch({type: ACTION_USUARIO_ACCEDER});
+      fetch(SERVER_ADDRESS + 'api/login/', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((r) => r.json())
+        .then(async (r) => {
+          console.log(r);
+          if (r.token) {
+            console.log('********************LOGIN*******************');
+            console.log(JSON.stringify(r.data));
+            await setSharedPreference('auth-token', r.token);
+            await setSharedPreference('data-user', JSON.stringify(r.data));
+            dispatch({type: ACTION_USUARIO_ACCESO_CORRECTO, token: r.token});
+            navigationRef?.current?.navigate('Master');
+          } else if (r.non_field_errors) {
+            dispatch({
+              type: ACTION_USUARIO_ERROR_ACCEDIENDO,
+              error: r.non_field_errors[0],
+            });
+          } else {
+            dispatch({
+              type: ACTION_USUARIO_ERROR_ACCEDIENDO,
+              error: 'Error desconocido',
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
           dispatch({
             type: ACTION_USUARIO_ERROR_ACCEDIENDO,
             error: 'Error desconocido',
           });
-        }
-      });
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
 

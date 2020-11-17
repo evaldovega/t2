@@ -14,15 +14,8 @@ import {
 import {withAnchorPoint} from 'react-native-anchor-point';
 import {WebView} from 'react-native-webview';
 import YoutubePlayer, {getYoutubeMeta} from 'react-native-youtube-iframe';
-import {
-  Card,
-  Checkbox,
-  Button,
-  Switch,
-  FAB,
-  Title,
-  Paragraph,
-} from 'react-native-paper';
+import {Card, Button, Switch, FAB, Title, Paragraph} from 'react-native-paper';
+import {CheckBox} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loader from 'components/Loader';
 const {width, height} = Dimensions.get('screen');
@@ -175,7 +168,7 @@ class Actividad extends React.Component {
 
   renderOpcion = (opcion, pregunta, index_pregunta, index_opcion) => {
     return (
-      <TouchableOpacity
+      <CheckBox
         key={index_opcion}
         onPress={() =>
           this.props.seleccionarOpcion(
@@ -184,16 +177,11 @@ class Actividad extends React.Component {
             pregunta.id,
             opcion.id,
           )
-        }>
-        <View style={styles.checkboxContainer}>
-          <Checkbox
-            status={
-              pregunta.seleccionada == opcion.id ? 'checked' : 'unchecked'
-            }
-            color={COLORS.PRIMARY_COLOR}></Checkbox>
-          <Text style={{flex: 1}}>{opcion.opcion}</Text>
-        </View>
-      </TouchableOpacity>
+        }
+        title={opcion.opcion}
+        checkedColor={COLORS.PRIMARY_COLOR}
+        checked={pregunta.seleccionada == opcion.id}
+      />
     );
   };
 

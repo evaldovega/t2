@@ -113,7 +113,7 @@ const styleInput = StyleSheet.create({
   },
   error: {
     fontSize: 12,
-    color: 'red',
+    color: '#CD6155',
     paddingHorizontal: 16,
     marginTop: 4,
   },

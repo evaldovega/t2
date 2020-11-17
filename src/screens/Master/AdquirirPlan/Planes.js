@@ -70,8 +70,8 @@ class Planes extends React.Component {
               <List.Item
                 key={k}
                 onPress={() => this.seleccionar(i)}
-                title={i.name}
-                description={i.price}
+                title={i.titulo}
+                description={i.precio}
                 left={(props) => <List.Icon {...props} icon="folder" />}
                 right={(props) => <List.Icon {...props} icon="arrow-right" />}
               />
