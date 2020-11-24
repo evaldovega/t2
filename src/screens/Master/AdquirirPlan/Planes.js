@@ -2,8 +2,8 @@ import React from 'react';
 import {styleHeader} from 'styles';
 import {COLORS, SERVER_ADDRESS} from 'constants';
 import {connect} from 'react-redux';
-import {View, Text, Alert} from 'react-native';
-
+import {View, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
 import {
   FAB,
   Avatar,
@@ -16,7 +16,8 @@ import {
   Paragraph,
   List,
 } from 'react-native-paper';
-import {ScrollView} from 'react-native-gesture-handler';
+
+import Navbar from 'components/Navbar';
 
 class Planes extends React.Component {
   state = {
@@ -55,26 +56,32 @@ class Planes extends React.Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        <View style={styleHeader.wrapper}>
-          <FAB
-            icon="arrow-left"
-            onPress={() => this.props.navigation.pop()}
-            style={styleHeader.btnLeft}
-          />
-          <Text style={styleHeader.title}>Seleccione un Plan</Text>
-          <FAB style={{opacity: 0}} />
-        </View>
+        <Navbar back title="Seleccione un Plan" {...this.props} />
         <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
           {this.state.docs.map((i, k) => {
             return (
-              <List.Item
+              <TouchableOpacity
                 key={k}
                 onPress={() => this.seleccionar(i)}
-                title={i.titulo}
-                description={i.precio}
-                left={(props) => <List.Icon {...props} icon="folder" />}
-                right={(props) => <List.Icon {...props} icon="arrow-right" />}
-              />
+                style={{
+                  borderRadius: 24,
+                  backgroundColor: '#ffff',
+                  marginTop: 8,
+                  marginHorizontal: 16,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: 16,
+                }}>
+                <View style={{flex: 1}}>
+                  <Title>{i.titulo}</Title>
+                  <Paragraph>{i.precio}</Paragraph>
+                </View>
+                <Icon
+                  name="arrowright"
+                  size={32}
+                  color={COLORS.PRIMARY_COLOR}
+                />
+              </TouchableOpacity>
             );
           })}
         </ScrollView>

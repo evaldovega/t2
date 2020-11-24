@@ -31,6 +31,7 @@ const {width, height} = Dimensions.get('screen');
 import {styleText} from 'styles';
 import {connect} from 'react-redux';
 import {capacitacionDetalleCargar} from '../../../redux/actions';
+import Navbar from 'components/Navbar';
 
 class CapacitacionDetalle extends React.Component {
   state = {
@@ -149,6 +150,7 @@ class CapacitacionDetalle extends React.Component {
       );
     });
   };
+
   renderSecciones = () => {
     if (this.props.secciones.length == 0) {
       return <Text>No hay secciones</Text>;
@@ -212,16 +214,7 @@ class CapacitacionDetalle extends React.Component {
           barStyle={'light-content'}
         />
         <Loader loading={this.props.cargando} />
-        <View style={styleHeader.wrapper}>
-          <TouchableOpacity
-            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
-            style={styleHeader.btnLeft}
-            onPress={this.onPressMenu}>
-            <Icon name="arrowleft" color="white" size={24} />
-          </TouchableOpacity>
-          <Text style={styleHeader.title}>Detalle Capacitación</Text>
-          <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
-        </View>
+        <Navbar back {...this.props} title="Detalle capacitación" />
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{paddingHorizontal: 16}}>

@@ -77,7 +77,7 @@ export const salir = () => {
     deleteSharedPreference('auth-token');
     deleteSharedPreference('data-user');
     dispatch({type: ACTION_USUARIO_SALIR});
-    navigationRef?.current?.navigate('Onboarding');
+    navigationRef?.current?.navigate('Presentation');
   };
 };
 

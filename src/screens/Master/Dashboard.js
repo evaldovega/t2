@@ -23,15 +23,13 @@ import {CambiarNombre} from '../../redux/actions/Usuario';
 import Icon from 'react-native-vector-icons/Entypo';
 import {COLORS} from 'constants';
 import LottieView from 'lottie-react-native';
+import Navbar from 'components/Navbar';
 
 class Dashboard extends React.Component {
   state = {
     progress: new Animated.Value(0),
   };
 
-  onPressMenu = () => {
-    this.props.navigation.openDrawer();
-  };
   componentDidMount() {
     // Animated.loop(
     //   Animated.timing(this.state.progress, {
@@ -50,16 +48,7 @@ class Dashboard extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-        <View style={styleHeader.wrapper}>
-          <TouchableOpacity
-            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
-            style={styleHeader.btnLeft}
-            onPress={this.onPressMenu}>
-            <Icon name="menu" size={24} color="white" />
-          </TouchableOpacity>
-          <Text style={styleHeader.title}>Dashboard</Text>
-          <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
-        </View>
+        <Navbar menu title="Dashboard" {...this.props}></Navbar>
 
         <View style={styles.containerTime}>
           {dataTime.map((item) => {

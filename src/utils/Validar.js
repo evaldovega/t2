@@ -30,12 +30,7 @@ export const validar = (
     }),
   );
 
-  if (por_props) {
-    object[key_error] = scope.props[input];
-  } else {
-    //object[input] = scope.state[input];
-    object[key_error] = input;
-  }
+  object[key_error] = input;
 
   let constraints = {};
   constraints[key_error] = constraint;
@@ -49,7 +44,6 @@ export const validar = (
     //scope.setState({error: {...errores}});
     scope.setState(
       produce((draft) => {
-        console.log('Input ', key_error, 'Error ');
         draft.error[key_error] = errores[key_error];
       }),
     );

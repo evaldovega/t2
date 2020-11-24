@@ -27,6 +27,7 @@ import {
 
 import {changeProp} from '../../../redux/actions/Clients';
 import {connect} from 'react-redux';
+import Navbar from 'components/Navbar';
 
 class PreventDoubleTap extends React.Component {
   disabled = false;
@@ -168,17 +169,7 @@ class ContactToClient extends PreventDoubleTap {
   render() {
     return (
       <View style={{flex: 1}}>
-        <View style={styleHeader.wrapper}>
-          <TouchableOpacity
-            style={styleHeader.btnLeft}
-            onPress={() => this.props.navigation.pop()}>
-            <Icon name="arrowleft" color="white" size={24} />
-          </TouchableOpacity>
-          <Text style={styleHeader.title}>
-            Clientes Potenciales {this.props.cargando}
-          </Text>
-          <View></View>
-        </View>
+        <Navbar back title="Importat contacto" {...this.props} />
         {!this.state.loading && (
           <Searchbar
             style={{

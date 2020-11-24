@@ -35,25 +35,25 @@ import {COLORS} from 'constants';
 const data = [
   {
     color: '#00C48C',
-    animation: require('../../animations/sales.json'),
+    animation: require('animations/sales.json'),
     Titulo: 'Conéctate y gana',
     Texto: 'Conéctate y gana vendiendo seguros con Servi',
   },
   {
     color: '#00817A',
-    animation: require('../../animations/relot.json'),
+    animation: require('animations/relot.json'),
     Titulo: 'Sin horarios',
     Texto: 'Actívate cuando quieras',
   },
   {
     color: '#00C48C',
-    animation: require('../../animations/metas.json'),
+    animation: require('animations/metas.json'),
     Titulo: 'Gana',
     Texto: 'Genera ingresos y cumple tus metas',
   },
 ];
 
-class Walkthroughs extends React.Component {
+class Presentation extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -73,6 +73,7 @@ class Walkthroughs extends React.Component {
       }),
     ).start();
   }
+
   vendeYa = () => {
     if (this.props.logeado) {
       this.props.navigation.navigate('Master');
@@ -132,14 +133,19 @@ class Walkthroughs extends React.Component {
             onSnapToItem={(i) => this.setState({indexActive: i})}
           />
         </View>
-        <Button
-          backgroundColor={COLORS.PRIMARY_COLOR}
-          dark={true}
-          mode="contained"
-          style={{borderRadius: 16, margin: 24, padding: 8}}
+        <TouchableOpacity
+          style={{
+            borderRadius: 16,
+            margin: 24,
+            padding: 16,
+            backgroundColor: COLORS.PRIMARY_COLOR,
+            elevation: 8,
+          }}
           onPress={this.vendeYa}>
-          ¡Vende ya {this.props.nombre}!
-        </Button>
+          <Text style={{color: '#ffff', textAlign: 'center'}}>
+            ¡Vende ya {this.props.nombre}!
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -158,7 +164,7 @@ const mapToActions = (dispatch) => {
     },
   };
 };
-export default connect(mapToState, mapToActions)(Walkthroughs);
+export default connect(mapToState, mapToActions)(Presentation);
 
 const styles = StyleSheet.create({
   slider: {

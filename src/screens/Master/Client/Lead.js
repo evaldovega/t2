@@ -16,6 +16,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
+
 import {
   Avatar,
   Title,
@@ -30,13 +31,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/Entypo';
 import {styleHeader} from 'styles';
 import {loadClients, trash} from 'redux/actions/Clients';
-import Swipeout from 'react-native-swipeout';
 import {COLORS} from 'constants';
-
-const genero = {
-  M: require('utils/images/man.png'),
-  F: require('utils/images/woman.png'),
-};
+import Navbar from 'components/Navbar';
 
 const styles = StyleSheet.create({
   container: {
@@ -64,20 +60,6 @@ class Lead extends React.Component {
     const acciones = [
       {
         onPress: () => {
-          this.props.navigation.push('ClientSave', {id: item.id});
-        },
-        text: 'Editar',
-        color: COLORS.PRIMARY_COLOR,
-        backgroundColor: Colors.grey100,
-        component: (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <FAB icon="pencil" />
-          </View>
-        ),
-      },
-      {
-        onPress: () => {
           this.props.navigation.push('ClientProfile', {id: item.id});
         },
         backgroundColor: Colors.grey100,
@@ -90,12 +72,6 @@ class Lead extends React.Component {
         ),
       },
       {
-        onPress: () => {
-          let tel = item.numero_telefono.split(',')[0];
-          Linking.openURL(
-            Platform.OS === 'android' ? `tel:${tel}` : `telprompt:${tel}`,
-          );
-        },
         disabled: item.numero_telefono == '',
         text: 'Llamar',
         backgroundColor: Colors.grey100,
@@ -138,28 +114,22 @@ class Lead extends React.Component {
           marginBottom: 8,
         }}
         elevation={1}>
-        <Swipeout
-          backgroundColor="transparent"
-          right={acciones}
-          autoClose={true}>
-          <Card.Content
-            style={{
-              paddingVertical: 8,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Avatar.Image
-              style={{marginRight: 16}}
-              source={genero[item.genero]}
-            />
-            <View style={{flex: 1}}>
-              <Title>{nombre}</Title>
-              <Caption style={{color: COLORS.PRIMARY_COLOR}}>
-                {item.numero_telefono}
-              </Caption>
-            </View>
-          </Card.Content>
-        </Swipeout>
+        <Card.Content
+          style={{
+            paddingVertical: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <FAB icon="phone" onPress={() => this.call(item)} />
+          <TouchableOpacity
+            style={{flex: 1, marginLeft: 16}}
+            onPress={() => this.detail(item)}>
+            <Title>{nombre}</Title>
+            <Caption style={{color: COLORS.PRIMARY_COLOR}}>
+              {item.numero_telefono}
+            </Caption>
+          </TouchableOpacity>
+        </Card.Content>
       </Card>
     );
   };
@@ -178,6 +148,16 @@ class Lead extends React.Component {
 
   onPressMenu = () => {
     this.props.navigation.openDrawer();
+  };
+
+  call = (item) => {
+    let tel = item.numero_telefono.split(',')[0];
+    Linking.openURL(
+      Platform.OS === 'android' ? `tel:${tel}` : `telprompt:${tel}`,
+    );
+  };
+  detail = (item) => {
+    this.props.navigation.push('ClientProfile', {id: item.id});
   };
 
   componentDidMount() {
@@ -220,15 +200,7 @@ class Lead extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-        <View style={styleHeader.wrapper}>
-          <TouchableOpacity
-            style={styleHeader.btnLeft}
-            onPress={this.onPressMenu}>
-            <Icon name="menu" color="white" size={24} />
-          </TouchableOpacity>
-          <Text style={styleHeader.title}>Clientes</Text>
-          <View></View>
-        </View>
+        <Navbar menu title="Clientes" {...this.props} />
 
         <SafeAreaView style={{flex: 1, marginTop: 8}}>
           <VirtualizedList

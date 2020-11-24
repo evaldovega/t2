@@ -11,6 +11,7 @@ import {
   FlatList,
   Image,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import {
   FAB,
@@ -25,12 +26,14 @@ import {
 } from 'react-native-paper';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
-import {loadClient, taskRemove} from '../../../redux/actions/Clients';
+import {loadClient, taskRemove} from 'redux/actions/Clients';
+import ClientAgenda from './Agenda';
 import {COLORS} from 'constants';
 import TaskList from '../Task/List';
+import Navbar from 'components/Navbar';
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
+  container: {flex: 1, backgroundColor: COLORS.PRIMARY_COLOR},
 });
 
 class ClientProfile extends React.Component {
@@ -61,6 +64,10 @@ class ClientProfile extends React.Component {
     Linking.openURL(
       Platform.OS === 'android' ? `tel:${tel}` : `telprompt:${tel}`,
     );
+  };
+
+  edit = () => {
+    this.props.navigation.push('ClientSave', {id: this.props.id});
   };
 
   renderProduct = ({item}) => (
@@ -108,16 +115,10 @@ class ClientProfile extends React.Component {
         justifyContent: 'space-between',
         alignItems: 'center',
       }}>
-      <Avatar.Image
-        size={64}
-        source={{
-          uri:
-            'https://mk0careergirlda22ty0.kinstacdn.com/wp-content/uploads/2018/11/Victoria-Beckham-1.jpg',
-        }}
-      />
-      <View style={{flex: 1, paddingHorizontal: 4}}>
-        <Text
-          style={[styleText.h1, {textAlign: 'center', color: Colors.primary}]}>
+      <TouchableOpacity
+        style={{flex: 1, paddingHorizontal: 4}}
+        onPress={this.edit}>
+        <Title style={[{color: '#ffff'}]}>
           {!this.props.loading &&
             this.props.primer_nombre +
               ' ' +
@@ -126,14 +127,23 @@ class ClientProfile extends React.Component {
               this.props.primer_apellido +
               ' ' +
               this.props.segundo_apellido}
-        </Text>
-        <Caption style={{color: Colors.primary}}>
+        </Title>
+        <Caption style={{color: '#ffff'}}>
           {this.props.numero_cedula || '...'}
         </Caption>
-        <Caption>{this.props.correo_electronico || '...'}</Caption>
-        <Caption>{this.props.numero_telefono || '...'}</Caption>
-      </View>
-      <FAB size={64} icon="phone" onPress={this.call} />
+        <Caption style={{color: '#ffff'}}>
+          {this.props.correo_electronico || '...'}
+        </Caption>
+        <Caption style={{color: '#ffff'}}>
+          {this.props.numero_telefono || '...'}
+        </Caption>
+      </TouchableOpacity>
+      <FAB
+        size={64}
+        icon="phone"
+        style={{elevation: 0, borderColor: '#ffff', borderWidth: 1}}
+        onPress={this.call}
+      />
     </View>
   );
 
@@ -141,15 +151,19 @@ class ClientProfile extends React.Component {
     const nombre = `${this.props.primer_nombre} ${this.props.segundo_nombre} ${this.props.primer_apellido} ${this.props.segundo_apellido}`;
     return (
       <View style={styles.container}>
-        <View style={styleHeader.wrapper}>
-          <FAB
-            icon="arrow-left"
-            onPress={() => this.props.navigation.pop()}
-            style={styleHeader.btnLeft}
-          />
-          <Text style={styleHeader.title}>Detalle Cliente</Text>
-          <View></View>
-        </View>
+        <Navbar
+          back
+          title="Detalle cliente"
+          right={
+            <FAB
+              style={{elevation: 0, backgroundColor: 'transparent'}}
+              onPress={this.edit}
+              icon="pencil"
+            />
+          }
+          {...this.props}
+        />
+
         <ScrollView
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -158,20 +172,42 @@ class ClientProfile extends React.Component {
               onRefresh={() => this.props.load(this.props.route.params.id)}
             />
           }>
-          <View style={{flex: 1, margin: 16}}>
-            {this.props.loading && this.renderLoadingClientInfor()}
-
+          <View style={{padding: 16}}>
             {!this.props.loading ? this.renderInfoClient() : null}
+          </View>
 
+          <View
+            style={{
+              flex: 1,
+              padding: 16,
+              backgroundColor: '#eeeeee',
+              borderTopRightRadius: 24,
+              borderTopLeftRadius: 24,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: 16,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Title style={{color: COLORS.PRIMARY_COLOR}}>
+                Planes Adquiridos
+              </Title>
+              <FAB
+                icon="plus"
+                small
+                onPress={() =>
+                  this.props.navigation.push('Planes', {
+                    cliente_id: this.props.id,
+                    nombre_cliente: nombre,
+                  })
+                }
+              />
+            </View>
             <Card
               style={{borderRadius: 16, marginTop: 32, elevation: 0}}
               elevation={2}>
-              <Card.Title
-                title="Planes Adquiridos"
-                subtitle={
-                  this.props.ordenes.length == 0 &&
-                  'El cliente no ha adquirido ningún plan'
-                }></Card.Title>
               <Card.Content>
                 <FlatList
                   data={this.props.ordenes}
@@ -179,40 +215,33 @@ class ClientProfile extends React.Component {
                   keyExtractor={(item) => item.id}
                 />
               </Card.Content>
-              <Card.Actions style={{marginTop: 16}}>
-                <Button
-                  icon="plus"
-                  onPress={() =>
-                    this.props.navigation.push('Planes', {
-                      cliente_id: this.props.id,
-                      nombre_cliente: nombre,
-                    })
-                  }>
-                  {' '}
-                  Añadir plan
-                </Button>
-              </Card.Actions>
             </Card>
 
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: 16,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Title style={{color: COLORS.PRIMARY_COLOR}}>Agenda</Title>
+              <FAB
+                icon="calendar-plus"
+                small
+                onPress={() =>
+                  this.props.navigation.push('TaskSave', {
+                    cliente_id: this.props.route.params.id,
+                  })
+                }
+              />
+            </View>
             <Card
               style={{borderRadius: 16, marginTop: 32, elevation: 0}}
               elevation={2}>
-              <Card.Title title="Tareas" subtitle=""></Card.Title>
               <Card.Content>
-                <TaskList {...this.props} />
+                <ClientAgenda {...this.props} />
+                {/*<TaskList {...this.props} />*/}
               </Card.Content>
-              <Card.Actions style={{marginVertical: 32}}>
-                <Button
-                  icon="calendar-plus"
-                  onPress={() =>
-                    this.props.navigation.push('TaskSave', {
-                      cliente_id: this.props.route.params.id,
-                    })
-                  }>
-                  {' '}
-                  Programar Tarea
-                </Button>
-              </Card.Actions>
             </Card>
           </View>
         </ScrollView>

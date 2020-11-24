@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   Modal,
 } from 'react-native';
-
+import LinearGradient from 'react-native-linear-gradient';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
 
@@ -38,6 +38,7 @@ import {COLORS} from 'constants';
 import {styleHeader} from 'styles';
 import ProfileIdentificacion from './Identificacion';
 import {actualizarDatos, cambiarProp} from 'redux/actions/Usuario';
+import Navbar from 'components/Navbar';
 const SeguridadSocial = React.lazy(() => import('./SeguridadSocial'));
 
 class Profile extends React.Component {
@@ -85,32 +86,33 @@ class Profile extends React.Component {
           barStyle={'light-content'}
         />
 
-        <View style={styleHeader.wrapper}>
-          <FAB
-            icon="menu"
-            onPress={() => this.props.navigation.openDrawer()}
-            style={styleHeader.btnLeft}
-          />
-          <Text style={styleHeader.title}>
-            Perfil {this.state.mostrar_modal_capacitacion}
-          </Text>
-          <FAB style={{opacity: 0}} />
-        </View>
+        <Navbar menu title="Perfil" {...this.props} />
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <TouchableNativeFeedback onPress={this.cambiarFoto}>
-            <Avatar.Image
-              style={styles.avatar}
-              source={{uri: this.props.usuario.foto_perfil}}
-            />
-          </TouchableNativeFeedback>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              paddingHorizontal: 24,
+            }}>
+            <TouchableNativeFeedback onPress={this.cambiarFoto}>
+              <Avatar.Image
+                style={styles.avatar}
+                size={96}
+                source={{uri: this.props.usuario.foto_perfil}}
+              />
+            </TouchableNativeFeedback>
+            <View style={{marginLeft: 8}}>
+              <Title style={{textAlign: 'center', color: Colors.white}}>
+                {this.props.usuario.nombre || 'Nombre del usuario'}
+              </Title>
+              <Subheading style={{textAlign: 'center', color: Colors.white}}>
+                {this.props.usuario.num_documento_identidad}
+              </Subheading>
+            </View>
+          </View>
 
-          <Title style={{textAlign: 'center', color: Colors.white}}>
-            {this.props.usuario.nombre}
-          </Title>
-          <Subheading style={{textAlign: 'center', color: Colors.white}}>
-            {this.props.usuario.num_documento_identidad}
-          </Subheading>
           {!this.props.usuario.habilitado ? (
             <TouchableOpacity
               style={styles.btnUpdate}
@@ -219,7 +221,7 @@ export default connect(mapToState, mapTopActions)(Profile);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.PRIMARY_COLOR_DARK_1,
+    backgroundColor: COLORS.PRIMARY_COLOR,
     elevation: 0,
   },
   avatar: {

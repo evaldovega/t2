@@ -30,6 +30,7 @@ import {
 import {COLORS} from 'constants';
 import Check from 'svgs/Check';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import Navbar from 'components/Navbar';
 
 const styles = StyleSheet.create({
   container: {
@@ -331,18 +332,7 @@ class Actividad extends React.Component {
     return (
       <View style={styles.container}>
         <Loader loading={cargando} />
-        <View style={styleHeader.wrapper}>
-          <TouchableOpacity
-            style={styleHeader.btnLeft}
-            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
-            onPress={() => this.props.navigation.pop()}>
-            <Icon name="arrowleft" color="white" size={24} />
-          </TouchableOpacity>
-          <Text style={[styleHeader.title, {textTransform: 'capitalize'}]}>
-            {data.tipo}
-          </Text>
-          <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
-        </View>
+        <Navbar back title={data.tipo} {...this.props} />
 
         <View style={styles.container}>
           <View

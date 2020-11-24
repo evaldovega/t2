@@ -37,6 +37,7 @@
     "react-moment": "^1.0.0",
     "react-native": "0.62.2",
     "react-native-anchor-point": "^1.0.1",
+    "react-native-calendars": "^1.403.0",
     "react-native-chart-kit": "^5.5.0",
     "react-native-contacts": "^5.2.7",
     "react-native-datepicker": "^1.7.2",

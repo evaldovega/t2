@@ -13,7 +13,8 @@ import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {Platform} from 'react-native';
 // @ts-ignore
 
-import Walkthroughs from 'screens/Walkthroughs';
+import Presentation from 'screens/Presentation';
+
 import ForgotPass from 'screens/ForgotPass';
 import SignIn from 'screens/SiginIn';
 import StaticsHealth from 'screens/StaticsHealth';
@@ -85,6 +86,7 @@ const theme = {
     primary: COLORS.PRIMARY_COLOR,
     accent: COLORS.PRIMARY_COLOR,
   },
+  animation: {},
 };
 
 const MainNavigation = memo(() => {
@@ -99,31 +101,26 @@ const MainNavigation = memo(() => {
   }, []);
 
   return (
-    /* <ScalingDrawer
-            ref={drawer}
-            content={<LeftMenu onClose={onClose} onOpen={onOpen}/>}
-            {...defaultScalingDrawerConfig}
-        >*/
-    <Suspense fallback={<LoaderModule visible={true} />}>
-      <Provider store={store}>
-        <PaperProvider theme={theme}>
-          <StatusBar
-            translucent={true}
-            backgroundColor={'transparent'}
-            barStyle={'light-content'}
-          />
-          <NavigationContainer
-            // @ts-ignore
-            ref={navigationRef}>
+    <Provider store={store}>
+      <PaperProvider theme={theme}>
+        <StatusBar
+          translucent={true}
+          backgroundColor={'transparent'}
+          barStyle={'light-content'}
+        />
+        <NavigationContainer
+          // @ts-ignore
+          ref={navigationRef}>
+          <Suspense fallback={<LoaderModule visible={true} />}>
             <Navigator
               screenOptions={{
                 headerShown: false,
                 gestureEnabled: false,
               }}
-              initialRouteName={ROUTERS.Onboarding}>
+              initialRouteName="Presentation">
               <Screen
-                name={ROUTERS.Onboarding}
-                component={Walkthroughs}
+                name="Presentation"
+                component={Presentation}
                 options={optionNavigator}
               />
               <Screen
@@ -176,13 +173,12 @@ const MainNavigation = memo(() => {
                   options={optionNavigator}
                 />
               )}
-              {ClientProfile && (
-                <Screen
-                  name="ClientProfile"
-                  component={ClientProfile}
-                  options={optionNavigator}
-                />
-              )}
+
+              <Screen
+                name="ClientProfile"
+                component={ClientProfile}
+                options={optionNavigator}
+              />
               {ProductList && (
                 <Screen
                   name="ProductList"
@@ -233,10 +229,10 @@ const MainNavigation = memo(() => {
                 />
               )}
             </Navigator>
-          </NavigationContainer>
-        </PaperProvider>
-      </Provider>
-    </Suspense>
+          </Suspense>
+        </NavigationContainer>
+      </PaperProvider>
+    </Provider>
   );
 });
 

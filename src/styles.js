@@ -98,9 +98,16 @@ const styleInput = StyleSheet.create({
     borderWidth: 1,
     marginTop: 16,
     borderColor: '#EAE8EA',
-    paddingHorizontal: 8,
-
-    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  label: {
+    fontFamily: 'Montserrat',
+    color: COLORS.PRIMARY_COLOR_DARK_1,
+    fontWeight: 'bold',
+    fontSize: 14,
+    flex: 1,
+    padding: 0,
+    marginBottom: 14,
   },
   input: {
     fontFamily: 'Lato-Regular',

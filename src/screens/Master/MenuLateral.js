@@ -8,6 +8,7 @@ import {Avatar, Title, Drawer, Caption} from 'react-native-paper';
 import {View} from 'react-native';
 import {connect} from 'react-redux';
 import {salir} from 'redux/actions/Usuario';
+import moment from 'moment';
 
 class MenuLateral extends React.Component {
   componentDidMount() {}
@@ -92,7 +93,7 @@ class MenuLateral extends React.Component {
         />
 
         <Caption style={{textAlign: 'center', marginTop: 64}}>
-          Serviproteccion
+          Serviproteccion © {moment().format('YYYY')}
         </Caption>
       </DrawerContentScrollView>
     );

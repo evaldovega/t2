@@ -28,6 +28,7 @@ import {COLORS} from 'constants';
 import {styelCard, styleHeader} from 'styles';
 import {connect} from 'react-redux';
 import {capacitacionesCargar} from '../../../redux/actions';
+import Navbar from 'components/Navbar';
 
 class CapacitacionListado extends React.Component {
   onPressMenu = () => {
@@ -61,19 +62,17 @@ class CapacitacionListado extends React.Component {
       <Card
         elevation={1}
         style={{marginTop: 16, borderRadius: 16, overflow: 'hidden'}}>
+        <Card.Cover source={{uri: l.imagen_portada}} />
         <Card.Content style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-          <Image
-            source={{uri: l.imagen_portada}}
-            style={{
-              width: '30%',
-              height: undefined,
-              aspectRatio: 4 / 3,
-              borderRadius: 16,
-              marginRight: 16,
-            }}
-          />
-          <View style={{flex: 1}}>
-            <Title style={{marginBottom: 8}}>{l.tiutlo}</Title>
+          <View style={{flex: 1, justifyContent: 'center'}}>
+            <Title
+              style={{
+                marginBottom: 8,
+                color: COLORS.PRIMARY_COLOR,
+                textAlign: 'center',
+              }}>
+              {l.titulo}
+            </Title>
             <Paragraph style={{marginBottom: 4}}>{l.descripcion}</Paragraph>
             {parseFloat(l.progreso) >= 100 && (
               <Text style={{marginVertical: 8, color: Colors.green400}}>
@@ -82,7 +81,7 @@ class CapacitacionListado extends React.Component {
               </Text>
             )}
             <ProgressBar
-              style={{flex: 1}}
+              style={{flex: 1, height: 10, borderRadius: 20}}
               progress={parseFloat(l.progreso) / 100}
               color={COLORS.PRIMARY_COLOR}
             />
@@ -93,7 +92,7 @@ class CapacitacionListado extends React.Component {
         <Card.Actions style={{justifyContent: 'flex-end'}}>
           <Button
             icon="arrow-right"
-            contentStyle={{flexDirection: 'row-reverse'}}
+            contentStyle={{flexDirection: 'row-reverse', paddingHorizontal: 16}}
             onPress={() => this.detalle(l)}>
             Capacitarme
           </Button>
@@ -110,17 +109,7 @@ class CapacitacionListado extends React.Component {
           barStyle={'light-content'}
         />
 
-        <View style={styleHeader.wrapper}>
-          <FAB
-            onPress={this.onPressMenu}
-            style={styleHeader.btnLeft}
-            icon="menu"
-          />
-          <Text style={styleHeader.title}>
-            Capacitaciones {this.props.cargando}
-          </Text>
-          <TouchableOpacity style={styleHeader.btnRight}></TouchableOpacity>
-        </View>
+        <Navbar menu title="Capacitaciones" {...this.props} />
 
         <ScrollView
           showsVerticalScrollIndicator={false}

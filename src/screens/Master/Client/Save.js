@@ -54,6 +54,7 @@ const validations = {
 class ClientSave extends React.Component {
   state = {
     error: {},
+    values: {},
   };
 
   componentDidMount() {
@@ -114,50 +115,69 @@ class ClientSave extends React.Component {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{paddingHorizontal: 16, paddingVertical: 32}}>
             <View style={styleInput.wrapper}>
+              <Text style={styleInput.label}>Primer nombre:</Text>
               <TextInput
                 style={styleInput.input}
-                placeholder="Primer nombre"
+                placeholder=""
                 value={this.props.primer_nombre}
                 onChangeText={(i) => this.props.changeProp('primer_nombre', i)}
                 onBlur={() =>
-                  validar(this, 'primer_nombre', validations.primer_nombre)
+                  validar(
+                    this,
+                    this.props.primer_nombre,
+                    'primer_nombre',
+                    validations.primer_nombre,
+                  )
                 }
               />
             </View>
             {renderErrores(this, 'primer_nombre')}
 
             <View style={styleInput.wrapper}>
+              <Text style={styleInput.label}>Segundo nombre:</Text>
               <TextInput
                 style={styleInput.input}
-                placeholder="Segundo nombre"
+                placeholder=""
                 value={this.props.segundo_nombre}
                 onChangeText={(i) => this.props.changeProp('segundo_nombre', i)}
                 onBlur={() =>
-                  validar(this, 'segundo_nombre', validations.segundo_nombre)
+                  validar(
+                    this,
+                    this.props.segundo_nombre,
+                    'segundo_nombre',
+                    validations.segundo_nombre,
+                  )
                 }
               />
             </View>
             {renderErrores(this, 'segundo_nombre')}
 
             <View style={styleInput.wrapper}>
+              <Text style={styleInput.label}>Primer apellido:</Text>
               <TextInput
                 style={styleInput.input}
-                placeholder="Primer apellido"
+                placeholder=""
                 value={this.props.primer_apellido}
                 onChangeText={(i) =>
                   this.props.changeProp('primer_apellido', i)
                 }
                 onBlur={() =>
-                  validar(this, 'primer_apellido', validations.primer_apellido)
+                  validar(
+                    this,
+                    this.props.primer_apellido,
+                    'primer_apellido',
+                    validations.primer_apellido,
+                  )
                 }
               />
             </View>
             {renderErrores(this, 'primer_apellido')}
 
             <View style={styleInput.wrapper}>
+              <Text style={styleInput.label}>Segundo apellido:</Text>
               <TextInput
                 style={styleInput.input}
-                placeholder="Segundo apellido"
+                placeholder=""
                 value={this.props.segundo_apellido}
                 onChangeText={(i) =>
                   this.props.changeProp('segundo_apellido', i)
@@ -165,6 +185,7 @@ class ClientSave extends React.Component {
                 onBlur={() =>
                   validar(
                     this,
+                    this.props.segundo_apellido,
                     'segundo_apellido',
                     validations.segundo_apellido,
                   )
@@ -174,20 +195,27 @@ class ClientSave extends React.Component {
             {renderErrores(this, 'segundo_apellido')}
 
             <View style={styleInput.wrapper}>
+              <Text style={styleInput.label}>Número de documento:</Text>
               <TextInput
                 style={styleInput.input}
-                placeholder="Número de documento"
+                placeholder=""
                 keyboardType="number-pad"
                 value={this.props.numero_cedula}
                 onChangeText={(i) => this.props.changeProp('numero_cedula', i)}
                 onBlur={() =>
-                  validar(this, 'numero_cedula', validations.numero_cedula)
+                  validar(
+                    this,
+                    this.props.numero_cedula,
+                    'numero_cedula',
+                    validations.numero_cedula,
+                  )
                 }
               />
             </View>
             {renderErrores(this, 'numero_cedula')}
 
             <View style={styleInput.wrapper}>
+              <Text style={styleInput.label}>Genero:</Text>
               <Picker
                 selectedValue={this.props.genero}
                 onValueChange={(itemValue, itemIndex) =>
@@ -200,14 +228,21 @@ class ClientSave extends React.Component {
             </View>
 
             <View style={styleInput.wrapper}>
+              <Text style={styleInput.label}>Número de teléfono:</Text>
               <TextInput
                 style={styleInput.input}
-                placeholder="Número de teléfono"
+                placeholder=""
                 value={this.props.numero_telefono}
                 onChangeText={(i) =>
                   this.props.changeProp('numero_telefono', i)
                 }
-                onBlur={() => validar(this, validations.numero_telefono)}
+                onBlur={() =>
+                  validar(
+                    this,
+                    this.props.numero_telefono,
+                    validations.numero_telefono,
+                  )
+                }
               />
             </View>
             {renderErrores(this, 'numero_telefono')}
@@ -224,6 +259,7 @@ class ClientSave extends React.Component {
                 onBlur={() =>
                   validar(
                     this,
+                    this.props.correo_electronico,
                     'correo_electronico',
                     validations.correo_electronico,
                   )
