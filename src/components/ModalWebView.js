@@ -15,7 +15,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {COLORS} from 'constants';
 import SvgBack from 'svgs/profile/SvgBack';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
-import {FAB, Title} from 'react-native-paper';
+import {Divider, FAB, Title} from 'react-native-paper';
 
 const {width, heigth} = Dimensions.get('screen');
 const ModalWebView = (props) => {
@@ -66,6 +66,9 @@ const ModalWebView = (props) => {
           }}
           style={{width: width, flex: 1}}
         />
+        {props.footer ? (
+          <View style={{padding: 16}}>{props.footer}</View>
+        ) : null}
       </View>
     </Modal>
   );

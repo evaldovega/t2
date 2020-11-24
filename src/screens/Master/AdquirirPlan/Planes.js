@@ -16,13 +16,15 @@ import {
   Paragraph,
   List,
 } from 'react-native-paper';
-
+import ModalWebView from 'components/ModalWebView';
 import Navbar from 'components/Navbar';
 
 class Planes extends React.Component {
   state = {
     cargando: false,
     docs: [],
+    modal_show: false,
+    doc: {},
   };
 
   componentDidMount() {
@@ -47,16 +49,40 @@ class Planes extends React.Component {
 
   seleccionar = (i) => {
     console.log(i);
+    this.setState({modal_show: true, doc: i});
+    return;
+  };
+
+  adquirir = () => {
+    console.log('ADQUIRIR');
+    this.setState({modal_show: false});
     this.props.navigation.push('AdquirirPlan', {
-      ...i,
+      ...this.state.doc,
       cliente: this.props.route.params.cliente_id,
     });
+  };
+
+  onCLose = () => {
+    this.setState({modal_show: false});
   };
 
   render() {
     return (
       <View style={{flex: 1}}>
         <Navbar back title="Seleccione un Plan" {...this.props} />
+        <ModalWebView
+          html={this.state.doc.informacion}
+          visible={this.state.modal_show}
+          onClose={this.onCLose}
+          footer={
+            <Button
+              mode="contained"
+              style={{borderRadius: 24}}
+              onPress={this.adquirir}>
+              Continuar
+            </Button>
+          }
+        />
         <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
           {this.state.docs.map((i, k) => {
             return (
