@@ -29,6 +29,7 @@ class ProfileIdentificacion extends React.Component {
   }
 
   render() {
+    console.log(this.props.ide_foto_respaldo);
     return (
       <>
         <Title

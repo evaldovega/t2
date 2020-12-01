@@ -110,7 +110,9 @@ class SignUp extends React.Component {
             contratoValidationVisible: false,
             contratoValidated: false,
             textResponseCodeValidation: "",
-            error:{}
+            error:{},
+            mostrarTerminos:false,
+            terminosHtml:''
         }
     }
 
@@ -330,6 +332,19 @@ class SignUp extends React.Component {
         this.enviar(result.encoded)
     }
 
+    noMostrarTerminos=()=>{
+        console.log("Cerrar ")
+        this.setState({mostrarTerminos:false})
+    }
+    terminosYcondiciones=()=>{
+        this.setState({mostrarTerminos:true})
+        if(this.state.terminosHtml==''){
+            fetch(SERVER_ADDRESS+'api/config/terminos/').then(r=>r.json()).then(r=>{
+                this.setState({terminosHtml:r[0].terminos_condiciones})
+            })
+        }
+    }
+
     enviar=(firma)=>{
         const body=JSON.stringify({
             user:{
@@ -425,7 +440,10 @@ class SignUp extends React.Component {
             <View style={styles.container}>
                 
                 <ModalWebView visible={this.state.contratoVisualizacion} html={this.state.contratoContent} cancelButtonText="Volver" onClose={this.cerrarContrato}></ModalWebView>
+                <ModalWebView visible={this.state.mostrarTerminos} html={this.state.terminosHtml} cancelButtonText="Volver" onClose={this.noMostrarTerminos}></ModalWebView>
+
                 <ModalPrompt visible={this.state.contratoValidationVisible} dismissModal={() => this.setState({contratoValidationVisible: false})} mt={16} valid={this.state.contratoValidated} actionDisabled={this.state.contratoValidated} error={this.state.inputCodeRegistrationError} textMessage={this.state.textResponseCodeValidation} value={this.state.inputCodeRegistration} onChangeText={(i)=>this.setState({inputCodeRegistration: i})} onCodeValidation={this.validateCodeRegistration}></ModalPrompt>
+                
                 <ScrollView>
                     <View>
                         <Header/>
@@ -539,14 +557,14 @@ class SignUp extends React.Component {
 
 
                         <View style={styles.containerSignIn}>
-                            <View style={{flex:1}}>
+                            <TouchableOpacity style={{flex:1}} onPress={this.terminosYcondiciones}>
                                 <Text>
                                     Acepto los
-                                    <Text style={styles.link} onPress={()=>Linking.openURL('https://google.com')}> términos y condiciones </Text>
+                                    <Text style={styles.link}> términos y condiciones </Text>
                                     y las
-                                    <Text style={styles.link} onPress={()=>Linking.openURL('https://google.com')}> políticas de tratamiento de datos</Text>
+                                    <Text style={styles.link}> políticas de tratamiento de datos</Text>
                                 </Text>
-                            </View>
+                            </TouchableOpacity>
                             <Switch
                                 trackColor={{ false: COLORS.PRIMARY_COLOR, true: COLORS.SECONDARY_COLOR_LIGHTER }}
                                 thumbColor={this.state.isEnabled ? COLORS.SECONDARY_COLOR : "#f4f3f4"}

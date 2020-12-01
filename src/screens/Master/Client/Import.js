@@ -35,10 +35,13 @@ class PreventDoubleTap extends React.Component {
     if (this.disabled) return;
     this.disabled = true;
     console.log('Desactivar');
-    this.props.navigation.push('ClientSave', {id: '', item: args[0]});
+    requestAnimationFrame(() => {
+      this.props.navigation.push('ClientSave', {id: '', item: args[0]});
+    });
     setTimeout(() => {
       this.disabled = false;
     }, 2000);
+
     this.props.onPress && this.props.onPress(...args);
   };
 }
@@ -65,6 +68,7 @@ class ContactToClient extends PreventDoubleTap {
     Contacts.getAll((err, contacts) => {
       contacts = contacts.map((c, i) => {
         let nombre = c.givenName + ' ' + c.middleName + ' ' + c.familyName;
+
         let email =
           c.emailAddresses && c.emailAddresses.length > 0
             ? c.emailAddresses[0].email
@@ -80,6 +84,7 @@ class ContactToClient extends PreventDoubleTap {
           empresa: c.company,
           email: email,
         };
+        return null;
       });
       this.contacts = contacts;
       this.setState({
@@ -169,7 +174,7 @@ class ContactToClient extends PreventDoubleTap {
   render() {
     return (
       <View style={{flex: 1}}>
-        <Navbar back title="Importat contacto" {...this.props} />
+        <Navbar back title="Importar contacto" {...this.props} />
         {!this.state.loading && (
           <Searchbar
             style={{

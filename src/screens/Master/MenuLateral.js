@@ -5,17 +5,24 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 import {Avatar, Title, Drawer, Caption} from 'react-native-paper';
-import {View} from 'react-native';
+import {View, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {salir} from 'redux/actions/Usuario';
 import moment from 'moment';
+import GradientContainer from 'components/GradientContainer';
 
 class MenuLateral extends React.Component {
   componentDidMount() {}
+
   render() {
     const actual = this.props.state.routeNames[this.props.state.index];
     return (
-      <DrawerContentScrollView {...this.props}>
+      <GradientContainer style={{flex: 1}}>
+        <Image
+          source={require('utils/images/logo_black.png')}
+          resizeMode="contain"
+          style={{width: 100, height: 80, alignSelf: 'center'}}
+        />
         <View
           style={{
             flexDirection: 'row',
@@ -23,10 +30,6 @@ class MenuLateral extends React.Component {
             marginHorizontal: 16,
             marginVertical: 32,
           }}>
-          <Avatar.Image
-            source={{uri: this.props.foto_perfil}}
-            style={{marginRight: 8}}
-          />
           <Title style={{flex: 1}}>
             {this.props.nombre} {this.props.index}
           </Title>
@@ -36,14 +39,22 @@ class MenuLateral extends React.Component {
             label="Perfil"
             active={actual == 'Profile'}
             icon="account-circle"
-            onPress={() => this.props.navigation.navigate('Profile')}
+            onPress={() =>
+              requestAnimationFrame(() => {
+                this.props.navigation.navigate('Profile');
+              })
+            }
           />
           {this.props.habilitado ? (
             <Drawer.Item
               label="Dashboard"
               active={actual == 'Dashboard'}
               icon="monitor-dashboard"
-              onPress={() => this.props.navigation.navigate('Dashboard')}
+              onPress={() =>
+                requestAnimationFrame(() => {
+                  this.props.navigation.navigate('Dashboard');
+                })
+              }
             />
           ) : (
             <></>
@@ -52,14 +63,22 @@ class MenuLateral extends React.Component {
             label="Capacitaciones"
             active={actual == 'Capacitaciones'}
             icon="school"
-            onPress={() => this.props.navigation.navigate('Capacitaciones')}
+            onPress={() =>
+              requestAnimationFrame(() => {
+                this.props.navigation.navigate('Capacitaciones');
+              })
+            }
           />
           {this.props.habilitado ? (
             <Drawer.Item
               label="Clientes"
               active={actual == 'Clientes'}
               icon="account-group"
-              onPress={() => this.props.navigation.navigate('Clientes')}
+              onPress={() =>
+                requestAnimationFrame(() =>
+                  this.props.navigation.navigate('Clientes'),
+                )
+              }
             />
           ) : (
             <></>
@@ -72,13 +91,21 @@ class MenuLateral extends React.Component {
               label="Notificaciones"
               active={actual == 'Notificaciones'}
               icon="bell"
-              onPress={() => this.props.navigation.navigate('Notificaciones')}
+              onPress={() =>
+                requestAnimationFrame(() => {
+                  this.props.navigation.navigate('Notificaciones');
+                })
+              }
             />
             <Drawer.Item
               label="Soporte"
               icon="face-agent"
               active={actual == 'Soporte'}
-              onPress={() => this.props.navigation.navigate('Soporte')}
+              onPress={() =>
+                requestAnimationFrame(() => {
+                  this.props.navigation.navigate('Soporte');
+                })
+              }
             />
           </Drawer.Section>
         ) : (
@@ -92,10 +119,23 @@ class MenuLateral extends React.Component {
           onPress={() => this.props.salir()}
         />
 
-        <Caption style={{textAlign: 'center', marginTop: 64}}>
-          Serviproteccion © {moment().format('YYYY')}
-        </Caption>
-      </DrawerContentScrollView>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 64,
+          }}>
+          <Image
+            source={require('utils/images/icon.png')}
+            style={{width: 20, aspectRatio: 1, marginRight: 16}}
+            resizeMode="contain"
+          />
+          <Caption style={{textAlign: 'center'}}>
+            Serviproteccion © {moment().format('YYYY')}
+          </Caption>
+        </View>
+      </GradientContainer>
     );
   }
 }

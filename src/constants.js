@@ -2,7 +2,11 @@ export const SERVER_ADDRESS = 'http://servi.ufotech.co/';
 export const SOCKET_ADDRESS = 'http://servi.ufotech.co:8080';
 
 export const COLORS = {
-  PRIMARY_COLOR: '#209A91',
+  BG_BLUE: '#F2FAFE',
+  BG_GRAY: '#f7f7f7',
+  DARK: '#113b50',
+  GRAY: '#b8b8b8',
+  PRIMARY_COLOR: '#72D4C2',
   SECONDARY_COLOR: '#102E4D',
   PRIMARY_COLOR_DARK_1: '#00817A',
   PRIMARY_COLOR_DARK_2: '#006661',
@@ -10,5 +14,7 @@ export const COLORS = {
   PRIMARY_COLOR_DARK_4: '#002F2C',
   SECONDARY_COLOR_LIGHTER: '#839ab1',
   SECONDARY_COLOR_MUTED: '#415b71',
-  ACCENT: '#009BFF',
+  TEXT: '#5E6267',
+  TEXT_STRONG: '#46484B',
+  ACCENT: '#6E55F6',
 };

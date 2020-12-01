@@ -9,7 +9,7 @@ import { COLORS } from 'constants';
 const Header = memo(() => {
     return (
         <View style={styles.container}>
-            <Image style={styles.logo} source={require('utils/images/ISO.png')}></Image>
+            <Image style={styles.logo} resizeMode='contain' source={require('utils/images/icon.png')}></Image>
             <Text style={styles.txtWelcome}>¡Hola!</Text>
             <Text style={styles.txtTo}>Crea tu cuenta {'\n'}en Servi</Text>
             {/* <View style={styles.circle}/> */}

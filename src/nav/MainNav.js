@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {createRef, memo, useCallback, useRef, Suspense} from 'react';
+import React, {memo, useCallback, useRef, Suspense} from 'react';
 import {StatusBar, Text} from 'react-native';
 import {
   NavigationContainer,
@@ -8,24 +8,23 @@ import {
   ROUTERS,
   Screen,
 } from 'utils/navigation';
-import {StackNavigationOptions} from '@react-navigation/stack';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
-import {Platform} from 'react-native';
 // @ts-ignore
 
 import Presentation from 'screens/Presentation';
+import FQA from 'screens/FQA';
 
 import ForgotPass from 'screens/ForgotPass';
 import SignIn from 'screens/SiginIn';
-import StaticsHealth from 'screens/StaticsHealth';
 
 import Notification from 'screens/Notification';
 import SignUp from 'screens/SignUp';
 import Master from '../screens/Master';
-import LeftMenu from 'screens/LeftMenu';
 
 import CapacitacionDetalle from '../screens/Master/Capacitacion/Detalle';
 import Actividad from '../screens/Master/Capacitacion/Actividad';
+
+const delay = 300;
 
 const ClientSave = React.lazy(() => import('../screens/Master/Client/Save'));
 const ContactToClient = React.lazy(() =>
@@ -38,31 +37,41 @@ const ProductList = React.lazy(() => import('../screens/Master/Product/List'));
 
 const ProductDetail = React.lazy(() => {
   return new Promise((resolve) => {
-    setTimeout(() => resolve(import('../screens/Master/Product/Detail')), 300);
+    setTimeout(
+      () => resolve(import('../screens/Master/Product/Detail')),
+      delay,
+    );
   });
 });
 
 const Plan = React.lazy(() => {
   return new Promise((resolve) => {
-    setTimeout(() => resolve(import('../screens/Master/Product/Plan')), 300);
+    setTimeout(() => resolve(import('../screens/Master/Product/Plan')), delay);
   });
 });
+const Planes = React.lazy(() => {
+  return Promise.all([
+    import('../screens/Master/AdquirirPlan/Planes'),
+    new Promise((resolve) => setTimeout(resolve, delay)),
+  ]).then(([moduleExports]) => moduleExports);
+});
 
-const Planes = React.lazy(() =>
-  import('../screens/Master/AdquirirPlan/Planes'),
-);
-const AdquirirPlan = React.lazy(() =>
-  import('../screens/Master/AdquirirPlan/Completar'),
-);
+const AdquirirPlan = React.lazy(() => {
+  return Promise.all([
+    import('../screens/Master/AdquirirPlan/Completar'),
+    new Promise((resolve) => setTimeout(resolve, delay)),
+  ]).then(([moduleExports]) => moduleExports);
+});
+
 const TaskSave = React.lazy(() => {
   return new Promise((resolve) => {
-    setTimeout(() => resolve(import('../screens/Master/Task/Save')), 300);
+    setTimeout(() => resolve(import('../screens/Master/Task/Save')), delay);
   });
 });
 
 const SelecctorArchivo = React.lazy(() => {
   return new Promise((resolve) => {
-    setTimeout(() => resolve(import('../components/SelecctorArchivo')), 300);
+    setTimeout(() => resolve(import('../components/SelecctorArchivo')), delay);
   });
 });
 
@@ -106,7 +115,7 @@ const MainNavigation = memo(() => {
         <StatusBar
           translucent={true}
           backgroundColor={'transparent'}
-          barStyle={'light-content'}
+          barStyle={'dark-content'}
         />
         <NavigationContainer
           // @ts-ignore
@@ -123,6 +132,7 @@ const MainNavigation = memo(() => {
                 component={Presentation}
                 options={optionNavigator}
               />
+              <Screen name="FQA" component={FQA} options={optionNavigator} />
               <Screen
                 name={ROUTERS.ForgotPassword}
                 component={ForgotPass}

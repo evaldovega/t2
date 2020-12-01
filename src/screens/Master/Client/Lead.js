@@ -14,6 +14,7 @@ import {
   VirtualizedList,
   RefreshControl,
   SafeAreaView,
+  TextInput,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 
@@ -28,16 +29,16 @@ import {
 } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import Icon from 'react-native-vector-icons/Entypo';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {styleHeader} from 'styles';
 import {loadClients, trash} from 'redux/actions/Clients';
 import {COLORS} from 'constants';
 import Navbar from 'components/Navbar';
+import GradientContainer from 'components/GradientContainer';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.grey100,
   },
 });
 
@@ -57,77 +58,56 @@ class Lead extends React.Component {
   };
 
   Item = (item) => {
-    const acciones = [
-      {
-        onPress: () => {
-          this.props.navigation.push('ClientProfile', {id: item.id});
-        },
-        backgroundColor: Colors.grey100,
-        text: 'Detalles',
-        component: (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <FAB icon="account-details" />
-          </View>
-        ),
-      },
-      {
-        disabled: item.numero_telefono == '',
-        text: 'Llamar',
-        backgroundColor: Colors.grey100,
-        color: '#ffff',
-        component: (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <FAB icon="phone" />
-          </View>
-        ),
-      },
-      {
-        onPress: () => {
-          this.borrar(item);
-        },
-        text: 'Borrar',
-        backgroundColor: Colors.grey100,
-        component: (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <FAB
-              color="#ffff"
-              style={{backgroundColor: Colors.red400}}
-              icon="delete"
-            />
-          </View>
-        ),
-      },
-    ];
-
     const nombre = `${item.primer_nombre} ${item.segundo_nombre} ${item.primer_apellido} ${item.segundo_apellido}`;
     return (
       <Card
         style={{
-          marginHorizontal: 16,
-          borderRadius: 8,
-          elevation: 1,
+          borderRadius: 16,
           overflow: 'hidden',
           padding: 0,
           marginBottom: 8,
-        }}
-        elevation={1}>
+          backgroundColor: COLORS.BG_BLUE,
+          borderWidth: 0.2,
+          elevation: 0,
+          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+        }}>
         <Card.Content
           style={{
             paddingVertical: 8,
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <FAB icon="phone" onPress={() => this.call(item)} />
+          <FAB
+            icon="phone"
+            color={COLORS.SECONDARY_COLOR_LIGHTER}
+            style={{
+              borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+              borderWidth: 0.2,
+              backgroundColor: COLORS.BG_GRAY,
+            }}
+            onPress={() => this.call(item)}
+          />
           <TouchableOpacity
             style={{flex: 1, marginLeft: 16}}
             onPress={() => this.detail(item)}>
-            <Title>{nombre}</Title>
-            <Caption style={{color: COLORS.PRIMARY_COLOR}}>
+            <Text
+              style={{
+                marginTop: 16,
+                marginBottom: 8,
+                color: COLORS.DARK,
+                fontSize: 18,
+                fontFamily: 'Roboto-Medium',
+              }}>
+              {nombre}
+            </Text>
+            <Text
+              style={{
+                color: COLORS.PRIMARY_COLOR,
+                fontFamily: 'Roboto-Light',
+                fontSize: 12,
+              }}>
               {item.numero_telefono}
-            </Caption>
+            </Text>
           </TouchableOpacity>
         </Card.Content>
       </Card>
@@ -144,12 +124,6 @@ class Lead extends React.Component {
     ]);
   };
 
-  toggleFab = ({open}) => this.setState({open_fab: open});
-
-  onPressMenu = () => {
-    this.props.navigation.openDrawer();
-  };
-
   call = (item) => {
     let tel = item.numero_telefono.split(',')[0];
     Linking.openURL(
@@ -157,7 +131,9 @@ class Lead extends React.Component {
     );
   };
   detail = (item) => {
-    this.props.navigation.push('ClientProfile', {id: item.id});
+    requestAnimationFrame(() => {
+      this.props.navigation.push('ClientProfile', {id: item.id});
+    });
   };
 
   componentDidMount() {
@@ -194,15 +170,37 @@ class Lead extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <StatusBar
-          translucent={true}
-          backgroundColor={'transparent'}
-          barStyle={'light-content'}
-        />
+      <GradientContainer style={styles.container}>
         <Navbar menu title="Clientes" {...this.props} />
+        <View style={{flex: 1, marginHorizontal: 16}}>
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginVertical: 16,
+              borderWidth: 0.2,
+              borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+              borderRadius: 24,
+              padding: 12,
+            }}>
+            <EvilIcons
+              name="search"
+              color={COLORS.SECONDARY_COLOR_LIGHTER}
+              size={32}
+              style={{}}
+            />
+            <TextInput
+              placeholder="Buscar cliente..."
+              style={{
+                flex: 1,
+                color: COLORS.SECONDARY_COLOR_LIGHTER,
+                padding: 0,
+                margin: 0,
+              }}
+            />
+          </View>
 
-        <SafeAreaView style={{flex: 1, marginTop: 8}}>
           <VirtualizedList
             style={{flex: 1}}
             data={this.props.items}
@@ -218,32 +216,32 @@ class Lead extends React.Component {
               />
             }
           />
-        </SafeAreaView>
-
-        {this.state.mostrar_ayuda && (
-          <LottieView
-            style={{width: '100%'}}
-            source={require('../../../animations/swipe.json')}
-            progress={this.state.progress}
-            style={styles.sliderImage}
+        </View>
+        <View
+          style={{flexDirection: 'row', justifyContent: 'flex-end', margin: 8}}>
+          <FAB
+            onPress={() => this.props.navigation.push('ClientSave', {id: ''})}
+            color={COLORS.SECONDARY_COLOR_LIGHTER}
+            style={{
+              backgroundColor: COLORS.BG_GRAY,
+              borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+              borderWidth: 0.2,
+              marginRight: 8,
+            }}
+            icon="plus"
           />
-        )}
-
-        <FAB.Group
-          open={this.state.open_fab}
-          onStateChange={this.toggleFab}
-          icon={this.state.open_fab ? 'minus' : 'plus'}
-          actions={[
-            {
-              icon: 'account-plus',
-              onPress: () => this.props.navigation.push('ClientSave', {id: ''}),
-            },
-            {
-              icon: 'card-account-phone',
-              onPress: () => this.props.navigation.push('ContactoAcliente'),
-            },
-          ]}></FAB.Group>
-      </View>
+          <FAB
+            onPress={() => this.props.navigation.push('ContactoAcliente')}
+            color={COLORS.SECONDARY_COLOR_LIGHTER}
+            style={{
+              backgroundColor: COLORS.BG_GRAY,
+              borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+              borderWidth: 0.2,
+            }}
+            icon="card-account-phone"
+          />
+        </View>
+      </GradientContainer>
     );
   }
 }

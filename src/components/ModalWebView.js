@@ -6,16 +6,14 @@ import {
   Text,
   Button,
   TouchableHighlight,
+  TouchableOpacity,
   View,
   Dimensions,
 } from 'react-native';
 import {Montserrat} from 'utils/fonts';
 import WebView from 'react-native-webview';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {COLORS} from 'constants';
-import SvgBack from 'svgs/profile/SvgBack';
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
-import {Divider, FAB, Title} from 'react-native-paper';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 
 const {width, heigth} = Dimensions.get('screen');
 const ModalWebView = (props) => {
@@ -30,21 +28,32 @@ const ModalWebView = (props) => {
         props.onClose();
       }}>
       <View style={styles.modalBackground}>
-        <View
+        <TouchableOpacity
+          onPress={() => {
+            props.onClose();
+            console.log('Cerrar modal');
+          }}
           style={{
+            zIndex: 9999,
             flexDirection: 'row',
             alignItems: 'center',
             paddingHorizontal: 32,
             marginBottom: 32,
           }}>
-          <FAB
-            style={{backgroundColor: COLORS.PRIMARY_COLOR, marginRight: 16}}
-            icon="arrow-left"
-            color="#ffff"
-            onPress={() => props.onClose()}
+          <EvilIcons
+            color={COLORS.SECONDARY_COLOR_LIGHTER}
+            size={32}
+            name="close"
           />
-          <Title>Volver</Title>
-        </View>
+          <Text
+            style={{
+              fontFamily: 'Roboto-Medium',
+              fontSize: 14,
+              color: COLORS.SECONDARY_COLOR_LIGHTER,
+            }}>
+            Cerrar
+          </Text>
+        </TouchableOpacity>
 
         <WebView
           originWhitelist={['*']}
@@ -89,27 +98,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around',
-  },
-  btnSignIn: {
-    backgroundColor: COLORS.SECONDARY_COLOR,
-    borderRadius: 24,
-    flex: 1,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  txtSignIn: {
-    fontFamily: Montserrat,
-    fontWeight: '600',
-    color: '#FFF',
-    fontSize: 17,
-  },
-  back: {
-    marginLeft: 32,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingBottom: 32,
-    zIndex: 99,
   },
 });
 

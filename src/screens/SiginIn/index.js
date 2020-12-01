@@ -7,6 +7,7 @@ import {
   Alert,
   Image,
   Animated,
+  Dimensions,
   Easing,
   ScrollView,
 } from 'react-native';
@@ -19,9 +20,13 @@ import {ROUTERS} from 'utils/navigation';
 import {SERVER_ADDRESS, COLORS} from 'constants';
 import Loader from 'components/Loader';
 
+import LinearGradient from 'react-native-linear-gradient';
+import {Shadow, Neomorph} from 'react-native-neomorph-shadows';
+
 import {connect} from 'react-redux';
 import {acceder, initUsuario} from 'redux/actions/Usuario';
 
+const {width, height} = Dimensions.get('screen');
 class SignIn extends React.Component {
   constructor(props) {
     super(props);
@@ -76,44 +81,39 @@ class SignIn extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <LottieView
-          autoPlay
-          autoSize
-          style={{width: '50%'}}
-          source={require('../../animations/dinero.json')}
-        />
-
+      <LinearGradient
+        colors={['#ffff', '#C2C4C7']}
+        style={styles.container}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}>
         <Loader loading={this.props.accediendo}></Loader>
-        <View
+
+        <Neomorph
+          darkShadowColor={COLORS.ACCENT}
+          lightShadowColor={COLORS.PRIMARY_COLOR}
+          swapShadows
           style={{
-            borderTopStartRadius: 24,
-            borderTopEndRadius: 24,
-            backgroundColor: 'white',
-            paddingVertical: 16,
-            flex: 3,
+            shadowOpacity: 0.1,
+            shadowRadius: 15,
+            backgroundColor: '#F7F7F7',
+            width: width * 0.8,
+            height: height * 0.75,
+            borderRadius: 72,
           }}>
-          <View
+          <Image
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingHorizontal: 32,
-            }}>
-            <Image
-              style={styles.logo}
-              source={require('utils/images/ISO.png')}></Image>
-            <View>
-              <Title style={{color: COLORS.PRIMARY_COLOR, fontSize: 24}}>
-                Hola
-              </Title>
-              <Paragraph style={{fontSize: 20, fontWeight: 'bold'}}>
-                Bienvenido a Servi
-              </Paragraph>
-            </View>
-          </View>
+              width: 100,
+              height: 100,
+              position: 'absolute',
+              left: width * 0.4 - 50,
+              top: -42,
+            }}
+            resizeMode="contain"
+            source={require('utils/images/icon.png')}
+          />
+
           <Input
-            mt={40}
+            mt={70}
             pass={false}
             errorMsg={this.state.errorMsgUser}
             borderColor={this.state.userborderColor}
@@ -154,13 +154,14 @@ class SignIn extends React.Component {
             onPress={this.onPressRegister}>
             <Text style={styles.txtSignInFb}>Regístrate</Text>
           </TouchableOpacity>
-        </View>
-        {/*
-                <TouchableOpacity style={styles.btnSignInGoogle}>
-                    <Text style={styles.txtSignInFb}>Sign In With Google</Text>
-                </TouchableOpacity>
-                */}
-      </View>
+
+          <Image
+            source={require('utils/images/logo_black.png')}
+            style={{width: 100, height: 50, alignSelf: 'center', marginTop: 32}}
+            resizeMode="contain"
+          />
+        </Neomorph>
+      </LinearGradient>
     );
   }
 }
@@ -187,7 +188,8 @@ export default connect(mapToState, mapToActions)(SignIn);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.PRIMARY_COLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   containerSignIn: {
     flexDirection: 'row',
@@ -195,27 +197,18 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   btnSignIn: {
-    backgroundColor: '#102e4d',
-    borderRadius: 24,
+    backgroundColor: COLORS.ACCENT,
+    borderRadius: 64,
     flex: 1,
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 2,
   },
   txtSignIn: {
-    fontFamily: Montserrat,
-    fontWeight: '600',
+    fontFamily: 'Roboto-Light',
     color: '#FFF',
     fontSize: 17,
-  },
-  btnFaceId: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: '#6979F8',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 20,
   },
   btnForgot: {
     marginTop: 24,
@@ -224,8 +217,7 @@ const styles = StyleSheet.create({
   txtForgot: {
     fontSize: 12,
     color: '#0F4C81',
-    fontFamily: Montserrat,
-    fontWeight: '500',
+    fontFamily: 'Roboto-Light',
   },
   containerOr: {
     flexDirection: 'row',
@@ -236,26 +228,26 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: COLORS.TEXT,
   },
   txtOr: {
     marginHorizontal: 20,
     fontSize: 16,
-    color: '#1A051D',
-    fontFamily: Montserrat,
+    color: COLORS.TEXT,
     fontWeight: 'normal',
   },
   btnSignFb: {
     marginHorizontal: 40,
     height: 48,
-    borderRadius: 24,
-    backgroundColor: '#209a91',
+    borderRadius: 64,
+    backgroundColor: COLORS.PRIMARY_COLOR,
     marginTop: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 2,
   },
   txtSignInFb: {
-    fontWeight: '600',
+    fontFamily: 'Roboto-Light',
     fontSize: 17,
     color: '#FFF',
   },
@@ -277,5 +269,11 @@ const styles = StyleSheet.create({
     color: '#0F4C81',
     fontFamily: Montserrat,
     fontWeight: '500',
+  },
+  logo: {
+    width: 100,
+    height: 80,
+    alignSelf: 'center',
+    marginTop: 64,
   },
 });

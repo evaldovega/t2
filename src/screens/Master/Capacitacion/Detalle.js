@@ -14,17 +14,12 @@ import {
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {withAnchorPoint} from 'react-native-anchor-point';
-import {FAB, List} from 'react-native-paper';
 import {Montserrat, Lato} from 'utils/fonts';
-import ArrowLeft from 'svgs/ArrowLeft';
-
-import ArrowRight from 'svgs/ArrowRight';
-import Check from 'svgs/Check';
 
 import Loader from 'components/Loader';
 import {COLORS} from 'constants';
-import {styelCard, styleHeader} from 'styles';
-import Icon from 'react-native-vector-icons/AntDesign';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+
 const dataTime = ['DAYS', 'WEEKS', 'MONTHS', 'YEARS'];
 
 const {width, height} = Dimensions.get('screen');
@@ -32,6 +27,7 @@ import {styleText} from 'styles';
 import {connect} from 'react-redux';
 import {capacitacionDetalleCargar} from '../../../redux/actions';
 import Navbar from 'components/Navbar';
+import GradientContainer from 'components/GradientContainer';
 
 class CapacitacionDetalle extends React.Component {
   state = {
@@ -76,74 +72,69 @@ class CapacitacionDetalle extends React.Component {
     let transform = {
       transform: [{scale: this.state.valueScale}],
     };
-    return withAnchorPoint(transform, {x: 0, y: 0.5}, {width: 32, height: 32});
+    return withAnchorPoint(
+      transform,
+      {x: 0.5, y: 0.5},
+      {width: 42, height: 42},
+    );
   };
+
   renderActividades = (id_seccion, actividades) => {
     if (actividades.length == 0) {
       return <Text>No hay actividades</Text>;
     }
+    const countActivities = actividades.length;
     return actividades.map((a, key, arr) => {
+      const last = key == countActivities - 1;
       return (
         <TouchableNativeFeedback
           key={key}
-          onPress={() => this.actividad(id_seccion, a.id)}>
+          onPress={() =>
+            requestAnimationFrame(() => this.actividad(id_seccion, a.id))
+          }>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-around',
-              alignItems: 'center',
-              paddingVertical: 16,
-              paddingHorizontal: 32,
-              marginLeft: -32,
+              alignItems: 'flex-start',
+              paddingRight: 16,
               position: 'relative',
             }}>
-            {key + 1 < arr.length && (
-              <Animated.View style={{transform: [{scaleY: this.state.scaleY}]}}>
-                <View
-                  style={{
-                    width: 3,
-                    height: '150%',
-                    backgroundColor: COLORS.PRIMARY_COLOR,
-                    position: 'absolute',
-                    borderTopLeftRadius: 4,
-                    borderTopRightRadius: 4,
-                    shadowColor: 'rgba(0,0,0,.6)',
-                    elevation: 0,
-                    top: 0,
-                    left: 19,
-                  }}></View>
-              </Animated.View>
-            )}
+            <View style={styles.shadowHole}>
+              {(a.tipo != 'cuestionario' && a.visualizado) || a.aprobado ? (
+                <Animated.View style={this.getTransform()}>
+                  <View style={styles.pointInHole} />
+                </Animated.View>
+              ) : (
+                <></>
+              )}
+            </View>
 
-            <Animated.View style={this.getTransform()}>
-              <FAB
-                ref={(v) => {
-                  key == 0 ? (this.vista = v) : null;
-                }}
+            <View
+              style={{
+                flex: 1,
+                marginLeft: -16,
+                borderLeftColor: COLORS.PRIMARY_COLOR,
+                borderLeftWidth: !last ? 1.5 : 0,
+                paddingLeft: 25,
+                paddingBottom: 16,
+              }}>
+              <Text style={{fontFamily: 'Roboto-Medium'}}>{a.titulo}</Text>
+              <Text
                 style={{
-                  zIndex: 999,
-                  marginRight: 8,
-                  backgroundColor: COLORS.PRIMARY_COLOR,
-                }}
-                color="#ffff"
-                animated={true}
-                small
-                icon={
-                  (a.tipo != 'cuestionario' && a.visualizado) || a.aprobado
-                    ? 'check'
-                    : 'alert-octagon'
-                }></FAB>
-            </Animated.View>
-
-            <View style={{flex: 1}}>
-              <Text style={[styleText.h3, {marginTop: 0}]}>{a.titulo}</Text>
-              <Text style={[styleText.small, {textTransform: 'capitalize'}]}>
+                  fontFamily: 'Roboto-Light',
+                  textTransform: 'capitalize',
+                }}>
                 {a.tipo}
               </Text>
             </View>
 
             <View>
-              <Icon name="right" size={24} color={COLORS.PRIMARY_COLOR} />
+              <SimpleLineIcons
+                name="arrow-right"
+                size={24}
+                color={COLORS.PRIMARY_COLOR}
+              />
             </View>
           </View>
         </TouchableNativeFeedback>
@@ -152,37 +143,36 @@ class CapacitacionDetalle extends React.Component {
   };
 
   renderSecciones = () => {
-    if (this.props.secciones.length == 0) {
+    if (!this.props.secciones) {
+      return <Text>No hay secciones</Text>;
+    }
+    if (this.props.secciones && this.props.secciones.length == 0) {
       return <Text>No hay secciones</Text>;
     }
     return this.props.secciones.map((s, key) => {
       return (
         <View
-          key={key}
-          style={{flexDirection: 'column'}}
-          onLayout={(event) => {
-            const layout = event.nativeEvent.layout;
+          style={{
+            borderRadius: 25,
+            paddingLeft: 16,
+            margin: 25,
+            marginBottom: 32,
+            backgroundColor: COLORS.BG_BLUE,
+            borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+            borderWidth: 0.3,
           }}>
-          {key == 100 && (
-            <Animated.View style={{transform: [{scaleY: this.state.scaleY}]}}>
-              <View
-                style={{
-                  width: 3,
-                  height: 36 * (s.actividades.length + 1),
-                  backgroundColor: COLORS.PRIMARY_COLOR,
-                  position: 'absolute',
-                  borderTopLeftRadius: 4,
-                  borderTopRightRadius: 4,
-                  shadowColor: 'rgba(0,0,0,.6)',
-                  elevation: 0,
-                  top: 90,
-                  left: 19,
-                }}></View>
-            </Animated.View>
-          )}
-          <Text style={[styleText.h2]}>{s.titulo}</Text>
-          <View style={{marginBottom: 24, position: 'relative'}}>
-            {this.renderActividades(s.id, s.actividades)}
+          <View key={key}>
+            <Text
+              style={{
+                fontFamily: 'Roboto-Medium',
+                fontSize: 18,
+                marginVertical: 18,
+              }}>
+              {s.titulo}
+            </Text>
+            <View style={{marginBottom: 24, position: 'relative'}}>
+              {this.renderActividades(s.id, s.actividades)}
+            </View>
           </View>
         </View>
       );
@@ -207,23 +197,33 @@ class CapacitacionDetalle extends React.Component {
       console.log(this.top);
     }
     return (
-      <View style={styles.container}>
-        <StatusBar
-          translucent={true}
-          backgroundColor={'transparent'}
-          barStyle={'light-content'}
-        />
+      <GradientContainer style={styles.container}>
         <Loader loading={this.props.cargando} />
         <Navbar back {...this.props} title="Detalle capacitación" />
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{paddingHorizontal: 16}}>
-            <Text style={[styleText.h1, {textAlign: 'center'}]}>
+            <Text
+              style={{
+                textAlign: 'center',
+                color: COLORS.DARK,
+                fontFamily: 'Roboto-Medium',
+                fontSize: 32,
+                marginTop: 16,
+              }}>
               {item.titulo}
+            </Text>
+            <Text
+              style={{
+                textAlign: 'center',
+                color: COLORS.SECONDARY_COLOR_LIGHTER,
+                fontFamily: 'Roboto-Medium',
+              }}>
+              {item.descripcion}
             </Text>
           </View>
 
-          <View style={styles.containerInfo}>
+          {/*<View style={styles.containerInfo}>
             <View style={styles.col}>
               <Text style={styles.value}>{this.totalActividades()}</Text>
               <Text style={styles.title}>Actividades</Text>
@@ -238,32 +238,10 @@ class CapacitacionDetalle extends React.Component {
               <Text style={styles.value}>{this.totalActividades()}</Text>
               <Text style={styles.title}>Faltantes</Text>
             </View>
-          </View>
-
-          <View style={styles.content}>
-            <View
-              style={{
-                width: 64,
-                height: 64,
-                backgroundColor: 'white',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 32,
-                elevation: 4,
-                marginTop: -50,
-                marginLeft: width / 2 - 64,
-                marginBottom: 32,
-              }}>
-              <Image
-                source={require('utils/images/ISO.png')}
-                style={{width: 32, height: 32}}
-              />
-            </View>
-            <Text>{item.descripcion}</Text>
-            {this.renderSecciones()}
-          </View>
+          </View>*/}
+          {this.renderSecciones()}
         </ScrollView>
-      </View>
+      </GradientContainer>
     );
   }
 }
@@ -287,104 +265,34 @@ export default connect(mapToState, mapToActions)(CapacitacionDetalle);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F8F9',
   },
-  content: {
-    flex: 1,
-    backgroundColor: '#FFF',
-    borderRadius: 24,
-    marginHorizontal: 8,
-    marginBottom: 30,
-    shadowColor: 'rgba(0,0,0,.5)',
-    elevation: 5,
-    paddingLeft: 20,
-    paddingBottom: 20,
-    paddingTop: 20,
+  shadowHole: {
+    borderRadius: 16,
+    borderColor: COLORS.PRIMARY_COLOR,
+    backgroundColor: COLORS.BG_GRAY,
+    borderWidth: 1.5,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
   },
-  header: {
+  pointInHole: {
+    borderRadius: 12,
     backgroundColor: COLORS.PRIMARY_COLOR,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    height: 96,
-    paddingTop: getStatusBarHeight(),
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 24,
+    height: 24,
   },
-  titleHeader: {
-    fontFamily: Montserrat,
-    fontSize: 17,
-    color: '#fff',
-  },
-  btnClose: {
-    position: 'absolute',
-    bottom: 20,
-    left: 16,
-    zIndex: 1,
-  },
-  btnOption: {
-    position: 'absolute',
-    bottom: 20,
-    right: 16,
-  },
-  containerTime: {
-    flexDirection: 'row',
-    height: 48,
-    margin: 16,
+  section: {
+    backgroundColor: COLORS.BG_GRAY,
     borderRadius: 24,
-    backgroundColor: '#FFF',
-  },
-  btnTime: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  txtTime: {
-    fontFamily: Montserrat,
-    fontSize: 12,
-    color: '#1A051D',
-  },
-  svgHover: {
-    position: 'absolute',
-    bottom: 0,
-    left: 40,
-  },
-  boxStatus: {
-    margin: 16,
-    backgroundColor: '#FFA26B',
-    borderRadius: 16,
-    paddingTop: 20,
-    paddingLeft: 24,
-    paddingBottom: 23,
-  },
-  txtGood: {
-    fontSize: 20,
-    color: '#FFF',
-    fontFamily: Montserrat,
-    fontWeight: '500',
-  },
-  txtKeep: {
-    fontSize: 16,
-    color: '#FFF',
-    fontFamily: Montserrat,
-  },
-  boxHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  containerChart: {
-    borderRadius: 16,
-    backgroundColor: '#FFF',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    marginHorizontal: 16,
-    marginBottom: 16,
-  },
-  txtTitle: {
-    marginLeft: 8,
-    fontFamily: Montserrat,
-    fontSize: 14,
-    color: '#1A051D',
-    flex: 1,
+    marginHorizontal: 32,
+    marginTop: 30,
+    marginBottom: 10,
+    shadowColor: 'rgba(0,0,0,1)',
+    elevation: 5,
+    padding: 32,
+    elevation: 4,
   },
   line: {
     height: 1,

@@ -1,9 +1,16 @@
 import React from 'react';
-import {styleHeader} from 'styles';
 import {COLORS, SERVER_ADDRESS} from 'constants';
 import {connect} from 'react-redux';
-import {View, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  Alert,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import NumberFormat from 'react-number-format';
 import {
   FAB,
   Avatar,
@@ -18,6 +25,7 @@ import {
 } from 'react-native-paper';
 import ModalWebView from 'components/ModalWebView';
 import Navbar from 'components/Navbar';
+import GradientContainer from 'components/GradientContainer';
 
 class Planes extends React.Component {
   state = {
@@ -68,22 +76,34 @@ class Planes extends React.Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <GradientContainer style={{flex: 1}}>
         <Navbar back title="Seleccione un Plan" {...this.props} />
         <ModalWebView
           html={this.state.doc.informacion}
           visible={this.state.modal_show}
           onClose={this.onCLose}
           footer={
-            <Button
+            <TouchableOpacity
               mode="contained"
-              style={{borderRadius: 24}}
-              onPress={this.adquirir}>
-              Continuar
-            </Button>
+              style={{
+                backgroundColor: COLORS.PRIMARY_COLOR,
+                padding: 24,
+                borderRadius: 24,
+                alignSelf: 'flex-end',
+              }}
+              onPress={() => this.adquirir()}>
+              <Text
+                style={{
+                  fontFamily: 'Roboto-Medium',
+                  color: '#ffff',
+                  fontSize: 18,
+                }}>
+                Crear Orden
+              </Text>
+            </TouchableOpacity>
           }
         />
-        <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false}>
           {this.state.docs.map((i, k) => {
             return (
               <TouchableOpacity
@@ -91,27 +111,66 @@ class Planes extends React.Component {
                 onPress={() => this.seleccionar(i)}
                 style={{
                   borderRadius: 24,
-                  backgroundColor: '#ffff',
-                  marginTop: 8,
+                  backgroundColor: COLORS.BG_BLUE,
+                  marginTop: 16,
                   marginHorizontal: 16,
                   flexDirection: 'row',
                   alignItems: 'center',
                   padding: 16,
+                  elevation: 0,
+                  borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+                  borderWidth: 0.2,
                 }}>
-                <View style={{flex: 1}}>
-                  <Title>{i.titulo}</Title>
-                  <Paragraph>{i.precio}</Paragraph>
+                <View style={{flexDirection: 'row'}}>
+                  <Image
+                    source={{uri: i.imagen}}
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: 8,
+                      overflow: 'hidden',
+                      borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+                      borderWidth: 0.2,
+                    }}
+                  />
+                  <View style={{flex: 1, marginLeft: 16}}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: COLORS.DARK,
+                        fontFamily: 'Roboto-Medium',
+                      }}>
+                      {i.titulo}
+                    </Text>
+                    <NumberFormat
+                      value={i.precio}
+                      displayType={'text'}
+                      thousandSeparator={true}
+                      prefix={'$'}
+                      renderText={(nf) => (
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontFamily: 'Roboto-Light',
+                            color: COLORS.PRIMARY_COLOR,
+                          }}>
+                          {nf}
+                        </Text>
+                      )}
+                    />
+                  </View>
+                  <Icon
+                    name="arrowright"
+                    size={32}
+                    color={COLORS.PRIMARY_COLOR}
+                  />
                 </View>
-                <Icon
-                  name="arrowright"
-                  size={32}
-                  color={COLORS.PRIMARY_COLOR}
-                />
               </TouchableOpacity>
             );
           })}
+          <View style={{height: 30}}></View>
         </ScrollView>
-      </View>
+      </GradientContainer>
     );
   }
 }

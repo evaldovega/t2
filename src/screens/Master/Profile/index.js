@@ -13,7 +13,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
-
+import {Neomorph} from 'react-native-neomorph-shadows';
 import {connect} from 'react-redux';
 import {
   CambiarNombre,
@@ -38,7 +38,10 @@ import {COLORS} from 'constants';
 import {styleHeader} from 'styles';
 import ProfileIdentificacion from './Identificacion';
 import {actualizarDatos, cambiarProp} from 'redux/actions/Usuario';
+
 import Navbar from 'components/Navbar';
+import GradientContainer from 'components/GradientContainer';
+
 const SeguridadSocial = React.lazy(() => import('./SeguridadSocial'));
 
 class Profile extends React.Component {
@@ -79,13 +82,7 @@ class Profile extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <StatusBar
-          translucent={true}
-          backgroundColor={'transparent'}
-          barStyle={'light-content'}
-        />
-
+      <GradientContainer style={styles.container}>
         <Navbar menu title="Perfil" {...this.props} />
 
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -95,19 +92,43 @@ class Profile extends React.Component {
               justifyContent: 'flex-start',
               alignItems: 'center',
               paddingHorizontal: 24,
+              marginTop: 32,
             }}>
-            <TouchableNativeFeedback onPress={this.cambiarFoto}>
-              <Avatar.Image
-                style={styles.avatar}
-                size={96}
-                source={{uri: this.props.usuario.foto_perfil}}
-              />
-            </TouchableNativeFeedback>
+            <Neomorph
+              style={{
+                shadowRadius: 3,
+                borderRadius: 36,
+                backgroundColor: COLORS.PRIMARY_COLOR,
+                width: 72,
+                height: 72,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Neomorph
+                inner
+                style={{
+                  shadowRadius: 7,
+                  borderRadius: 32,
+                  backgroundColor: COLORS.PRIMARY_COLOR,
+                  width: 64,
+                  height: 64,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  overflow: 'hidden',
+                }}>
+                <Avatar.Image
+                  onPress={this.cambiarFoto}
+                  size={64}
+                  source={{uri: this.props.usuario.foto_perfil}}
+                />
+              </Neomorph>
+            </Neomorph>
+
             <View style={{marginLeft: 8}}>
-              <Title style={{textAlign: 'center', color: Colors.white}}>
+              <Title style={{textAlign: 'center', color: COLORS.DARK}}>
                 {this.props.usuario.nombre || 'Nombre del usuario'}
               </Title>
-              <Subheading style={{textAlign: 'center', color: Colors.white}}>
+              <Subheading style={{textAlign: 'center', color: COLORS.DARK}}>
                 {this.props.usuario.num_documento_identidad}
               </Subheading>
             </View>
@@ -123,18 +144,18 @@ class Profile extends React.Component {
 
           <View style={styles.containerInfo}>
             <View style={styles.col}>
-              <Subheading style={{color: Colors.white}}>3.890</Subheading>
-              <Caption style={{color: Colors.white}}>Clientes</Caption>
+              <Subheading style={{color: COLORS.DARK}}>3.890</Subheading>
+              <Caption style={{color: COLORS.DARK}}>Clientes</Caption>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Subheading style={{color: Colors.white}}>257</Subheading>
-              <Caption style={{color: Colors.white}}>Ventas</Caption>
+              <Subheading style={{color: COLORS.DARK}}>257</Subheading>
+              <Caption style={{color: COLORS.DARK}}>Ventas</Caption>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Subheading style={{color: Colors.white}}>1.000.468</Subheading>
-              <Caption style={{color: Colors.white}}>Ganancias</Caption>
+              <Subheading style={{color: COLORS.DARK}}>1.000.468</Subheading>
+              <Caption style={{color: COLORS.DARK}}>Ganancias</Caption>
             </View>
           </View>
 
@@ -186,7 +207,7 @@ class Profile extends React.Component {
             </Suspense>
           </View>
         </ScrollView>
-      </View>
+      </GradientContainer>
     );
   }
 }
@@ -221,12 +242,7 @@ export default connect(mapToState, mapTopActions)(Profile);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.PRIMARY_COLOR,
     elevation: 0,
-  },
-  avatar: {
-    marginTop: getStatusBarHeight(true) + 10,
-    alignSelf: 'center',
   },
   back: {
     position: 'absolute',

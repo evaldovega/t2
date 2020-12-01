@@ -1,27 +1,18 @@
-import React, {Suspense} from 'react';
+import React from 'react';
 import messaging from '@react-native-firebase/messaging';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {Dimensions, Alert, Modal, View} from 'react-native';
+import {Dimensions, Alert, StatusBar} from 'react-native';
 import {initUsuario} from 'redux/actions/Usuario';
 import {connect} from 'react-redux';
-import LoaderModule from 'components/LoaderModules';
-import {Title, Paragraph, Button} from 'react-native-paper';
-import LottieView from 'lottie-react-native';
 import ModalCapacitarse from 'components/ModalCapacitarse';
-const delay = 500;
 
-/*
-const CapacitacionListado = React.lazy(() => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(import('./Capacitacion/Listado')), delay);
-  });
-});*/
 import Dashboard from './Dashboard';
 import CapacitacionListado from './Capacitacion/Listado';
 import Lead from './Client/Lead';
 import Soporte from './Chat/Soporte';
-import Profile from './Profile';
 import MenuLateral from './MenuLateral';
+
+import Profile from './Profile';
 
 const Drawer = createDrawerNavigator();
 const {width, height} = Dimensions.get('screen');
@@ -48,14 +39,6 @@ async function requestUserPermission() {
 
 async function registerAppWithFCM() {
   await messaging().registerDeviceForRemoteMessages();
-}
-
-function cargarModulo(Component) {
-  return (props) => (
-    <Suspense fallback={<LoaderModule visible={true} />}>
-      <Component {...props} />
-    </Suspense>
-  );
 }
 
 class Master extends React.Component {
@@ -86,6 +69,11 @@ class Master extends React.Component {
   render() {
     return (
       <>
+        <StatusBar
+          translucent={true}
+          backgroundColor={'transparent'}
+          barStyle={'light-content'}
+        />
         <Drawer.Navigator
           drawerContent={(props) => <MenuLateral {...props} />}
           drawerType={width >= 768 ? 'permanent' : 'back'}>
@@ -107,6 +95,7 @@ class Master extends React.Component {
         <ModalCapacitarse
           nombre={this.props.nombre}
           habilitado={this.props.habilitado}
+          ready_validation={this.props.ready_validation}
           navigation={this.props.navigation}
         />
       </>
@@ -115,6 +104,7 @@ class Master extends React.Component {
 }
 const mapearEstado = (state) => {
   return {
+    ready_validation: state.Usuario.ready_validation,
     habilitado: state.Usuario.habilitado,
     nombre: state.Usuario.nombre,
   };

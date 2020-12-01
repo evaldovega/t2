@@ -8,6 +8,8 @@ import {
   Image,
 } from 'react-native';
 
+const icon = require('utils/images/icon.png');
+
 const LoaderModule = (props) => {
   const {loading, ...attributes} = props;
 
@@ -21,9 +23,13 @@ const LoaderModule = (props) => {
       }}>
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
-          <ActivityIndicator animating={loading} color="blue" size="large" />
+          <Image
+            source={icon}
+            resizeMode="contain"
+            style={{width: 100, height: 100, alignSelf: 'center'}}
+          />
         </View>
-        <Text>Cargando Modulo...</Text>
+        <Text>Cargando espere un momento por favor...</Text>
       </View>
     </Modal>
   );

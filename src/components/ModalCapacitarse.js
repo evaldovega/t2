@@ -16,7 +16,10 @@ class ModalCapacitarse extends React.Component {
     this.setState({mostrar: !this.props.habilitado});
   }
   componentDidUpdate(prev) {
-    if (prev.habilitado != this.props.habilitado) {
+    if (
+      prev.habilitado != this.props.habilitado &&
+      this.props.ready_validation
+    ) {
       this.setState({mostrar: !this.props.habilitado});
     }
   }

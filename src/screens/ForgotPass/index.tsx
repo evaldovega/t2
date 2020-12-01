@@ -1,6 +1,6 @@
 import React, {memo, useCallback} from 'react';
 import {useNavigation} from "@react-navigation/native";
-import {View, StyleSheet, Text, Alert, TouchableOpacity, Image} from "react-native";
+import {View, StyleSheet, Text, Alert, TouchableOpacity, Image,KeyboardAvoidingView,ScrollView,Platform} from "react-native";
 import SvgLogo from "svgs/forgotPass/SvgLogo";
 import SvgClose from "svgs/forgotPass/SvgClose";
 import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper";
@@ -147,25 +147,26 @@ class ForgotPass extends React.Component {
                 this.setState({msgPassword: "Contraseña cambiada con éxito"})
                 this.props.navigation.pop()
             }else{
-                this.setState({msgPassword: "Algo anda mal"})
+                //this.setState({msgPassword: "Algo anda mal"})
                 console.log(response)
+                Alert.alert("Algo anda mal",response.password.join(','))
             }
         }).catch((err) => {
+            console.log(err)
             this.setState({msgPassword: err.toString()})
         }).finally(() => {
             this.setState({loading:false})
-            setTimeout(() => {
-                Alert.alert(this.state.msgPassword,"")
-            }, 100)
+            
         })
     }
 
     render() {
         return (
-            <View style={styles.container}>
+            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
+                <ScrollView>
                 <Loader loading={this.state.loading}></Loader>
                 <View style={styles.header}>
-                <Image style={styles.logo} source={require('utils/images/ISO.png')}></Image>
+                <Image style={styles.logo} resizeMode='contain' source={require('utils/images/icon.png')}></Image>
                     <TouchableOpacity onPress={this.onPressForgot}>
                         <SvgClose />
                     </TouchableOpacity>
@@ -175,6 +176,7 @@ class ForgotPass extends React.Component {
                 <Text style={styles.des}>
                     {this.state.codeSent == false ? "No te preocupes! Te ayudaremos a \n reestablecer tu contraseña" : this.state.codeValidated == false ? "Ingresa el código enviado a tu \n correo electrónico": "Ingresa tu nueva contraseña"}
                 </Text>
+                
                 { this.state.codeSent == false && this.state.codeValidated == false ? 
                     <View>
                         <Input mt={40} pass={false} errorMsg={this.state.errorMsgMail} borderColor={this.state.mailborderColor} placeholder={'Correo electrónico'} value={this.state.mail} onChangeText={m => this.setState({mail:m})} />
@@ -205,8 +207,8 @@ class ForgotPass extends React.Component {
                         </View>
                     </View>
                 }
-                
-            </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         )
     }
 }

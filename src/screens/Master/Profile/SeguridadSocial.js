@@ -26,9 +26,15 @@ import {TextInput} from 'react-native-gesture-handler';
 import moment from 'moment';
 
 class SeguridadSocial extends React.Component {
-  state = {pdf: null, periodo: moment().format('M'), mostrar: false};
+  state = {
+    pdf: null,
+    periodo: moment().format('M'),
+    year: moment().format('YYYY'),
+    mostrar: false,
+  };
 
   componentDidMount() {
+    console.log(moment().format('M'));
     this.props.cargar();
   }
 
@@ -79,7 +85,10 @@ class SeguridadSocial extends React.Component {
                 console.log(error)
             })*/
       setTimeout(() => {
-        this.props.subir(res);
+        this.props.subir(
+          res,
+          this.state.year + '-' + this.state.periodo + '-01',
+        );
       }, 1500);
     } catch (error) {
       console.log(error);
@@ -95,11 +104,8 @@ class SeguridadSocial extends React.Component {
           <Card style={{marginTop: 8, borderRadius: 16}}>
             <Card.Title
               title={
-                'Periodo ' + a.mes_correspondiente + ' ' + a.anio
+                'Mes de ' + a.mes_correspondiente_display + ' ' + a.anio
               }></Card.Title>
-            <Card.Content>
-              <Text>Valor Cotizado 356.000</Text>
-            </Card.Content>
             <Card.Actions>
               <Button
                 icon="delete"
@@ -171,8 +177,8 @@ class SeguridadSocial extends React.Component {
                 {label: 'Agosto', value: 8},
                 {label: 'Septiembre', value: 9},
                 {label: 'Octubre', value: '10'},
-                {label: 'Noviembre', value: 11},
-                {label: 'Diciembre', value: 12},
+                {label: 'Noviembre', value: '11'},
+                {label: 'Diciembre', value: '12'},
               ]}
               defaultValue={this.state.periodo}
               containerStyle={{
@@ -199,7 +205,9 @@ class SeguridadSocial extends React.Component {
             <Text>Año</Text>
             <TextInput
               keyboardType="decimal-pad"
+              value={this.state.year}
               style={{backgroundColor: '#fafafa'}}
+              onChangeText={(year) => this.setState({year: year})}
             />
 
             <Button
@@ -226,12 +234,6 @@ class SeguridadSocial extends React.Component {
             marginBottom: 32,
           }}>
           <Title style={{color: COLORS.PRIMARY_COLOR}}>Seguridad Social</Title>
-          <FAB
-            icon="sync"
-            loading={this.props.cargando}
-            small
-            onPress={this.props.cargar}
-          />
         </View>
 
         <Paragraph>Recuerda subir tu seguridad social cada mes.</Paragraph>
@@ -258,8 +260,8 @@ const mapToDispatch = (dispatch) => {
     cargar: () => {
       dispatch(cargar());
     },
-    subir: (file) => {
-      dispatch(subir(file));
+    subir: (file, fecha) => {
+      dispatch(subir(file, fecha));
     },
     borrar: (id) => {
       dispatch(borrar(id));

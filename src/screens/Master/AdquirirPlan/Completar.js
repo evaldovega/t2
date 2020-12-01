@@ -14,12 +14,14 @@ import {
   Image,
   KeyboardAvoidingView,
 } from 'react-native';
-import {Text, FAB, Paragraph, Colors, Card, Title} from 'react-native-paper';
+import {Text, Paragraph} from 'react-native-paper';
 import {Button} from 'react-native-elements';
 import NumberFormat from 'react-number-format';
-import TextInputMask from 'react-native-text-input-mask';
 import produce from 'immer';
+import scour from 'scourjs';
 import Loader from 'components/Loader';
+import GradientContainer from 'components/GradientContainer';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
 
 import {
   styleHeader,
@@ -35,185 +37,7 @@ import {validar, totalErrores, renderErrores} from 'utils/Validar';
 import Navbar from 'components/Navbar';
 
 const {width, height} = Dimensions.get('screen');
-
-const {width: viewportWidth} = Dimensions.get('window');
-function wp(percentage) {
-  const value = (percentage * viewportWidth) / 100;
-  return Math.round(value);
-}
-
-const slideHeight = '100%';
-const slideWidth = wp(80);
-const itemHorizontalMargin = wp(2);
-const sliderWidth = viewportWidth;
-const itemWidth = slideWidth + itemHorizontalMargin * 2;
-let amount = 0;
-
 let Validaciones = {};
-
-class EVForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {data: {}};
-  }
-
-  componentDidMount() {}
-
-  change = (name, value, rowIndex, tipo) => {
-    this.setState(
-      produce((draft) => {
-        if (tipo == 'single') {
-          draft.data[name] = value;
-        } else {
-          if (!draft.data[name]) {
-            draft.data[name] = [];
-          }
-          console.log('Array ', rowIndex, value);
-          draft.data[name][rowIndex] = value;
-        }
-      }),
-    );
-  };
-
-  getValues = () => {
-    return this.state.data;
-    /*
-    let data={}
-      React.Children.forEach(this.props.children,(child,index)=>{
-        if(child.tipo=='single'){
-          data[child.props.name]=this.refs['input-'+index].getValue()
-        }else{
-          if(!data[child.props.name]){
-            data[child.props.name]=[]
-          }
-          data[child.props.name].push(this.refs['input-'+index].getValue())
-        }
-      })
-      return data*/
-  };
-
-  render() {
-    let index = 0;
-    const children = React.Children.map(this.props.children, (child) => {
-      if (child.props.children) {
-        return (
-          <child.type
-            {...this.props}
-            {...child.props}
-            change={this.change}
-            tipo="array"
-            ref={'input-' + index++}>
-            {child.props.children}
-          </child.type>
-        );
-      } else {
-        return (
-          <child.type
-            {...this.props}
-            {...child.props}
-            change={this.change}
-            tipo="single"
-            index={index++}>
-            {child.children}
-          </child.type>
-        );
-      }
-    });
-    return <View>{this.props.children}</View>;
-  }
-}
-
-class EVFormList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {values: {}};
-  }
-
-  componentDidMount() {
-    console.log('Mi index ', this.props.rowIndex);
-  }
-
-  change = (name, value, rowIndex, tipo) => {
-    this.setState(
-      produce((draft) => {
-        draft.values[name] = value;
-      }),
-    );
-    setTimeout(() => {
-      this.props.change(
-        this.props.name,
-        this.state.values,
-        this.props.rowIndex,
-        'array',
-      );
-    });
-  };
-
-  getValue = () => {
-    let values = {};
-    React.Children.forEach(this.props.children, (child, index) => {
-      values[child.props.name] = this.refs[
-        'list-' + this.props.name + '-input-' + index
-      ].getValue();
-    });
-    return values;
-  };
-
-  render() {
-    let index = 0;
-    const children = React.Children.map(this.props.children, (child, k) => {
-      if (child.props.children) {
-        return (
-          <child.type
-            {...this.props}
-            {...child.props}
-            change={this.change}
-            rowIndex={this.props.rowIndex}
-            ref={'list-' + this.props.name + '-input-' + index++}>
-            {child.props.children}
-          </child.type>
-        );
-      } else {
-        return (
-          <child.type
-            {...this.props}
-            {...child.props}
-            change={this.change}
-            rowIndex={this.props.rowIndex}
-            ref={'list-' + this.props.name + '-input-' + index++}></child.type>
-        );
-      }
-    });
-    return <>{this.props.children}</>;
-  }
-}
-
-class EVInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {value: 'hola'};
-  }
-  componentDidMount() {
-    this.props.change(this.props.name, '', this.props.rowIndex, 'single');
-  }
-
-  getValue = () => {
-    return this.state.value;
-  };
-  set = (v) => {
-    this.setState({value: v});
-    console.log(this.props.key);
-    this.props.change(this.props.name, v, this.props.rowIndex, 'single');
-  };
-  render() {
-    return (
-      <>
-        <Text>{this.props.label}:</Text>
-        <TextInput value={this.state.value} onChangeText={(v) => this.set(v)} />
-      </>
-    );
-  }
-}
 
 class AdquirirPlan extends React.Component {
   state = {
@@ -226,6 +50,8 @@ class AdquirirPlan extends React.Component {
     formularios: [],
     productos: [],
     mostrar_selector: false,
+    saludo: {msn: 'Hola'},
+    data: {},
   };
 
   componentDidMount() {
@@ -238,23 +64,60 @@ class AdquirirPlan extends React.Component {
     })
       .then((r) => r.json())
       .then((r) => {
+        let data = {
+          plan: '',
+          cliente: '',
+          total_pagado: 0,
+          metodo_pago: '',
+          planes: [],
+        };
+
         const productos = r.planes.map((p) => {
+          let plan = {id: p.id, variaciones: []};
+
           p.variaciones = p.variaciones.map((v) => {
+            let variacion = {id: v.id, valor: v.cantidad_minima};
+            if (v.formularios) {
+              //variaciones.formularios=[]
+            }
             return {...v, ...{cantidad: v.cantidad_minima.toString()}};
           });
+
           if (p.formularios) {
+            plan.formularios = [];
             p.formularios = p.formularios.map((f) => {
-              f.preguntas = f.preguntas.map((p) => ({
-                ...p,
-                ...{mostrar_selector: false},
-              }));
+              let formulario = {id: f.id, campos: []};
+              f.preguntas = f.preguntas.map((p) => {
+                formulario.campos.push({id: p.id, respuesta: ''});
+                return {
+                  ...p,
+                  ...{mostrar_selector: false},
+                };
+              });
+              plan.formularios.push(formulario);
               return f;
             });
           }
+          data.planes.push(plan);
+
           return {...p, ...{seleccionado: false}};
         });
+
+        console.log(data.planes);
         this.setState({productos: productos});
+      })
+      .catch((error) => {
+        console.log(error);
       });
+    /*
+      setTimeout(()=>{
+        this.setState(function(prev,current){
+          console.log("Update state")
+          let state=scour(prev).set('saludo.msn','chao')
+            return state.get('saludo.msn').value
+        })
+        
+      },5000)*/
   }
 
   seleccionarProducto = (estado, id) => {
@@ -386,8 +249,10 @@ class AdquirirPlan extends React.Component {
           }
           //radiochoices
           return (
-            <View key={k_p}>
-              <Paragraph>{p.pregunta}:</Paragraph>
+            <View style={{marginTop: 16}} key={k_p}>
+              <Text style={{fontFamily: 'Roboto-Light', fontSize: 14}}>
+                {p.pregunta}:
+              </Text>
               {p.tipo_pregunta == 'input' ||
               p.tipo_pregunta == 'areatext' ||
               p.tipo_pregunta == 'inputnumber' ? (
@@ -416,7 +281,7 @@ class AdquirirPlan extends React.Component {
                     borderRadius: 16,
                     borderColor: '#A2D9CE',
                     borderWidth: 1,
-                    padding: 16,
+                    padding: 8,
                   }}>
                   <TouchableOpacity
                     onPress={() =>
@@ -437,13 +302,21 @@ class AdquirirPlan extends React.Component {
                   <ModalFilterPicker
                     visible={p.mostrar_selector}
                     onSelect={(p) => {
+                      console.log(
+                        'Opcion seleccionada ',
+                        producto.id,
+                        k_f,
+                        k_p,
+                        p.key,
+                        p,
+                      );
                       this.responderPregunta(
                         producto.id,
                         k_f,
                         k_p,
                         'respuesta',
                         p.key,
-                        p.id145,
+                        p.id,
                       );
                       this.responderPregunta(
                         producto.id,
@@ -478,10 +351,20 @@ class AdquirirPlan extends React.Component {
     }
   };
 
+  renderVariantionForm = (form) => {
+    console.log(form.titulo);
+    return (
+      <View style={{width: '100%'}}>
+        <Text>{form.titulo}</Text>
+      </View>
+    );
+  };
+
   renderVariaciones = (producto) => {
     if (!producto.seleccionado) {
       return;
     }
+
     return producto.variaciones.map((v, i) => {
       return (
         <View style={{marginLeft: 16}}>
@@ -554,6 +437,15 @@ class AdquirirPlan extends React.Component {
               </View>
 
               {renderErrores(this, 'variacion' + v.id)}
+
+              <Carousel
+                data={v.formularios}
+                renderItem={this.renderVariantionForm}
+                sliderWidth={width}
+                itemWidth={width}
+                inactiveSlideScale={0.95}
+                inactiveSlideOpacity={0.4}
+              />
             </>
           ) : null}
         </View>
@@ -577,17 +469,80 @@ class AdquirirPlan extends React.Component {
         thousandSeparator={true}
         prefix={'$'}
         renderText={(nf) => (
-          <Text style={{fontSize: 32, color: '#ffff'}}>{nf}</Text>
+          <Text
+            style={{
+              fontSize: 32,
+              color: COLORS.PRIMARY_COLOR,
+              fontFamily: 'Roboto-Medium',
+            }}>
+            {nf}
+          </Text>
         )}
       />
     );
   };
 
+  renderProduct = (p) => {
+    return (
+      <View
+        key={p.id}
+        style={{
+          paddingVertical: 16,
+          marginTop: 16,
+          marginHorizontal: 16,
+          borderRadius: 24,
+          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+          borderWidth: 0.2,
+        }}>
+        <View style={{padding: 16}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+            }}>
+            <Image
+              source={{uri: p.imagen}}
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: 8,
+                marginRight: 16,
+                borderWidth: 0.2,
+                borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+              }}
+            />
+            <Text
+              style={{
+                flex: 1,
+                color: COLORS.SECONDARY_COLOR_LIGHTER,
+                fontSize: 18,
+                marginBottom: 16,
+                fontFamily: 'Roboto-Medium',
+              }}>
+              {p.titulo}
+            </Text>
+            <Switch
+              value={p.seleccionado}
+              onValueChange={(estado) => this.seleccionarProducto(estado, p.id)}
+            />
+          </View>
+          {this.renderVariaciones(p)}
+          {this.renderFormularios(p)}
+        </View>
+      </View>
+    );
+  };
+
   guardar = () => {
+    const productsSelected = this.state.productos.find((p) => p.seleccionado);
+    if (!productsSelected) {
+      Alert.alert('Selecciona algunos productos', '');
+      return;
+    }
     console.log(this.state.values);
     Object.keys(Validaciones).forEach((k) => {
       let value = this.state.values[k];
-      console.log('INPUT ', k, ' VALOR ', value);
       validar(this, value, k, Validaciones[k].validacion, false);
     });
     setTimeout(() => {
@@ -606,79 +561,42 @@ class AdquirirPlan extends React.Component {
 
   render() {
     return (
-      <KeyboardAvoidingView
-        style={{flex: 1, backgroundColor: COLORS.PRIMARY_COLOR}}>
-        <Loader loading={this.state.cargando} />
+      <KeyboardAvoidingView style={{flex: 1}}>
+        <GradientContainer style={{flex: 1}}>
+          <Loader loading={this.state.cargando} />
 
-        <Navbar back title={this.state.nombre_plan} {...this.props} />
+          <Navbar back title={this.state.nombre_plan} {...this.props} />
 
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingVertical: 32,
-          }}>
-          {this.total()}
-        </View>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingBotton: 8,
+            }}>
+            {this.total()}
+          </View>
+          <View
+            style={{
+              position: 'relative',
+            }}></View>
+          <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+            <View
+              style={{
+                flex: 1,
+                margin: 16,
+              }}>
+              <View style={{flex: 1, paddingBottom: 32}}>
+                {this.state.productos.map((p, i) => this.renderProduct(p))}
 
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: '#eeeeee',
-            borderTopRightRadius: 24,
-            borderTopLeftRadius: 24,
-          }}>
-          <ScrollView
-            style={{flex: 1, padding: 16}}
-            showsVerticalScrollIndicator={false}>
-            <View style={{flex: 1, paddingBottom: 32}}>
-              {this.state.productos.map((p, i) => (
-                <Card
-                  key={p.id}
-                  style={{
-                    marginTop: 8,
-                    marginHorizontal: 16,
-                    borderRadius: 24,
-                  }}>
-                  <Card.Content>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start',
-                      }}>
-                      <Text
-                        style={{
-                          flex: 1,
-                          color: COLORS.PRIMARY_COLOR,
-                          fontSize: 18,
-                          marginBottom: 16,
-                        }}>
-                        {p.titulo}
-                      </Text>
-                      <Switch
-                        value={p.seleccionado}
-                        onValueChange={(estado) =>
-                          this.seleccionarProducto(estado, p.id)
-                        }
-                      />
-                    </View>
-                    {this.renderVariaciones(p)}
-                    {this.renderFormularios(p)}
-                  </Card.Content>
-                </Card>
-              ))}
-              <Button
-                buttonStyle={[
-                  styleButton.wrapper,
-                  {padding: 24, marginVertical: 16},
-                ]}
-                onPress={() => this.guardar()}
-                title="Guardar"
-              />
+                <Button
+                  buttonStyle={[styleButton.wrapper, {fontSize: 32}]}
+                  onPress={() => this.guardar()}
+                  title="Vender"
+                />
+              </View>
             </View>
           </ScrollView>
-        </View>
+        </GradientContainer>
       </KeyboardAvoidingView>
     );
   }
@@ -698,49 +616,3 @@ const mapToAction = (dispatch) => {
 };
 
 export default connect(mapearEstado, mapToAction)(AdquirirPlan);
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    marginVertical: 16,
-    paddingHorizontal: 16,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  dotStyle: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 0,
-    backgroundColor: COLORS.PRIMARY_COLOR,
-  },
-  inactiveDotStyle: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 0,
-    backgroundColor: '#6D5F6F',
-  },
-  containerStyle: {
-    padding: 0,
-    margin: 0,
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-  },
-  item: {
-    elevation: 1,
-    flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 16,
-    width: itemWidth,
-    overflow: 'hidden',
-  },
-  slider: {
-    marginTop: 15,
-    height: '80%',
-    overflow: 'visible',
-  },
-  sliderContentContainer: {
-    paddingVertical: 10, // for custom animation
-  },
-});

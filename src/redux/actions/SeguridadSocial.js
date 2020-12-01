@@ -56,26 +56,26 @@ export const borrar = (id) => {
   };
 };
 
-export const subir = (file) => {
+export const subir = (file, fecha) => {
   return async (dispatch, getState) => {
     dispatch({type: ACTION_SUBIENDO_SC});
     RNFetchBlob.fetch(
       'POST',
-      'http://10.0.82.78:3400/sc',
+      SERVER_ADDRESS + 'api/usuarios/aportes/',
       {
-        Authorization: 'Bearer access-token',
+        Authorization: 'Token ' + getState().Usuario.token,
         'Content-Type': 'multipart/form-data',
       },
       [
         {
-          name: 'file',
+          name: 'archivo',
           filename: file.name,
           type: file.type,
           data: RNFetchBlob.wrap(file.uri),
         },
-        {name: 'ide', data: getState().Usuario.num_documento_identidad},
+        {name: 'user', data: getState().Usuario.id.toString()},
+        {name: 'fecha', data: fecha},
         {name: 'token', data: getState().Usuario.token},
-        {name: 'api', data: SERVER_ADDRESS},
       ],
     )
       .then((resp) => {

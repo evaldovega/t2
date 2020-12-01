@@ -21,6 +21,7 @@ import produce from 'immer';
 const initialState = {
   nombre: '',
   num_documento_identidad: '',
+  ready_validation: false,
   habilitado: false,
   nivel: 'Agente corredor',
   estado: 'Activo',
@@ -58,6 +59,7 @@ export default Usuario = (state = initialState, action) => {
         draft.accediendo = false;
         break;
       case ACTION_USUARIO_SALIR:
+        draft.ready_validation = false;
         draft.token = '';
         draft.nombre = '';
         draft.logeado = false;
@@ -89,6 +91,7 @@ export default Usuario = (state = initialState, action) => {
         draft.ide_foto_respaldo = action.ide_foto_respaldo;
         draft.ide_foto_frente = action.ide_foto_frente;
         draft.habilitado = action.habilitado;
+        draft.ready_validation = true;
         if (action.token) {
           console.log('Esta logeado');
           draft.logeado = true;

@@ -31,11 +31,11 @@ import {COLORS} from 'constants';
 import Check from 'svgs/Check';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Navbar from 'components/Navbar';
+import GradientContainer from 'components/GradientContainer';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F8F9',
   },
   content: {
     flex: 1,
@@ -134,7 +134,8 @@ class Actividad extends React.Component {
                         textAlign:'justify'
                     }
                     body{
-                        textAlign:'justify'
+                        textAlign:'justify';
+                        padding:32px
                     }
                     img{
                         maxWidth:100%
@@ -150,13 +151,14 @@ class Actividad extends React.Component {
       <View
         style={{
           flex: 1,
-          padding: 20,
-          marginHorizontal: 8,
-          backgroundColor: 'white',
-          borderTopRightRadius: 20,
-          borderTopLeftRadius: 20,
-          shadowColor: 'rgba(0,0,0,.5)',
-          elevation: 5,
+          padding: 0,
+          marginVertical: 24,
+          marginHorizontal: 24,
+          backgroundColor: COLORS.BG_GRAY,
+          borderRadius: 20,
+          overflow: 'hidden',
+          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+          borderWidth: 0.3,
         }}>
         <WebView
           showsVerticalScrollIndicator={true}
@@ -182,6 +184,7 @@ class Actividad extends React.Component {
         title={opcion.opcion}
         checkedColor={COLORS.PRIMARY_COLOR}
         checked={pregunta.seleccionada == opcion.id}
+        style={{backgroundColor: 'transparent'}}
       />
     );
   };
@@ -214,20 +217,23 @@ class Actividad extends React.Component {
       return (
         <Card
           key={k}
-          style={{borderRadius: 16, marginBottom: 16}}
-          elevation={4}>
+          style={{
+            borderRadius: 16,
+            marginBottom: 16,
+            backgroundColor: COLORS.BG_GRAY,
+            borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+            borderWidth: 0.3,
+          }}>
           <Card.Content>
-            <Title
-              style={[
-                styleText.h2,
-                {
-                  fontWeight: 'bold',
-                  color: COLORS.PRIMARY_COLOR,
-                  marginBottom: 20,
-                },
-              ]}>
+            <Text
+              style={{
+                fontFamily: 'Roboto-Medium',
+                color: COLORS.SECONDARY_COLOR_LIGHTER,
+                fontSize: 18,
+                marginBottom: 20,
+              }}>
               {p.pregunta}
-            </Title>
+            </Text>
             {p.opciones.map((o, k2) => this.renderOpcion(o, p, k, k2))}
             {p.error && p.error != '' ? (
               <View style={{flexDirection: 'row'}}>
@@ -330,7 +336,7 @@ class Actividad extends React.Component {
     console.log(data.preguntas);
 
     return (
-      <View style={styles.container}>
+      <GradientContainer style={styles.container}>
         <Loader loading={cargando} />
         <Navbar back title={data.tipo} {...this.props} />
 
@@ -341,7 +347,7 @@ class Actividad extends React.Component {
               justifyContent: 'flex-start',
               alignItems: 'stretch',
             }}>
-            <Card
+            {/*<Card
               style={{
                 borderRadius: 16,
                 marginHorizontal: 16,
@@ -394,13 +400,40 @@ class Actividad extends React.Component {
                   ) : null}
                 </View>
               </Card.Content>
-            </Card>
+            </Card>*/}
+            <View>
+              <Text
+                style={{
+                  fontFamily: 'Roboto-Medium',
+                  fontSize: 24,
+                  textAlign: 'center',
+                  color: COLORS.DARK,
+                  marginVertical: 16,
+                }}>
+                {data.titulo}
+              </Text>
+              {data.tipo == 'lectura' ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    alignSelf: 'center',
+                  }}>
+                  <Text style={{fontFamily: 'Roboto-Light'}}>
+                    Marcar como leido
+                  </Text>
+                  <Switch
+                    value={data.visualizado}
+                    onValueChange={() => this.marcarLeida()}></Switch>
+                </View>
+              ) : null}
+            </View>
 
             {this.renderLectura(data)}
             {this.renderCuestionario(data)}
           </View>
         </View>
-      </View>
+      </GradientContainer>
     );
   }
 }

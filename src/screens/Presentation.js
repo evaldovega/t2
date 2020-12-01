@@ -10,11 +10,10 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import LottieView from 'lottie-react-native';
-import {Button, Colors, Title, Paragraph} from 'react-native-paper';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {ROUTERS} from 'utils/navigation';
-
+import LinearGradient from 'react-native-linear-gradient';
+import GradientContainer from 'components/GradientContainer';
 const {width: viewportWidth} = Dimensions.get('window');
 
 function wp(percentage: number) {
@@ -34,22 +33,22 @@ import {COLORS} from 'constants';
 
 const data = [
   {
-    color: '#00C48C',
-    animation: require('animations/sales.json'),
-    Titulo: 'Conéctate y gana',
-    Texto: 'Conéctate y gana vendiendo seguros con Servi',
+    color: '#113b50',
+    image: require('utils/images/presentation/A.png'),
+    Titulo: 'CONÉCTATE Y GANA',
+    subtitle: 'vendiendo seguros',
   },
   {
-    color: '#00817A',
-    animation: require('animations/relot.json'),
-    Titulo: 'Sin horarios',
-    Texto: 'Actívate cuando quieras',
+    color: '#72D4C2',
+    image: require('utils/images/presentation/B.png'),
+    Titulo: 'SIN HORARIOS',
+    subtitle: 'actívate cuando quieras',
   },
   {
-    color: '#00C48C',
-    animation: require('animations/metas.json'),
-    Titulo: 'Gana',
-    Texto: 'Genera ingresos y cumple tus metas',
+    color: '#113b50',
+    image: require('utils/images/presentation/C.png'),
+    Titulo: 'GENERA INGRESOS',
+    subtitle: 'y cumple tus metas',
   },
 ];
 
@@ -84,42 +83,101 @@ class Presentation extends React.Component {
 
   renderItem = ({item}) => {
     return (
-      <View style={[styles.item, {backgroundColor: item.color}]}>
-        <LottieView
-          loop={true}
-          style={{width: '100%'}}
-          source={item.animation}
-          progress={this.state.progress}
-          style={styles.sliderImage}
+      <View
+        style={{
+          width: itemWidth,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Image
+          style={{
+            width: '100%',
+            borderTopRightRadius: 24,
+            borderTopLeftRadius: 24,
+          }}
+          source={item.image}
         />
-        <View style={{flex: 1}}>
-          <Title style={styles.title}>{item.Titulo}</Title>
-          <Paragraph style={styles.des}>{item.Texto}</Paragraph>
+
+        <View
+          style={{
+            width: '100%',
+            margin: 0,
+            backgroundColor: item.color,
+            paddingBottom: 24,
+            borderBottomRightRadius: 64,
+            borderBottomLeftRadius: 64,
+          }}>
+          <Text
+            style={{
+              color: '#ffff',
+              fontFamily: 'Roboto-Black',
+              fontSize: 24,
+              textAlign: 'center',
+              marginTop: 16,
+            }}>
+            {item.Titulo}
+          </Text>
+          <Text
+            style={{
+              color: '#ffff',
+              fontFamily: 'Roboto-Medium',
+              fontSize: 16,
+              textAlign: 'center',
+              marginTop: -4,
+            }}>
+            {item.subtitle}
+          </Text>
         </View>
       </View>
     );
   };
   render() {
     return (
-      <View style={styles.container}>
+      <GradientContainer style={{flex: 1}}>
         <StatusBar
           translucent={true}
           backgroundColor={'transparent'}
           barStyle={'dark-content'}
         />
+
         <View style={styles.header}>
           <Image
             style={styles.logo}
-            source={require('utils/images/LOGO.png')}></Image>
-          <Pagination
-            dotsLength={3}
-            activeDotIndex={this.state.indexActive}
-            dotStyle={styles.dotStyle}
-            inactiveDotStyle={styles.inactiveDotStyle}
-            containerStyle={styles.containerStyle}
-            inactiveDotScale={1}
-          />
+            resizeMode={'contain'}
+            source={require('utils/images/logo_black.png')}></Image>
+          <View style={{flexDirection: 'row'}}>
+            <View
+              style={{
+                shadowOpacity: 16,
+                backgroundColor:
+                  this.state.indexActive == 0 ? COLORS.ACCENT : COLORS.GRAY,
+                borderRadius: 4,
+                width: 8,
+                height: 8,
+                marginRight: 8,
+              }}></View>
+            <View
+              style={{
+                backgroundColor:
+                  this.state.indexActive == 1 ? COLORS.ACCENT : COLORS.GRAY,
+                borderRadius: 4,
+                width: 8,
+                height: 8,
+                marginRight: 8,
+              }}></View>
+            <View
+              inner
+              useArt // <- set this prop to use non-native shadow on ios
+              style={{
+                backgroundColor:
+                  this.state.indexActive == 2 ? COLORS.ACCENT : COLORS.GRAY,
+                borderRadius: 4,
+                width: 8,
+                height: 8,
+              }}></View>
+          </View>
         </View>
+
         <View style={styles.boxCarousel}>
           <Carousel
             data={data}
@@ -133,20 +191,57 @@ class Presentation extends React.Component {
             onSnapToItem={(i) => this.setState({indexActive: i})}
           />
         </View>
-        <TouchableOpacity
+
+        <View
           style={{
-            borderRadius: 16,
-            margin: 24,
-            padding: 16,
-            backgroundColor: COLORS.PRIMARY_COLOR,
-            elevation: 8,
-          }}
-          onPress={this.vendeYa}>
-          <Text style={{color: '#ffff', textAlign: 'center'}}>
-            ¡Vende ya {this.props.nombre}!
-          </Text>
-        </TouchableOpacity>
-      </View>
+            flexDirection: 'row',
+            margin: 12,
+            justifyContent: 'space-around',
+          }}>
+          <TouchableOpacity
+            style={{
+              borderRadius: 64,
+              padding: 16,
+              flex: 1,
+              backgroundColor: COLORS.ACCENT,
+              elevation: 4,
+              alignSelf: 'center',
+              marginHorizontal: 4,
+            }}
+            onPress={() => requestAnimationFrame(() => this.vendeYa())}>
+            <Text
+              style={{
+                color: '#ffff',
+                textAlign: 'center',
+                fontFamily: 'Roboto-Black',
+                fontSize: 18,
+              }}>
+              ¡Vende ya!
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              borderRadius: 64,
+              padding: 16,
+              marginHorizontal: 4,
+              backgroundColor: COLORS.BG_BLUE,
+              elevation: 4,
+              alignSelf: 'center',
+            }}
+            onPress={() => this.props.navigation.push('FQA')}>
+            <Text
+              style={{
+                color: COLORS.DARK,
+                textAlign: 'center',
+                fontFamily: 'Roboto-Black',
+                fontSize: 18,
+              }}>
+              FAQ
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </GradientContainer>
     );
   }
 }
@@ -168,37 +263,23 @@ export default connect(mapToState, mapToActions)(Presentation);
 
 const styles = StyleSheet.create({
   slider: {
-    marginTop: 15,
+    marginTop: 8,
     height: '100%',
-    overflow: 'visible', // for custom animations
+    overflow: 'hidden', // for custom animations
     padding: 0,
     margin: 0,
   },
   logo: {
-    width: 200,
-    height: 60,
+    width: 80,
+    aspectRatio: 1,
   },
   sliderContentContainer: {
     paddingVertical: 10, // for custom animation
   },
   sliderImage: {
-    width: '80%',
+    width: '100%',
     alignSelf: 'center',
     flex: 1,
-  },
-  dotStyle: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 0,
-    backgroundColor: COLORS.PRIMARY_COLOR,
-  },
-  inactiveDotStyle: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 0,
-    backgroundColor: '#6D5F6F',
   },
   containerStyle: {
     padding: 0,
@@ -208,11 +289,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.BG_BLUE,
   },
   header: {
     flexDirection: 'row',
-    marginVertical: 56,
+    marginTop: 30,
+    marginBottom: 1,
     paddingHorizontal: 24,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -236,22 +318,25 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   item: {
-    borderRadius: 16,
+    borderTopRightRadius: 24,
+    borderTopLeftRadius: 24,
+    borderBottomLeftRadius: 64,
+    borderBottomEndRadius: 64,
     width: itemWidth,
     height: slideHeight,
-    paddingHorizontal: itemHorizontalMargin,
     overflow: 'hidden',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
   },
   svgIntro: {
     alignSelf: 'center',
   },
   title: {
     color: '#FFF',
-
-    marginTop: 50,
-    marginLeft: 24,
-    marginRight: 16,
+    fontFamily: 'Roboto-Medium',
+    fontSize: 18,
+    marginTop: 8,
+    marginHorizontal: 16,
+    textAlign: 'center',
   },
   des: {
     color: '#FFFFFF',

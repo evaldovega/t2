@@ -244,7 +244,8 @@ export const subirFotoIde = (image, lado) => {
               lado == 'frente'
                 ? body.foto_documento_cara1
                 : body.foto_documento_cara2;
-            foto_subida = SERVER_ADDRESS + foto_subida;
+            foto_subida =
+              SERVER_ADDRESS + foto_subida.replace('/media', 'media');
             if (lado == 'frente') {
               data_user.foto_documento_cara1 = foto_subida;
             } else {

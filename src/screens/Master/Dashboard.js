@@ -8,6 +8,7 @@ import {
   StatusBar,
   Animated,
   Easing,
+  Dimensions,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Montserrat} from 'utils/fonts';
@@ -24,7 +25,10 @@ import Icon from 'react-native-vector-icons/Entypo';
 import {COLORS} from 'constants';
 import LottieView from 'lottie-react-native';
 import Navbar from 'components/Navbar';
+import GradientContainer from 'components/GradientContainer';
+import {Neomorph} from 'react-native-neomorph-shadows';
 
+const {width, height} = Dimensions.get('screen');
 class Dashboard extends React.Component {
   state = {
     progress: new Animated.Value(0),
@@ -42,15 +46,10 @@ class Dashboard extends React.Component {
   }
   render() {
     return (
-      <View style={styles.container}>
-        <StatusBar
-          translucent={true}
-          backgroundColor={'transparent'}
-          barStyle={'light-content'}
-        />
+      <GradientContainer style={styles.container}>
         <Navbar menu title="Dashboard" {...this.props}></Navbar>
 
-        <View style={styles.containerTime}>
+        {/*<View style={styles.containerTime}>
           {dataTime.map((item) => {
             return (
               <TouchableOpacity style={styles.btnTime} key={item}>
@@ -59,25 +58,28 @@ class Dashboard extends React.Component {
             );
           })}
           <SvgHover style={styles.svgHover} />
-        </View>
+        </View>*/}
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View
-            style={[
-              styles.boxStatus,
-              {
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-              },
-            ]}>
+          <Neomorph
+            swapShadows // <- change zIndex of each shadow color
+            style={{
+              shadowRadius: 5,
+              borderRadius: 25,
+              padding: 25,
+              backgroundColor: '#FFA26B',
+              width: width - 50,
+              height: 100,
+              marginHorizontal: 24,
+              marginVertical: 25,
+            }}>
             <View style={{flex: 1}}>
               <Text style={styles.txtGood}>Buen trabajo 👍</Text>
               <Text style={styles.txtKeep}>
                 Este mes haz alcanzado tus metas!
               </Text>
             </View>
-          </View>
+          </Neomorph>
 
           <View style={styles.containerChart}>
             <View style={styles.boxHeader}>
@@ -120,7 +122,7 @@ class Dashboard extends React.Component {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </GradientContainer>
     );
   }
 }
@@ -142,7 +144,6 @@ export default connect(mapToState, mapToActions)(Dashboard);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F8F9',
   },
   header: {
     backgroundColor: '#6979F8',
