@@ -25,7 +25,7 @@ const validations = {
     lastname:{
         presence: {allowEmpty: false, message: '^Este campo es requerido'},
     },
-    mail: {
+    email: {
         email:{message:'^Email invalido'},
         presence: {allowEmpty: false, message: '^Este campo es requerido'},
     },
@@ -69,7 +69,7 @@ class SignUp extends React.Component {
             firstnameErrors: false,
             lastname: "",
             lastnameErrors: false,
-            mail: "",
+            email: "",
             mailErrors: false,
             password1: "",
             password1Errors: false,
@@ -153,7 +153,7 @@ class SignUp extends React.Component {
     onSwitchAcceptContratoChange = () => {
         // Enviar codigo de aprobacion
         if(!this.state.aceptacionContrato){
-            if(this.state.mail == ""){
+            if(this.state.email == ""){
                 Alert.alert("Debe ingresar un correo electrónico válido", "")
                 return
             }
@@ -165,7 +165,7 @@ class SignUp extends React.Component {
                     'content-type': 'application/json'
                 },
                 body: JSON.stringify({
-                    'email': this.state.mail
+                    'email': this.state.email
                 })
             }).then(r => r.json()).then(response => {
                 if(response.activo){
@@ -359,7 +359,7 @@ class SignUp extends React.Component {
             user:{
                 first_name: this.state.firstname,
                 last_name: this.state.lastname,
-                email:this.state.mail,
+                email:this.state.email,
                 password: this.state.password1,
             },
             firma:firma,
@@ -467,9 +467,9 @@ class SignUp extends React.Component {
                         mt={16} 
                         pass={false} 
                         placeholder={'Correo electrónico'} 
-                        value={this.state.mail} 
+                        value={this.state.email} 
                         onChangeText={v=>this.onChangeValue('email',v)}
-                        onBlur={() =>validar(this,this.state.email,'mail', validations.mail,false)} />
+                        onBlur={() =>validar(this,this.state.email,'mail', validations.email,false)} />
                         <View style={{paddingHorizontal:32}}>{renderErrores(this, 'mail')}</View>
 
                         <Input mt={16} pass={true}  placeholder={'Contraseña'} value={this.state.password1} onChangeText={v=>this.onChangeValue('password1',v)} onBlur={()=>validar(this,this.state.password1,'password1',validations.password1,false)} />

@@ -78,7 +78,6 @@ const style = StyleSheet.create({
   },
   title: {
     marginLeft: 16,
-    fontFamily: 'Mont-Bold',
     fontSize: 17,
     color: '#ffff',
   },

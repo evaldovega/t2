@@ -70,7 +70,7 @@ class Planes extends React.Component {
     });
   };
 
-  onCLose = () => {
+  onClose = () => {
     this.setState({modal_show: false});
   };
 
@@ -81,7 +81,7 @@ class Planes extends React.Component {
         <ModalWebView
           html={this.state.doc.informacion}
           visible={this.state.modal_show}
-          onClose={this.onCLose}
+          onClose={this.onClose}
           footer={
             <TouchableOpacity
               mode="contained"
@@ -116,29 +116,32 @@ class Planes extends React.Component {
                   marginHorizontal: 16,
                   flexDirection: 'row',
                   alignItems: 'center',
+                  flex: 1,
                   padding: 16,
                   elevation: 0,
                   borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
                   borderWidth: 0.2,
                 }}>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{flexDirection: 'column', flex: 1}}>
                   <Image
                     source={{uri: i.imagen}}
                     style={{
-                      width: 64,
-                      height: 64,
+                      flex: 1,
+                      height: 200,
                       borderRadius: 8,
                       overflow: 'hidden',
                       borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
                       borderWidth: 0.2,
                     }}
                   />
-                  <View style={{flex: 1, marginLeft: 16}}>
+                  <View style={{flex: 1, marginLeft: 16, alignSelf: 'center'}}>
                     <Text
                       style={{
                         fontSize: 16,
                         color: COLORS.DARK,
                         fontFamily: 'Roboto-Medium',
+                        alignSelf: 'center',
+                        marginTop: 10,
                       }}>
                       {i.titulo}
                     </Text>
@@ -152,18 +155,18 @@ class Planes extends React.Component {
                           style={{
                             fontSize: 14,
                             fontFamily: 'Roboto-Light',
-                            color: COLORS.PRIMARY_COLOR,
+                            backgroundColor: COLORS.PRIMARY_COLOR,
+                            paddingVertical: 4,
+                            paddingHorizontal: 8,
+                            color: 'white',
+                            alignSelf: 'center',
+                            marginTop: 6,
                           }}>
                           {nf}
                         </Text>
                       )}
                     />
                   </View>
-                  <Icon
-                    name="arrowright"
-                    size={32}
-                    color={COLORS.PRIMARY_COLOR}
-                  />
                 </View>
               </TouchableOpacity>
             );
