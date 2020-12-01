@@ -13,6 +13,7 @@ import DatePicker from 'react-native-datepicker'
 import ModalWebView from 'components/ModalWebView';
 import ModalPrompt from 'components/ModalPrompt';
 import SignatureCapture from 'react-native-signature-capture';
+import produce from 'immer'
 import { Caption, Divider, FAB,Colors } from 'react-native-paper';
 import {validar, totalErrores, renderErrores} from 'utils/Validar';
 
@@ -111,6 +112,7 @@ class SignUp extends React.Component {
             contratoValidated: false,
             textResponseCodeValidation: "",
             error:{},
+            values:{},
             mostrarTerminos:false,
             terminosHtml:''
         }
@@ -141,6 +143,13 @@ class SignUp extends React.Component {
     onSwitchAcceptChange = () => {
         this.setState({isEnabled: !this.state.isEnabled})
     }
+    onChangeValue=(name,value)=>{
+        this.setState(produce(draft=>{
+            draft.values[name]=value
+            draft[name]=value
+        }))
+    }
+
     onSwitchAcceptContratoChange = () => {
         // Enviar codigo de aprobacion
         if(!this.state.aceptacionContrato){
@@ -448,10 +457,10 @@ class SignUp extends React.Component {
                     <View>
                         <Header/>
                         <Loader loading={this.state.loading}></Loader>
-                        <Input mt={60} pass={false} placeholder={'Nombres'} value={this.state.firstname} onChangeText={firstName=>this.setState({firstname:firstName})} onBlur={() =>validar(this, 'firstname', validations.firstname,false)}/>
+                        <Input mt={60} pass={false} placeholder={'Nombres'} value={this.state.firstname} onChangeText={v=>this.onChangeValue('firstname',v)} onBlur={() =>validar(this,this.state.firstname, 'firstname', validations.firstname,false)}/>
                         <View style={{paddingHorizontal:32}}>{renderErrores(this, 'firstname')}</View>
                         
-                        <Input mt={16} pass={false}  placeholder={'Apellidos'} value={this.state.lastname} onChangeText={lastName=>this.setState({lastname:lastName})} onBlur={() =>validar(this, 'lastname', validations.lastname,false)} />
+                        <Input mt={16} pass={false}  placeholder={'Apellidos'} value={this.state.lastname} onChangeText={v=>this.onChangeValue('lastname',v)} onBlur={() =>validar(this,this.state.lastname, 'lastname', validations.lastname,false)} />
                         <View style={{paddingHorizontal:32}}>{renderErrores(this, 'lastname')}</View>
 
                         <Input 
@@ -459,14 +468,14 @@ class SignUp extends React.Component {
                         pass={false} 
                         placeholder={'Correo electrónico'} 
                         value={this.state.mail} 
-                        onChangeText={email=>this.setState({mail:email})} 
-                        onBlur={() =>validar(this, 'mail', validations.mail,false)} />
+                        onChangeText={v=>this.onChangeValue('email',v)}
+                        onBlur={() =>validar(this,this.state.email,'mail', validations.mail,false)} />
                         <View style={{paddingHorizontal:32}}>{renderErrores(this, 'mail')}</View>
 
-                        <Input mt={16} pass={true}  placeholder={'Contraseña'} value={this.state.password1} onChangeText={p1=>this.setState({password1:p1})} onBlur={()=>validar(this,'password1',validations.password1,false)} />
+                        <Input mt={16} pass={true}  placeholder={'Contraseña'} value={this.state.password1} onChangeText={v=>this.onChangeValue('password1',v)} onBlur={()=>validar(this,this.state.password1,'password1',validations.password1,false)} />
                         <View style={{paddingHorizontal:32}}>{renderErrores(this, 'password1')}</View>
 
-                        <Input mt={16} pass={true} error={this.state.password2Errors} placeholder={'Confirma tu contraseña'} value={this.state.password2} onChangeText={p2=>this.setState({password2:p2})} onBlur={()=>validar(this,'password2',validations.password2,false)}/>
+                        <Input mt={16} pass={true} error={this.state.password2Errors} placeholder={'Confirma tu contraseña'} value={this.state.password2} onChangeText={v=>this.onChangeValue('password2',v)} onBlur={()=>validar(this,this.state.password2,'password2',validations.password2,false)}/>
                         <View style={{paddingHorizontal:32}}>{renderErrores(this, 'password2')}</View>
 
                         <View style={[styles.line, {marginTop:20}]}></View>
@@ -475,7 +484,7 @@ class SignUp extends React.Component {
                         </View>
                         
                         {/* Formulario complementario */}
-                        <Input mt={30} pass={false} placeholder={'Número de WhatsApp'} value={this.state.numWhatsapp} onChangeText={whatsapp=>this.setState({numWhatsapp:whatsapp})} onBlur={()=>validar(this,'numWhatsapp',validations.numWhatsapp,false)} />
+                        <Input mt={30} pass={false} placeholder={'Número de WhatsApp'} value={this.state.numWhatsapp} onChangeText={v=>this.onChangeValue('numWhatsapp',v)} onBlur={()=>validar(this,this.state.numWhatsapp,'numWhatsapp',validations.numWhatsapp,false)} />
                         <View style={{paddingHorizontal:32}}>{renderErrores(this, 'numWhatsapp')}</View>
 
                         <View style={[styles.containerDropdown, this.state.pickedGenero ? null : styles.errorDropDown]}>
@@ -514,7 +523,7 @@ class SignUp extends React.Component {
                             />
                         </View>
                         
-                        <Input mt={16} pass={false}  placeholder={'Dirección'} value={this.state.direccion} onChangeText={dir=>this.setState({direccion:dir})} onBlur={()=>validar(this,'direccion',validations.direccion,false)} />
+                        <Input mt={16} pass={false}  placeholder={'Dirección'} value={this.state.direccion} onChangeText={v=>this.onChangeValue('direccion',v)} onBlur={()=>validar(this,this.state.direccion,'direccion',validations.direccion,false)} />
                         <View style={{paddingHorizontal:32}}>{renderErrores(this,'direccion')}</View>
 
                         <View style={styles.inputDatePickerContainer}>
