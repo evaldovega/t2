@@ -153,7 +153,7 @@ class SignUp extends React.Component {
     onSwitchAcceptContratoChange = () => {
         // Enviar codigo de aprobacion
         if(!this.state.aceptacionContrato){
-            if(this.state.mail == ""){
+            if(this.state.email == ""){
                 Alert.alert("Debe ingresar un correo electrónico válido", "")
                 return
             }
@@ -165,7 +165,7 @@ class SignUp extends React.Component {
                     'content-type': 'application/json'
                 },
                 body: JSON.stringify({
-                    'email': this.state.mail
+                    'email': this.state.email
                 })
             }).then(r => r.json()).then(response => {
                 if(response.activo){
@@ -359,7 +359,7 @@ class SignUp extends React.Component {
             user:{
                 first_name: this.state.firstname,
                 last_name: this.state.lastname,
-                email:this.state.mail,
+                email:this.state.email,
                 password: this.state.password1,
             },
             firma:firma,

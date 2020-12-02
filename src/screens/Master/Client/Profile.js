@@ -348,7 +348,7 @@ class ClientProfile extends React.Component {
                 style={{
                   marginLeft: 4,
                   color: '#ffff',
-                  fontFamily: 'Roboto-Thint',
+                  fontFamily: 'Roboto-Thin',
                 }}>
                 Editar
               </Text>
