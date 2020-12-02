@@ -9,11 +9,14 @@ import {
   Alert,
   SafeAreaView,
   Modal,
+  TextInput,
+  Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
-import {Neomorph} from 'react-native-neomorph-shadows';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+// import {Neomorph} from 'react-native-neomorph-shadows';
 import {connect} from 'react-redux';
 import {
   CambiarNombre,
@@ -25,7 +28,7 @@ import {
   Avatar,
   FAB,
   Subheading,
-  TextInput,
+  // TextInput,
   Title,
   Caption,
   Button,
@@ -80,10 +83,38 @@ class Profile extends React.Component {
       });
   };
 
+  onPressMenu = () => {
+    requestAnimationFrame(() => {
+      this.props.navigation.openDrawer();
+    });
+  };
+
   render() {
     return (
-      <GradientContainer style={styles.container}>
-        <Navbar menu title="Perfil" {...this.props} />
+      <LinearGradient style={styles.container} colors={['#72d3c1', '#72d3c1']}>
+        {/* <Navbar menu title="Perfil" {...this.props} /> */}
+
+        <View style={[styles.wrapper]}>
+          <TouchableOpacity
+            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
+            style={styles.btnLeft}
+            onPress={this.onPressMenu}>
+            <SimpleLineIcons name="menu" size={24} color="#ffff" />
+          </TouchableOpacity>
+
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.title}>Perfil</Text>
+          </View>
+          <View style={styles.btnRight}>
+            <React.Fragment>
+              <Image
+                source={require('utils/images/isologo.png')}
+                style={{width: 40, height: 40}}
+                resizeMode="contain"
+              />
+            </React.Fragment>
+          </View>
+        </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View
@@ -94,7 +125,7 @@ class Profile extends React.Component {
               paddingHorizontal: 24,
               marginTop: 32,
             }}>
-            <Neomorph
+            <View
               style={{
                 shadowRadius: 3,
                 borderRadius: 36,
@@ -104,7 +135,7 @@ class Profile extends React.Component {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Neomorph
+              <View
                 inner
                 style={{
                   shadowRadius: 7,
@@ -121,14 +152,15 @@ class Profile extends React.Component {
                   size={64}
                   source={{uri: this.props.usuario.foto_perfil}}
                 />
-              </Neomorph>
-            </Neomorph>
+              </View>
+            </View>
 
             <View style={{marginLeft: 8}}>
-              <Title style={{textAlign: 'center', color: COLORS.DARK}}>
+              <Title style={{textAlign: 'center', color: 'white'}}>
                 {this.props.usuario.nombre || 'Nombre del usuario'}
               </Title>
-              <Subheading style={{textAlign: 'center', color: COLORS.DARK}}>
+              <Subheading
+                style={{textAlign: 'center', color: 'white', marginLeft: -38}}>
                 {this.props.usuario.num_documento_identidad}
               </Subheading>
             </View>
@@ -144,18 +176,18 @@ class Profile extends React.Component {
 
           <View style={styles.containerInfo}>
             <View style={styles.col}>
-              <Subheading style={{color: COLORS.DARK}}>3.890</Subheading>
-              <Caption style={{color: COLORS.DARK}}>Clientes</Caption>
+              <Subheading style={{color: 'white'}}>3.890</Subheading>
+              <Caption style={{color: 'white'}}>Clientes</Caption>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Subheading style={{color: COLORS.DARK}}>257</Subheading>
-              <Caption style={{color: COLORS.DARK}}>Ventas</Caption>
+              <Subheading style={{color: 'white'}}>257</Subheading>
+              <Caption style={{color: 'white'}}>Ventas</Caption>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Subheading style={{color: COLORS.DARK}}>1.000.468</Subheading>
-              <Caption style={{color: COLORS.DARK}}>Ganancias</Caption>
+              <Subheading style={{color: 'white'}}>1.000.468</Subheading>
+              <Caption style={{color: 'white'}}>Ganancias</Caption>
             </View>
           </View>
 
@@ -164,34 +196,51 @@ class Profile extends React.Component {
               Datos Personales
             </Title>
 
-            <TextInput
-              label="Número de Documento"
-              textContentType="number"
-              onChangeText={(t) =>
-                this.props.cambiarProp('num_documento_identidad', t)
-              }
-              value={this.props.usuario.num_documento_identidad}
-              style={{backgroundColor: 'transparent'}}
-            />
+            <Text style={styles.labelInput}>Número de documento</Text>
+            <View style={styles.containerInput}>
+              <TextInput
+                style={[styles.input]}
+                placeholder={'Número de documento'}
+                placeholderTextColor={'#ABA4AC'}
+                value={this.props.usuario.num_documento_identidad}
+                onChangeText={(t) =>
+                  this.props.cambiarProp('num_documento_identidad', t)
+                }
+              />
+            </View>
 
-            <TextInput
-              label="Correo Electrónico"
-              textContentType="emailAddress"
-              value={this.props.usuario.email}
-              onChangeText={(t) => this.props.cambiarProp('email', t)}
-              style={{backgroundColor: 'transparent'}}
-            />
-            <TextInput
-              label="Número de Celular"
-              textContentType="telephoneNumber"
-              onChangeText={(t) => this.props.cambiarProp('cel', t)}
-              value={this.props.usuario.cel}
-              style={{backgroundColor: 'transparent'}}
-            />
+            <Text style={styles.labelInput}>Correo electrónico</Text>
+            <View style={styles.containerInput}>
+              <TextInput
+                style={[styles.input]}
+                label="Correo Electrónico"
+                textContentType="emailAddress"
+                value={this.props.usuario.email}
+                onChangeText={(t) => this.props.cambiarProp('email', t)}
+                placeholder={'Correo electrónico'}
+                placeholderTextColor={'#ABA4AC'}
+              />
+            </View>
+
+            <Text style={styles.labelInput}>Número de celular</Text>
+            <View style={styles.containerInput}>
+              <TextInput
+                style={[styles.input]}
+                textContentType="telephoneNumber"
+                onChangeText={(t) => this.props.cambiarProp('cel', t)}
+                value={this.props.usuario.cel}
+                placeholder={'Número de celular'}
+                placeholderTextColor={'#ABA4AC'}
+              />
+            </View>
 
             <Button
               icon="pencil"
-              style={{marginVertical: 16}}
+              style={{
+                marginVertical: 16,
+                backgroundColor: COLORS.PRIMARY_COLOR,
+                color: 'white',
+              }}
               onPress={this.props.actualizarDatos}
               loading={this.props.usuario.actualizando_perfil}>
               Actualizar Datos
@@ -207,7 +256,7 @@ class Profile extends React.Component {
             </Suspense>
           </View>
         </ScrollView>
-      </GradientContainer>
+      </LinearGradient>
     );
   }
 }
@@ -353,5 +402,60 @@ const styles = StyleSheet.create({
   },
   work: {
     marginTop: 16,
+  },
+  wrapper: {
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    backgroundColor: '#FFFFFF00',
+    paddingHorizontal: 24,
+    height: 96,
+    paddingTop: getStatusBarHeight(),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    zIndex: 99,
+    overflow: 'hidden',
+    elevation: 0.2,
+  },
+  title: {
+    marginLeft: 16,
+    fontSize: 17,
+    color: '#ffff',
+  },
+  btnLeft: {
+    zIndex: 1,
+    elevation: 0,
+  },
+  btnRight: {elevation: 0},
+
+  containerInput: {
+    marginHorizontal: 16,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#EAE8EA',
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    flex: 1,
+  },
+  textAlert: {
+    marginHorizontal: 40,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    color: 'red',
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    fontFamily: 'Roboto',
+    padding: 0,
+    margin: 0,
+  },
+  labelInput: {
+    marginHorizontal: 18,
+    marginTop: 15,
+    marginBottom: 5,
+    fontWeight: 'bold',
   },
 });
