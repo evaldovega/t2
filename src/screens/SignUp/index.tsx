@@ -25,7 +25,7 @@ const validations = {
     lastname:{
         presence: {allowEmpty: false, message: '^Este campo es requerido'},
     },
-    mail: {
+    email: {
         email:{message:'^Email invalido'},
         presence: {allowEmpty: false, message: '^Este campo es requerido'},
     },
@@ -69,7 +69,7 @@ class SignUp extends React.Component {
             firstnameErrors: false,
             lastname: "",
             lastnameErrors: false,
-            mail: "",
+            email: "",
             mailErrors: false,
             password1: "",
             password1Errors: false,
@@ -467,10 +467,10 @@ class SignUp extends React.Component {
                         mt={16} 
                         pass={false} 
                         placeholder={'Correo electrónico'} 
-                        value={this.state.mail} 
+                        value={this.state.email} 
                         onChangeText={v=>this.onChangeValue('email',v)}
-                        onBlur={() =>validar(this,this.state.email,'mail', validations.mail,false)} />
-                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'mail')}</View>
+                        onBlur={() =>validar(this,this.state.email,'email', validations.email,false)} />
+                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'email')}</View>
 
                         <Input mt={16} pass={true}  placeholder={'Contraseña'} value={this.state.password1} onChangeText={v=>this.onChangeValue('password1',v)} onBlur={()=>validar(this,this.state.password1,'password1',validations.password1,false)} />
                         <View style={{paddingHorizontal:32}}>{renderErrores(this, 'password1')}</View>

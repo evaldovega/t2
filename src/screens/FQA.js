@@ -43,7 +43,7 @@ class FQA extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-        <NavBar title="Preguntas frecuentes" />
+        <NavBar back title="Preguntas frecuentes" {...this.props} />
         <ScrollView>
           {this.state.docs.map((r, key) => (
             <Card>

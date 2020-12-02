@@ -18,6 +18,8 @@ import {Colors, Button} from 'react-native-paper';
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import {loadClient, changeProp, save} from '../../../redux/actions/Clients';
 import {validar, totalErrores, renderErrores} from 'utils/Validar';
+import GradientContainer from 'components/GradientContainer';
+import Navbar from 'components/Navbar';
 
 const styles = StyleSheet.create({
   container: {
@@ -96,22 +98,9 @@ class ClientSave extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <GradientContainer style={styles.container}>
         <Loader loading={this.props.loading} />
-        <StatusBar
-          translucent={true}
-          backgroundColor={'transparent'}
-          barStyle={'light-content'}
-        />
-        <View style={styleHeader.wrapper}>
-          <TouchableOpacity
-            style={styleHeader.btnLeft}
-            onPress={() => this.props.navigation.pop()}>
-            <Icon name="arrowleft" color="white" size={24} />
-          </TouchableOpacity>
-          <Text style={styleHeader.title}>Guardar Cliente</Text>
-          <View></View>
-        </View>
+        <Navbar {...this.props} title="Guardar cliente" back />
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{paddingHorizontal: 16, paddingVertical: 32}}>
             <View style={styleInput.wrapper}>
@@ -277,7 +266,7 @@ class ClientSave extends React.Component {
             </Button>
           </View>
         </ScrollView>
-      </View>
+      </GradientContainer>
     );
   }
 }

@@ -56,12 +56,8 @@ const Planes = React.lazy(() => {
   ]).then(([moduleExports]) => moduleExports);
 });
 
-const AdquirirPlan = React.lazy(() => {
-  return Promise.all([
-    import('../screens/Master/AdquirirPlan/Completar'),
-    new Promise((resolve) => setTimeout(resolve, delay)),
-  ]).then(([moduleExports]) => moduleExports);
-});
+import AdquirirPlan from '../screens/Master/AdquirirPlan/Completar';
+import VariacionFormulario from '../screens/Master/AdquirirPlan/VariacionFormulario';
 
 const TaskSave = React.lazy(() => {
   return new Promise((resolve) => {
@@ -231,13 +227,17 @@ const MainNavigation = memo(() => {
                   options={optionNavigator}
                 />
               )}
-              {AdquirirPlan && (
-                <Screen
-                  name="AdquirirPlan"
-                  component={AdquirirPlan}
-                  options={optionNavigator}
-                />
-              )}
+
+              <Screen
+                name="AdquirirPlan"
+                component={AdquirirPlan}
+                options={optionNavigator}
+              />
+              <Screen
+                name="VariacionFormulario"
+                component={VariacionFormulario}
+                options={optionNavigator}
+              />
             </Navigator>
           </Suspense>
         </NavigationContainer>
