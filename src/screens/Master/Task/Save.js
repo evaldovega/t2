@@ -26,6 +26,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
 import {cargar} from '../../../redux/actions/TaskType';
 import {taskSave} from '../../../redux/actions/Clients';
+import GradientContainer from 'components/GradientContainer';
+import Navbar from 'components/Navbar';
 
 class TaskSave extends React.Component {
   state = {
@@ -73,17 +75,9 @@ class TaskSave extends React.Component {
     const fecha = moment(this.state.fecha_agendamiento).format('YYYY-MM-DD');
     const hora = moment(this.state.fecha_agendamiento).format('hh:mm a');
     return (
-      <View style={{flex: 1}}>
+      <GradientContainer style={{flex: 1}}>
         <Loader loading={this.props.loading} />
-        <View style={styleHeader.wrapper}>
-          <FAB
-            icon="arrow-left"
-            onPress={() => this.props.navigation.pop()}
-            style={styleHeader.btnLeft}
-          />
-          <Text style={styleHeader.title}>Agendar Tarea</Text>
-          <FAB style={{opacity: 0}} />
-        </View>
+        <Navbar back title="Agendar cita" {...this.props} />
         <ScrollView style={{flex: 1}}>
           <View style={{flex: 1}}>
             <Card
@@ -173,7 +167,7 @@ class TaskSave extends React.Component {
             </Card>
           </View>
         </ScrollView>
-      </View>
+      </GradientContainer>
     );
   }
 }
