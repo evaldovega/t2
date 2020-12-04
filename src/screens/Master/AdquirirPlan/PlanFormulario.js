@@ -1,12 +1,19 @@
 import module from '@react-native-firebase/app';
-import {COLORS} from 'constants';
-import React from 'react';
+import {COLORS, CURVA, MARGIN_HORIZONTAL, TITULO_TAM} from 'constants';
+import React, {useEffect, useState} from 'react';
 import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 import NumberFormat from 'react-number-format';
 import ModalFilterPicker from 'react-native-modal-filter-picker';
 import TextInputMask from 'react-native-text-input-mask';
 import produce from 'immer';
 import {validar, totalErrores, renderErrores} from 'utils/Validar';
+
+import Button from 'components/Button';
+import InputText from 'components/InputText';
+import InputMask from 'components/InputMask';
+import Select from 'components/Select';
+
+import Validator from 'components/Validator';
 
 const Validaciones = {};
 
@@ -16,6 +23,7 @@ class PlanFormulario extends React.Component {
     values: {},
     preguntas: [],
   };
+  refs = React.createRef([]);
 
   responder = (pregunta, valor) => {
     this.setState(
@@ -59,34 +67,16 @@ class PlanFormulario extends React.Component {
     }, 500);
   };
   renderChoices = (pregunta) => {
-    console.log(pregunta);
     const {tipo_pregunta, opciones, mostrar_selector, respuesta} = pregunta;
     if (tipo_pregunta == 'choice') {
       return (
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 4,
-            borderWidth: 0.2,
-            padding: 8,
-          }}>
-          <TouchableOpacity onPress={() => this.abrirOpciones(pregunta)}>
-            <Text>
-              {respuesta && respuesta != ''
-                ? opciones.find((o) => o.id == respuesta).opcion
-                : 'Seleccione'}
-            </Text>
-          </TouchableOpacity>
-          <ModalFilterPicker
-            visible={mostrar_selector}
-            onSelect={(opcion) => this.seleccionarOpcion(pregunta, opcion.key)}
-            onCancel={() => this.abrirOpciones(pregunta, false)}
-            options={opciones.map((o) => ({
-              key: o.id,
-              label: o.opcion,
-            }))}
-          />
-        </View>
+        <Select
+          marginTop={1}
+          value={respuesta}
+          placeholder={'Seleccione'}
+          options={opciones.map((o) => ({key: o.id, label: o.opcion}))}
+          onSelect={(opcion) => this.seleccionarOpcion(pregunta, opcion.key)}
+        />
       );
     }
   };
@@ -103,24 +93,15 @@ class PlanFormulario extends React.Component {
         props.numberOfLines = 4;
       }
       return (
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 4,
-            borderWidth: 0.2,
-            padding: 8,
-          }}>
-          <TextInput
-            style={{padding: 0}}
-            returnKeyType={'next'}
-            value={pregunta.respuesta}
-            onChangeText={(value) => {
-              this.responder(pregunta, value);
-            }}
-            onBlur={() => this.onBlur(pregunta)}
-            {...props}
-          />
-        </View>
+        <InputText
+          marginTop={1}
+          input={props}
+          value={pregunta.respuesta}
+          onChangeText={(value) => {
+            this.responder(pregunta, value);
+          }}
+          onBlur={() => this.onBlur(pregunta)}
+        />
       );
     }
   };
@@ -129,25 +110,16 @@ class PlanFormulario extends React.Component {
     const {tipo_pregunta, respuesta} = pregunta;
     if (tipo_pregunta == 'date') {
       return (
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 4,
-            borderWidth: 0.2,
-            padding: 8,
-          }}>
-          <TextInputMask
-            style={{margin: 0, padding: 0}}
-            placeholder="0000-00-00"
-            value={pregunta.respuesta}
-            returnKeyType={'next'}
-            onChangeText={(formatted, extracted) => {
-              this.responder(pregunta, formatted);
-            }}
-            onBlur={() => this.onBlur(pregunta)}
-            mask={'[0000]-[00]-[00]'}
-          />
-        </View>
+        <InputMask
+          marginTop={1}
+          placeholder="0000-00-00"
+          value={pregunta.respuesta}
+          onChangeText={(formatted, extracted) => {
+            this.responder(pregunta, formatted);
+          }}
+          onBlur={() => this.onBlur(pregunta)}
+          mask={'[0000]-[00]-[00]'}
+        />
       );
     }
   };
@@ -155,7 +127,7 @@ class PlanFormulario extends React.Component {
   renderPreguntas = (preguntas) => {
     return preguntas.map((pregunta) => (
       <View style={{marginTop: 16}}>
-        <Text style={{fontFamily: 'Roboto-Light', fontSize: 14}}>
+        <Text style={{fontFamily: 'Mont-Medium', fontSize: TITULO_TAM * 0.6}}>
           {pregunta.pregunta + ' ' + (pregunta.obligatorio ? '*' : '')}
         </Text>
         {this.renderInput(pregunta)}
@@ -167,14 +139,19 @@ class PlanFormulario extends React.Component {
   };
 
   validar = () => {
-    return new Promise((resolve, reject) => {
-      Object.keys(Validaciones).forEach((k) => {
+    return new Promise(async (resolve) => {
+      const promesas = [];
+      for (let k of Object.keys(Validaciones)) {
         let value = this.state.values[k];
-        validar(this, value, k, Validaciones[k].validacion, false);
+        promesas.push(
+          validar(this, value, k, Validaciones[k].validacion, false),
+        );
+      }
+      Promise.all(promesas).then(() => {
+        setTimeout(() => {
+          resolve(totalErrores(this));
+        }, 300);
       });
-      setTimeout(() => {
-        resolve(totalErrores(this));
-      }, 100);
     });
   };
 
@@ -223,18 +200,30 @@ class PlanFormulario extends React.Component {
     });
   }
 
+  enviar = () => {
+    console.log(this.refs);
+  };
+
   render() {
     const {titulo, preguntas} = this.state;
 
     return (
       <View
         style={{
-          borderRadius: 24,
-          borderWidth: 0.2,
-          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-          padding: 16,
+          borderRadius: CURVA,
+          padding: MARGIN_HORIZONTAL,
+          backgroundColor: 'rgba(255,255,255,.7)',
         }}>
-        <Text style={{fontFamily: 'Roboto-Medium'}}>{titulo}</Text>
+        <Text style={{fontFamily: 'Mont-Regular', fontSize: TITULO_TAM * 0.7}}>
+          {titulo}
+        </Text>
+        {/*<Validator ref={(r) => (this.refs['v1'] = r)} value={this.state.valor} constraints={{'presence':{'allowEmpty':false,'message':'^Diligencie éste campo'}}}>
+          <InputText value={this.state.valor} onChangeText={(v)=>this.setState({valor:v})}/>
+        </Validator>
+        <Validator ref={(r) => (this.refs['v2'] = r)} value={this.state.valor2} valueb={this.state.valor} constraints={{equality:{attribute:"e2",message:'^Las contraseñas introducidas no coinciden!',},'presence':{'allowEmpty':false,'message':'^Diligencie éste campo'}}}>
+          <InputText value={this.state.valor2} onChangeText={(v)=>this.setState({valor2:v})}/>
+        </Validator><Button title='Enviar' onPress={this.enviar}/>*/}
+
         {this.renderPreguntas(preguntas)}
       </View>
     );

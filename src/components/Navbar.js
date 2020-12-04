@@ -1,15 +1,31 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Animated,
+  Easing,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Entypo';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import {COLORS} from 'constants';
+import {
+  COLORS,
+  CURVA,
+  MARGIN_HORIZONTAL,
+  MARGIN_VERTICAL,
+  TITULO_TAM,
+} from 'constants';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
-import LinearGradient from 'react-native-linear-gradient';
 
 class Navbar extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      value: new Animated.Value(-10),
+    };
   }
 
   onPressMenu = () => {
@@ -21,65 +37,105 @@ class Navbar extends React.Component {
     this.props.navigation.pop();
   };
 
+  componentDidMount() {
+    Animated.timing(
+      this.state.value,
+      {toValue: 0, duration: 500, useNativeDriver: true},
+      Easing,
+    ).start();
+  }
+
   render() {
+    const extra_styles = {};
+    if (this.props.transparent) {
+      extra_styles.backgroundColor = 'transparent';
+    }
+    let ICON_COLOR = COLORS.NEGRO_N1;
+    if (this.props.icon_color) {
+      ICON_COLOR = this.props.icon_color;
+    }
+    const {value} = this.state;
+
     return (
-      <View style={[style.wrapper]}>
-        {this.props.menu ? (
-          <TouchableOpacity
-            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
-            style={style.btnLeft}
-            onPress={this.onPressMenu}>
-            <SimpleLineIcons name="menu" size={24} color="#ffff" />
-          </TouchableOpacity>
-        ) : null}
-        {this.props.back ? (
-          <TouchableOpacity
-            hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
-            style={style.btnLeft}
-            onPress={this.onBack}>
-            <IconAntDesign name="arrowleft" size={24} color="#ffff" />
-          </TouchableOpacity>
-        ) : null}
-        <View style={{flexDirection: 'row'}}>
-          <Text style={style.title}>{this.props.title}</Text>
-        </View>
-        <View style={style.btnRight}>
-          <React.Fragment>
-            {this.props.right ? (
-              this.props.right
-            ) : (
-              <Image
-                source={require('utils/images/icon_bg_dark.png')}
-                style={{width: 20, height: 20}}
-                resizeMode="contain"
-              />
-            )}
-          </React.Fragment>
-        </View>
-      </View>
+      <React.Fragment>
+        <Animated.View
+          style={{
+            transform: [
+              {
+                translateY: value.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-16, 0],
+                }),
+              },
+            ],
+          }}>
+          <View style={[style.wrapper, extra_styles]}>
+            {this.props.menu ? (
+              <TouchableOpacity
+                hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
+                style={style.btnLeft}
+                onPress={this.onPressMenu}>
+                <SimpleLineIcons name="menu" size={20} color={ICON_COLOR} />
+              </TouchableOpacity>
+            ) : null}
+            {this.props.back ? (
+              <TouchableOpacity
+                hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
+                style={style.btnLeft}
+                onPress={this.onBack}>
+                <SimpleLineIcons
+                  name="arrow-left"
+                  size={20}
+                  color={ICON_COLOR}
+                />
+              </TouchableOpacity>
+            ) : null}
+            <View style={{flexDirection: 'row', flex: 1}}>
+              <Text style={[style.title, this.props.style_title]}>
+                {this.props.title}
+              </Text>
+            </View>
+            <View style={style.btnRight}>
+              <React.Fragment>
+                {this.props.right ? (
+                  this.props.right
+                ) : (
+                  <Image
+                    source={require('utils/images/icon.png')}
+                    style={{width: 24, height: 24}}
+                    resizeMode="contain"
+                  />
+                )}
+              </React.Fragment>
+            </View>
+          </View>
+        </Animated.View>
+      </React.Fragment>
     );
   }
 }
 
 const style = StyleSheet.create({
   wrapper: {
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    backgroundColor: COLORS.DARK,
-    paddingHorizontal: 24,
-    height: 96,
-    paddingTop: getStatusBarHeight(),
+    borderBottomLeftRadius: CURVA,
+    borderBottomRightRadius: CURVA,
+    backgroundColor: COLORS.BLANCO,
+    paddingHorizontal: MARGIN_HORIZONTAL,
+    minHeight: 96,
+    paddingTop: 24 + getStatusBarHeight(),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     zIndex: 99,
     overflow: 'hidden',
-    elevation: 0.2,
   },
   title: {
-    marginLeft: 16,
-    fontSize: 17,
-    color: '#ffff',
+    marginHorizontal: MARGIN_HORIZONTAL,
+    fontSize: TITULO_TAM * 0.8,
+    color: COLORS.NEGRO,
+    fontFamily: 'Mont-Bold',
+    textAlign: 'center',
+    flex: 1,
   },
   btnLeft: {
     zIndex: 1,

@@ -26,6 +26,7 @@ const initialState = {
   actividad_seleccionada: {},
   error: '',
   cuestionario_aprobado: false,
+  habilitado: false,
 };
 export default Capacitacion = (state = initialState, action) => {
   return produce(state, (draft) => {
@@ -95,6 +96,7 @@ export default Capacitacion = (state = initialState, action) => {
           .actividades.find((a) => a.id == action.actividad_id).aprobado =
           action.aprobado;
         draft.cuestionario_aprobado = action.aprobado;
+        draft.habilitado = action.habilitado;
         break;
       case ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_ERROR:
         draft.cargando = false;

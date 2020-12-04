@@ -1,4 +1,5 @@
 import {
+  ACTION_USUARIO_HABILITAR,
   ACTION_CAMBIAR_NOMBRE_USUARIO,
   ACTION_USUARIO_ACCEDER,
   ACTION_USUARIO_ACCESO_CORRECTO,
@@ -39,9 +40,7 @@ export const acceder = (data) => {
       })
         .then((r) => r.json())
         .then(async (r) => {
-          console.log(r);
           if (r.token) {
-            console.log('********************LOGIN*******************');
             console.log(JSON.stringify(r.data));
             await setSharedPreference('auth-token', r.token);
             await setSharedPreference('data-user', JSON.stringify(r.data));
@@ -109,9 +108,6 @@ export const initUsuario = () => {
     if (token) {
       d.token = token;
     }
-    console.log('******************INIT****************');
-    console.log(d);
-    console.log(data_user);
     dispatch(d);
   };
 };
@@ -331,5 +327,16 @@ export const actualizarDatos = () => {
         error: error.toString(),
       });
     }
+  };
+};
+
+export const habilitar = (state) => {
+  return async (dispatch, getState) => {
+    console.log('CAMBIAR ESTADO HABILITADO ', state);
+    let data_user = await getSharedPreference('data-user');
+    data_user = JSON.parse(data_user);
+    data_user = state;
+    setSharedPreference('data-user', JSON.stringify(data_user));
+    dispatch({type: ACTION_USUARIO_HABILITAR, state: state});
   };
 };

@@ -96,7 +96,7 @@ const ModalPrompt = memo((props: Props) => {
               ]}>
               <TextInput
                 style={{
-                  fontFamily: 'Montserrat-Black',
+                  fontFamily: 'Mont-Bold',
                   fontSize: 18,
                   flex: 1,
                   textAlign: 'center',

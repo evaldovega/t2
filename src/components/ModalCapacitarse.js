@@ -6,15 +6,21 @@ import {Modal, View, Image} from 'react-native';
 class ModalCapacitarse extends React.Component {
   state = {mostrar: false};
 
+  constructor(props) {
+    super(props);
+  }
+
   capacitarme = () => {
     this.setState({mostrar: false});
     setTimeout(() => {
       this.props.navigation.navigate('Capacitaciones');
     }, 100);
   };
+
   componentDidMount() {
     this.setState({mostrar: !this.props.habilitado});
   }
+
   componentDidUpdate(prev) {
     if (
       prev.habilitado != this.props.habilitado &&
@@ -23,6 +29,7 @@ class ModalCapacitarse extends React.Component {
       this.setState({mostrar: !this.props.habilitado});
     }
   }
+
   render() {
     return (
       <Modal

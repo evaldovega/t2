@@ -5,11 +5,13 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 import {Avatar, Title, Drawer, Caption} from 'react-native-paper';
-import {View, Image} from 'react-native';
+import {View, Image, Text} from 'react-native';
 import {connect} from 'react-redux';
 import {salir} from 'redux/actions/Usuario';
 import moment from 'moment';
 import GradientContainer from 'components/GradientContainer';
+import AntDesing from 'react-native-vector-icons/AntDesign';
+import {COLORS, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
 
 class MenuLateral extends React.Component {
   componentDidMount() {}
@@ -21,14 +23,19 @@ class MenuLateral extends React.Component {
         <Image
           source={require('utils/images/logo_black.png')}
           resizeMode="contain"
-          style={{width: 100, height: 80, alignSelf: 'center'}}
+          style={{
+            width: 100,
+            height: 80,
+            alignSelf: 'center',
+            marginVertical: MARGIN_VERTICAL,
+          }}
         />
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             marginHorizontal: 16,
-            marginVertical: 32,
+            marginBottom: MARGIN_VERTICAL * 2,
           }}>
           <Title style={{flex: 1}}>
             {this.props.nombre} {this.props.index}
@@ -45,6 +52,21 @@ class MenuLateral extends React.Component {
               })
             }
           />
+          <View
+            style={{
+              flexDirection: 'row',
+              paddingHorizontal: MARGIN_HORIZONTAL,
+            }}>
+            <AntDesing name="phone" size={24} color={COLORS.NEGRO_N1} />
+            <Text
+              style={{
+                marginLeft: 28,
+                fontFamily: 'Mont-Bold',
+                color: COLORS.NEGRO_N1,
+              }}>
+              Prueba
+            </Text>
+          </View>
           {this.props.habilitado ? (
             <Drawer.Item
               label="Dashboard"

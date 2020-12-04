@@ -1,20 +1,43 @@
 import React, {memo, useCallback} from 'react';
-import {useNavigation} from "@react-navigation/native";
 import {View, StyleSheet, Text, Alert, TouchableOpacity, Image,KeyboardAvoidingView,ScrollView,Platform} from "react-native";
-import SvgLogo from "svgs/forgotPass/SvgLogo";
 import SvgClose from "svgs/forgotPass/SvgClose";
 import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper";
-import SvgLogoKey from "svgs/forgotPass/SvgLogoKey";
 import {Lato, Montserrat} from "utils/fonts";
-import Input from "screens/SiginIn/components/Input";
-import { SERVER_ADDRESS, COLORS } from 'constants';
-import Loader from "components/Loader"
+import { SERVER_ADDRESS, COLORS, MARGIN_HORIZONTAL } from 'constants';
 
+import {validar, totalErrores, renderErrores} from 'utils/Validar';
+import Loader from "components/Loader"
+import ColorfullContainer from 'components/ColorfullContainer'
+import Button from 'components/Button'
+import InputText from 'components/InputText'
+import { TextInput } from 'react-native-paper';
+
+const validations = {
+    email: {
+        email:{message:'^Email invalido'},
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+    codeInput:{
+        presence: {allowEmpty: false, message: '^Ingrese el codigo que se le ha enviado'},
+    },
+    password1:{
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+    password2:{
+        equality:{
+            attribute:"password1",
+            message:'^Las contraseñas introducidas no coinciden!',
+        },
+        presence: {allowEmpty: false, message: '^Este campo es requerido'},
+    },
+}
 class ForgotPass extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            mail: "",
+            values:{},
+            error:{},
+            email: "evaldo.vega@gmail.com",
             loading:false,
             mailborderColor: '#EAE8EA',
             errorMsgMail: "",
@@ -41,8 +64,9 @@ class ForgotPass extends React.Component {
     }
 
     onPressRecovery = () => {
-        if(this.state.mail == ""){
-            this.setState({mailborderColor: "red", errorMsgMail: "ERROR"})
+        
+        validar(this,this.state.email,'email',validations.email,false)
+        if(this.state.error['email'].length>0){
             return
         }
 
@@ -54,7 +78,7 @@ class ForgotPass extends React.Component {
                 'content-type': 'application/json'
             },
             body: JSON.stringify({
-                'email': this.state.mail,
+                'email': this.state.email,
             })
         }).then(r => r.json()).then(response => {
             console.log(response)
@@ -66,20 +90,19 @@ class ForgotPass extends React.Component {
                 }catch(err){
                     console.log(err)
                 }
+            }else if(response.email){
+                Alert.alert('Hay algunos problemas',response.email.join('\n'))
             }
         }).catch((err) => {
             this.setState({msg: err.toString()})
         }).finally(() => {
             this.setState({loading:false})
-            setTimeout(() => {
-                Alert.alert(this.state.msg,"")
-            }, 100)
         })
     }
 
     onCodeInput = () => {
-        if(this.state.codeInput == ""){
-            this.setState({codeborderColor: "red", errorMsgCode: "ERROR"})
+        validar(this,this.state.codeInput,'codeInput',validations.codeInput,false)
+        if(this.state.error['codeInput'].length>0){
             return
         }
         this.setState({loading:true})
@@ -116,20 +139,13 @@ class ForgotPass extends React.Component {
     }
 
     onChangePassword = () => {
-        this.setState({pass1borderColor:"", errorPass1:"", pass2borderColor:"", errorPass2:""})
-        if(this.state.password1 == ""){
-            this.setState({pass1borderColor: "red", errorPass1: "ERROR"})
-            return
-        }
-        if(this.state.password2 == ""){
-            this.setState({pass2borderColor: "red", errorPass2: "ERROR"})
+        validar(this,this.state.password1,'password1', validations.password1,false)
+        validar(this,{password1:this.state.password1,password2:this.state.password2},'password2', validations.password2,false)
+
+        if(this.state.error['password1'].length>0 || this.state.error['password2'].length>0){
             return
         }
         
-        if(this.state.password1 != this.state.password2){
-            Alert.alert("Las contraseñas no coinciden", "")
-            return
-        }
 
         this.setState({loading:true})
         fetch(SERVER_ADDRESS+"recovery/confirm/", {
@@ -162,53 +178,54 @@ class ForgotPass extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
-                <ScrollView>
-                <Loader loading={this.state.loading}></Loader>
-                <View style={styles.header}>
-                <Image style={styles.logo} resizeMode='contain' source={require('utils/images/icon.png')}></Image>
-                    <TouchableOpacity onPress={this.onPressForgot}>
-                        <SvgClose />
-                    </TouchableOpacity>
-                </View>
-                <Image style={styles.forgotImage} source={require('screens/ForgotPass/ForgotPassImage.png')}></Image>
-                <Text style={styles.title}>Olvidaste tu contraseña?</Text>
-                <Text style={styles.des}>
-                    {this.state.codeSent == false ? "No te preocupes! Te ayudaremos a \n reestablecer tu contraseña" : this.state.codeValidated == false ? "Ingresa el código enviado a tu \n correo electrónico": "Ingresa tu nueva contraseña"}
-                </Text>
-                
-                { this.state.codeSent == false && this.state.codeValidated == false ? 
-                    <View>
-                        <Input mt={40} pass={false} errorMsg={this.state.errorMsgMail} borderColor={this.state.mailborderColor} placeholder={'Correo electrónico'} value={this.state.mail} onChangeText={m => this.setState({mail:m})} />
-                        <View style={styles.containerSignIn}>
-                            <TouchableOpacity style={styles.btnSignIn} onPress={this.onPressRecovery}>
-                                <Text style={styles.txtSignIn}>Recuperar contraseña</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                : this.state.codeValidated == false ?
-                    <View>
-                        <Input mt={40} pass={false} styleInput={{fontFamily:"Montserrat-Black",fontSize:22,textAlign:"center"}} errorMsg={this.state.errorMsgCode} borderColor={this.state.codeborderColor} placeholder={'Ingresa el código'} value={this.state.codeInput} onChangeText={code => this.setState({codeInput:code})} />
-                        <View style={styles.containerSignIn}>
-                            <TouchableOpacity style={styles.btnSignIn} onPress={this.onCodeInput}>
-                                <Text style={styles.txtSignIn}>Validar</Text>
-                            </TouchableOpacity>
-                        </View>
+            
+                <ColorfullContainer style={{flex:1}}>
+                    <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
+                    <ScrollView style={{flex:1,paddingHorizontal:MARGIN_HORIZONTAL}}>
+                    <Loader loading={this.state.loading}></Loader>
+                    
+                    <View style={styles.header}>
+                    
+                        <TouchableOpacity onPress={this.onPressForgot}>
+                            <SvgClose />
+                        </TouchableOpacity>
                     </View>
 
-                    :
-                    <View>
-                        <Input mt={40} pass={true} errorMsg={this.state.errorPass1} borderColor={this.state.password1BorderColor} placeholder={'Contraseña'} value={this.state.password1} onChangeText={pass1 => this.setState({password1:pass1})} />
-                        <Input mt={40} pass={true} errorMsg={this.state.errorPass2} borderColor={this.state.password2BorderColor} placeholder={'Confirma la contraseña'} value={this.state.password2} onChangeText={pass2 => this.setState({password2:pass2})} />
-                        <View style={styles.containerSignIn}>
-                            <TouchableOpacity style={styles.btnSignIn} onPress={this.onChangePassword}>
-                                <Text style={styles.txtSignIn}>Cambiar contraseña</Text>
-                            </TouchableOpacity>
+                    <Image style={styles.forgotImage} source={require('utils/images/recuperar.png')}></Image>
+                    <Text style={styles.title}>Olvidaste tu contraseña?</Text>
+                    <Text style={styles.des}>
+                        {this.state.codeSent == false ? "No te preocupes! Te ayudaremos a \n reestablecer tu contraseña" : this.state.codeValidated == false ? "Ingresa el código enviado a tu \n correo electrónico": "Ingresa tu nueva contraseña"}
+                    </Text>
+                    
+                    { this.state.codeSent == false && this.state.codeValidated == false ? 
+                        <View>
+                            <InputText marginTop={3} placeholder='Correo electronico' value={this.state.email} onChangeText={m => this.setState({email:m})} onBlur={() =>validar(this,this.state.email,'email', validations.email,false)}/>
+                            <View>{renderErrores(this, 'email')}</View>
+                            <Button marginTop={1} title='Recuperar contraseña' onPress={this.onPressRecovery}/>
+                            
                         </View>
-                    </View>
-                }
-                </ScrollView>
+                    : this.state.codeValidated == false ?
+                        <View>
+                            <InputText marginTop={3}  placeholder={'Ingresa el código'} value={this.state.codeInput} onChangeText={code => this.setState({codeInput:code})} onBlur={() =>validar(this,this.state.codeInput,'codeInput', validations.codeInput,false)} />
+                            <View>{renderErrores(this, 'codeInput')}</View>
+                            <Button marginTop={1} title='Validar' onPress={this.onCodeInput}/>
+                        </View>
+
+                        :
+                        <View>
+                            <InputText marginTop={3} password  placeholder={'Contraseña'} value={this.state.password1} onChangeText={pass1 => this.setState({password1:pass1})} onBlur={() =>validar(this,this.state.password1,'password1', validations.password1,false)}/>
+                            <View>{renderErrores(this, 'password1')}</View>
+                            <InputText marginTop={1} pssword pass={true}  placeholder={'Confirma la contraseña'} value={this.state.password2} onChangeText={pass2 => this.setState({password2:pass2})} onBlur={() =>validar(this,{password1:this.state.password1,password2:this.state.password2},'password2', validations.password2,false)}/>
+                            <View>{renderErrores(this, 'password2')}</View>
+                            <Button marginTop={1} onPress={this.onChangePassword} title='Cambiar contraseña' />
+
+                        </View>
+                    }
+                    
+                    </ScrollView>
+                
             </KeyboardAvoidingView>
+            </ColorfullContainer>
         )
     }
 }
@@ -252,10 +269,10 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        marginTop: getStatusBarHeight(true),
+        marginTop: getStatusBarHeight(true)+MARGIN_HORIZONTAL,
         marginLeft: 32,
         marginRight: 16,
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         alignItems: 'center'
     },
     logo: {
@@ -265,15 +282,15 @@ const styles = StyleSheet.create({
         height: 60
     },
     title: {
-        color: '#1A051D',
+        color: COLORS.NEGRO,
         fontSize: 24,
         fontWeight: '500',
         marginTop: 32,
-        fontFamily: Montserrat,
+        fontFamily: 'Mont-Bold',
         alignSelf: 'center'
     },
     des: {
-        fontFamily: Lato,
+        fontFamily: 'Mont-Regular',
         color: '#6D5F6F',
         textAlign: 'center',
         marginTop: 7

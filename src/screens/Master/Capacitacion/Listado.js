@@ -9,30 +9,37 @@ import {
   Dimensions,
   RefreshControl,
   Alert,
+  Text,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Entypo';
 import {Montserrat} from 'utils/fonts';
 import {
   Avatar,
   Card,
-  Button,
   Title,
   Paragraph,
   ProgressBar,
   Colors,
-  Text,
   HelperText,
   FAB,
 } from 'react-native-paper';
-import {Shadow} from 'react-native-neomorph-shadows';
 import Loader from 'components/Loader';
-import {COLORS} from 'constants';
+import {
+  COLORS,
+  CURVA,
+  MARGIN_HORIZONTAL,
+  MARGIN_VERTICAL,
+  TITULO_TAM,
+} from 'constants';
 import {connect} from 'react-redux';
 import {capacitacionesCargar} from '../../../redux/actions';
+
 import Navbar from 'components/Navbar';
-import GradientContainer from 'components/GradientContainer';
+import ColorfullContainer from 'components/ColorfullContainer';
+import Button from 'components/Button';
+
 const {width, height} = Dimensions.get('screen');
-const width_progress = width * 0.7;
+const width_progress = width * 0.4;
 class CapacitacionListado extends React.Component {
   componentDidMount() {
     this.props.cargar();
@@ -60,75 +67,84 @@ class CapacitacionListado extends React.Component {
     return this.props.listado.map((l, k) => (
       <Card
         style={{
-          marginTop: 16,
-          borderRadius: 16,
+          marginTop: MARGIN_VERTICAL,
+          borderRadius: CURVA,
           overflow: 'hidden',
           elevation: 0,
-          backgroundColor: COLORS.BG_BLUE,
+          backgroundColor: 'rgba(255,255,255,.2)',
           borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
           borderWidth: 0.3,
         }}>
         <Card.Cover source={{uri: l.imagen_portada}} />
-        <Card.Content style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-          <View style={{flex: 1, justifyContent: 'center'}}>
-            <Text
-              style={{
-                marginTop: 16,
-                marginBottom: 8,
-                color: COLORS.DARK,
-                textAlign: 'center',
-                fontSize: 18,
-                fontFamily: 'Roboto-Medium',
-              }}>
-              {l.titulo}
-            </Text>
-            {parseFloat(l.progreso) >= 100 && (
-              <Text style={{marginVertical: 8, color: Colors.green400}}>
-                Capacitación completada <Icon name="check" />
-                <Icon name="check" />
+        <View style={{padding: MARGIN_VERTICAL}}>
+          <Card.Content>
+            <View style={{flex: 1, justifyContent: 'center'}}>
+              <Text
+                style={{
+                  marginTop: MARGIN_VERTICAL,
+                  marginBottom: MARGIN_VERTICAL * 2,
+                  color: COLORS.NEGRO,
+                  textAlign: 'left',
+                  fontSize: TITULO_TAM,
+                  fontFamily: 'Mont-Bold',
+                }}>
+                {l.titulo}
               </Text>
-            )}
-            <View style={{alignItems: 'center'}}>
+              {parseFloat(l.progreso) >= 100 && (
+                <Text style={{marginVertical: 8, color: Colors.green400}}>
+                  Capacitación completada <Icon name="check" />
+                  <Icon name="check" />
+                </Text>
+              )}
               <View
                 style={{
-                  backgroundColor: 'white',
-                  width: width_progress,
-                  height: 10,
-                  borderRadius: 16,
-                  overflow: 'hidden',
-                  borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-                  borderWidth: 0.3,
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
                 }}>
-                <View
-                  style={{
-                    backgroundColor: COLORS.PRIMARY_COLOR,
-                    height: 10,
-                    borderTopRightRadius: 20,
-                    width: width_progress * (l.progreso / 100),
-                  }}></View>
+                <View style={{alignItems: 'center'}}>
+                  <View
+                    style={{
+                      backgroundColor: 'white',
+                      width: width_progress,
+                      height: 10,
+                      borderRadius: CURVA,
+                      overflow: 'hidden',
+                      borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+                      borderWidth: 0.3,
+                    }}>
+                    <View
+                      style={{
+                        backgroundColor: COLORS.PRIMARY_COLOR,
+                        height: 10,
+                        borderTopRightRadius: CURVA,
+                        width: width_progress * (l.progreso / 100),
+                      }}></View>
+                  </View>
+                </View>
+                <Text style={styles.progress}>{l.progreso}%</Text>
               </View>
             </View>
-            <Text style={styles.progress}>{l.progreso}%</Text>
-          </View>
-        </Card.Content>
+          </Card.Content>
 
-        <Card.Actions style={{justifyContent: 'flex-end'}}>
-          <Button
-            rounded
-            onPress={() =>
-              requestAnimationFrame(() => {
-                this.detalle(l);
-              })
-            }>
-            Capacitarme
-          </Button>
-        </Card.Actions>
+          <Card.Actions
+            style={{justifyContent: 'center', marginTop: MARGIN_VERTICAL}}>
+            <Button
+              title="Capacitarme"
+              onPress={() =>
+                requestAnimationFrame(() => {
+                  this.detalle(l);
+                })
+              }
+            />
+          </Card.Actions>
+        </View>
       </Card>
     ));
   }
   render() {
     return (
-      <GradientContainer style={styles.container}>
+      <ColorfullContainer style={styles.container}>
         <Navbar menu title="Capacitaciones" {...this.props} />
 
         <ScrollView
@@ -139,11 +155,16 @@ class CapacitacionListado extends React.Component {
               onRefresh={this.props.cargar}
             />
           }>
-          <View style={{flex: 1, paddingHorizontal: 16, paddingVertical: 8}}>
+          <View
+            style={{
+              flex: 1,
+              paddingHorizontal: MARGIN_HORIZONTAL,
+              paddingVertical: MARGIN_VERTICAL,
+            }}>
             {this.renderCapacitaciones()}
           </View>
         </ScrollView>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }
@@ -169,14 +190,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   progress: {
-    backgroundColor: COLORS.PRIMARY_COLOR,
-    alignSelf: 'center',
-    marginTop: 8,
-    padding: 8,
-    borderRadius: 64,
-    paddingHorizontal: 16,
-    color: '#ffff',
-    fontFamily: 'Roboto-Black',
+    marginLeft: MARGIN_VERTICAL,
+    color: COLORS.PRIMARY_COLOR,
+    fontFamily: 'Mont-Regular',
     fontSize: 12,
   },
   containerTime: {

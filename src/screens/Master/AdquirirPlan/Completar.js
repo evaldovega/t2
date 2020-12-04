@@ -1,42 +1,42 @@
 import React from 'react';
-import ModalFilterPicker from 'react-native-modal-filter-picker';
 import {
-  TouchableHighlight,
   View,
   Alert,
-  TextInput,
   Dimensions,
-  StyleSheet,
   ScrollView,
-  Animated,
-  TouchableOpacity,
+  StatusBar,
   Switch,
   Image,
   KeyboardAvoidingView,
-  useColorScheme,
+  TouchableOpacity,
 } from 'react-native';
-import {Text, Card, FAB, DataTable} from 'react-native-paper';
-import {Button} from 'react-native-elements';
+import {Text, FAB} from 'react-native-paper';
 import NumberFormat from 'react-number-format';
-import TextInputMask from 'react-native-text-input-mask';
 import produce from 'immer';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 import Loader from 'components/Loader';
-import GradientContainer from 'components/GradientContainer';
-import Carousel, {Pagination} from 'react-native-snap-carousel';
+import ColorfullContainer from 'components/ColorfullContainer';
+import Button from 'components/Button';
+import InputText from 'components/InputText';
+import InputMask from 'components/InputMask';
+import Select from 'components/Select';
 
 import {
-  styleHeader,
-  styleInput,
-  styleButton,
-  styleText,
-  checkbox,
-} from 'styles';
-import {COLORS, SERVER_ADDRESS} from 'constants';
+  COLORS,
+  CURVA,
+  MARGIN_VERTICAL,
+  MARGIN_HORIZONTAL,
+  SERVER_ADDRESS,
+  TITULO_TAM,
+  TEXTO_TAM,
+} from 'constants';
 import {connect} from 'react-redux';
 import {addOrden} from 'redux/actions/Clients';
 import {validar, totalErrores, renderErrores} from 'utils/Validar';
 import Navbar from 'components/Navbar';
 import PlanFormulario from './PlanFormulario';
+import ZoomIn from 'components/ZoomIn';
 
 const {width, height} = Dimensions.get('screen');
 let Validaciones = {};
@@ -52,7 +52,6 @@ class AdquirirPlan extends React.Component {
     formularios: [],
     productos: [],
     mostrar_selector: false,
-    saludo: {msn: 'Hola'},
     data: {},
   };
 
@@ -231,6 +230,16 @@ class AdquirirPlan extends React.Component {
     );
   };
 
+  removeVariation = (variacion) => {
+    this.setState(
+      produce((draft) => {
+        draft.productos
+          .find((p) => p.id == variacion.plan)
+          .variaciones.find((v) => v.id == variacion.id).cantidad -= 1;
+      }),
+    );
+  };
+
   addVariation = (variacion) => {
     if (variacion.formularios && variacion.formularios.length > 0) {
       requestAnimationFrame(() => {
@@ -276,6 +285,7 @@ class AdquirirPlan extends React.Component {
     this.onBlur(pregunta);
   };
   seleccionarOpcion = (pregunta, opcion) => {
+    Alert.alert(opcion, '');
     this.setState(
       produce((draft) => {
         let _pregunta = draft.productos
@@ -293,33 +303,20 @@ class AdquirirPlan extends React.Component {
   };
   renderChoices = (pregunta) => {
     console.log(pregunta);
-    const {tipo_pregunta, opciones, mostrar_selector, respuesta} = pregunta;
+    const {tipo_pregunta, opciones, respuesta} = pregunta;
     if (tipo_pregunta == 'choice') {
       return (
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 4,
-            borderWidth: 0.2,
-            padding: 8,
-          }}>
-          <TouchableOpacity onPress={() => this.abrirOpciones(pregunta)}>
-            <Text>
-              {respuesta && respuesta != ''
-                ? opciones.find((o) => o.id == respuesta).opcion
-                : 'Seleccione'}
-            </Text>
-          </TouchableOpacity>
-          <ModalFilterPicker
-            visible={mostrar_selector}
+        <React.Fragment>
+          <Text>{respuesta}</Text>
+          <Select
+            value={respuesta}
             onSelect={(opcion) => this.seleccionarOpcion(pregunta, opcion.key)}
-            onCancel={() => this.abrirOpciones(pregunta, false)}
             options={opciones.map((o) => ({
               key: o.id,
               label: o.opcion,
             }))}
           />
-        </View>
+        </React.Fragment>
       );
     }
   };
@@ -348,24 +345,13 @@ class AdquirirPlan extends React.Component {
         props.numberOfLines = 4;
       }
       return (
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 4,
-            borderWidth: 0.2,
-            padding: 8,
-          }}>
-          <TextInput
-            style={{padding: 0}}
-            returnKeyType={'next'}
-            value={pregunta.respuesta}
-            onChangeText={(value) => {
-              this.responderPregunta(pregunta, 'respuesta', value);
-            }}
-            onBlur={() => this.onBlur(pregunta)}
-            {...props}
-          />
-        </View>
+        <InputText
+          value={pregunta.respuesta}
+          onChangeText={(value) => {
+            this.responderPregunta(pregunta, 'respuesta', value);
+          }}
+          onBlur={() => this.onBlur(pregunta)}
+        />
       );
     }
   };
@@ -373,25 +359,15 @@ class AdquirirPlan extends React.Component {
     const {tipo_pregunta, respuesta} = pregunta;
     if (tipo_pregunta == 'date') {
       return (
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 4,
-            borderWidth: 0.2,
-            padding: 8,
-          }}>
-          <TextInputMask
-            style={{margin: 0, padding: 0}}
-            placeholder="0000-00-00"
-            value={pregunta.respuesta}
-            returnKeyType={'next'}
-            onChangeText={(formatted, extracted) => {
-              this.responderPregunta(pregunta, 'respuesta', formatted);
-            }}
-            onBlur={() => this.onBlur(pregunta)}
-            mask={'[0000]-[00]-[00]'}
-          />
-        </View>
+        <InputMask
+          placeholder="0000-00-00"
+          value={pregunta.respuesta}
+          onChangeText={(formatted, extracted) => {
+            this.responderPregunta(pregunta, 'respuesta', formatted);
+          }}
+          onBlur={() => this.onBlur(pregunta)}
+          mask={'[0000]-[00]-[00]'}
+        />
       );
     }
   };
@@ -437,7 +413,6 @@ class AdquirirPlan extends React.Component {
 
   renderFormularios = (producto) => {
     if (!producto.seleccionado) {
-      console.log('Producto no seleccionado');
       return;
     }
     if (producto.formularios) {
@@ -453,62 +428,95 @@ class AdquirirPlan extends React.Component {
     }
 
     return producto.variaciones.map((v, i) => {
+      const show_minus =
+        v.formularios && v.formularios.length > 0 ? false : true;
       return (
-        <View style={{marginLeft: 16}}>
-          <View
+        <View style={{}}>
+          <Text
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+              color: COLORS.NEGRO,
+              fontFamily: 'Mont-Regular',
+              fontSize: TEXTO_TAM * 0.7,
             }}>
-            <Image source={{uri: v.icono}} style={{width: 32, height: 32}} />
-            <Text
-              style={{
-                flex: 1,
-                textAlign: 'center',
-                color: '#566573',
-                fontFamily: 'Roboto-Medium',
-                fontSize: 16,
-                marginTop: 24,
-                marginBottom: 20,
-              }}>
-              {v.titulo}
-            </Text>
-          </View>
+            {v.titulo}
+          </Text>
           {v.tipo_variacion == 'numerico' ? (
             <>
               <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: 18}}>{v.cantidad}</Text>
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: MARGIN_VERTICAL,
+                }}>
+                <View
+                  style={{
+                    width: '40%',
+                    flexDirection: 'row',
+                    padding: MARGIN_VERTICAL,
+                    backgroundColor: COLORS.BLANCO,
+                    borderRadius: CURVA,
+                    elevation: 3,
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  {show_minus ? (
+                    <TouchableOpacity
+                      style={{
+                        width: 32,
+                        height: 32,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onPress={() => this.removeVariation(v)}>
+                      <AntDesign name="minus" color={COLORS.NEGRO} />
+                    </TouchableOpacity>
+                  ) : null}
+                  <Text
+                    style={{
+                      fontSize: TEXTO_TAM,
+                      fontFamily: 'Mont-Regular',
+                      color: COLORS.NEGRO,
+                    }}>
+                    {v.cantidad}
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      width: 32,
+                      height: 32,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    onPress={() => this.addVariation(v)}>
+                    <AntDesign name="plus" color={COLORS.NEGRO} />
+                  </TouchableOpacity>
+                </View>
                 <NumberFormat
                   value={v.valor * v.cantidad}
                   displayType={'text'}
                   thousandSeparator={true}
                   prefix={'$'}
                   renderText={(nf) => (
-                    <Text
+                    <View
                       style={{
-                        fontSize: 24,
-                        flex: 1,
-                        textAlign: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginHorizontal: MARGIN_HORIZONTAL,
+                        backgroundColor: 'rgba(110,85,246,.1)',
+                        borderRadius: CURVA,
+                        paddingHorizontal: MARGIN_HORIZONTAL,
                       }}>
-                      {nf}
-                    </Text>
+                      <Text
+                        style={{
+                          fontSize: TEXTO_TAM,
+                          fontFamily: 'Mont-Regular',
+                          color: COLORS.NEGRO_N1,
+                        }}>
+                        {nf}
+                      </Text>
+                    </View>
                   )}
                 />
-                <FAB
-                  icon="plus"
-                  small
-                  style={{
-                    backgroundColor: COLORS.BG_GRAY,
-                    borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-                    borderWidth: 0.2,
-                    elevation: 0,
-                  }}
-                  onPress={() => this.addVariation(v)}
-                />
               </View>
-
               {renderErrores(this, 'variacion' + v.id)}
 
               <View
@@ -528,23 +536,6 @@ class AdquirirPlan extends React.Component {
 
                     return (
                       <React.Fragment>
-                        {key_form == 0 ? (
-                          <View
-                            style={{
-                              flex: 1,
-                              alignSelf: 'stretch',
-                              flexDirection: 'row',
-                            }}>
-                            {header.map((h, index_header) => (
-                              <View style={{flex: 1, alignSelf: 'stretch'}}>
-                                <Text style={{fontFamily: 'Roboto-Black'}}>
-                                  {h}
-                                </Text>
-                              </View>
-                            ))}
-                            <View></View>
-                          </View>
-                        ) : null}
                         <View
                           style={{
                             marginTop: 8,
@@ -556,26 +547,27 @@ class AdquirirPlan extends React.Component {
                           }}>
                           {body.map((b) => (
                             <View style={{flex: 1, alignSelf: 'stretch'}}>
-                              <Text style={{fontFamily: 'Roboto-Light'}}>
+                              <Text style={{fontFamily: 'Mont-Regular'}}>
                                 {b}
                               </Text>
                             </View>
                           ))}
                           <View>
-                            <FAB
-                              icon="minus"
-                              small
-                              style={{
-                                backgroundColor: 'transparent',
-                                borderColor: COLORS.ACCENT,
-                                borderWidth: 0.2,
-                                elevation: 0,
-                              }}
-                              color={COLORS.ACCENT}
+                            <TouchableOpacity
                               onPress={() =>
                                 this.removerFormularioVariation(v, key_form)
                               }
-                            />
+                              style={{
+                                width: 32,
+                                height: 32,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderColor: COLORS.NEGRO_N1,
+                                borderRadius: CURVA,
+                                borderWidth: 0.3,
+                              }}>
+                              <AntDesign name="minus" />
+                            </TouchableOpacity>
                           </View>
                         </View>
                       </React.Fragment>
@@ -600,233 +592,258 @@ class AdquirirPlan extends React.Component {
         });
       });
     return (
-      <NumberFormat
-        value={total}
-        displayType={'text'}
-        thousandSeparator={true}
-        prefix={'$'}
-        renderText={(nf) => (
-          <Text
-            style={{
-              fontSize: 32,
-              color: COLORS.PRIMARY_COLOR,
-              fontFamily: 'Roboto-Medium',
-            }}>
-            {nf}
-          </Text>
-        )}
-      />
+      <ZoomIn>
+        <NumberFormat
+          value={total}
+          displayType={'text'}
+          thousandSeparator={true}
+          prefix={'$'}
+          renderText={(nf) => (
+            <Text
+              style={{
+                fontSize: TITULO_TAM * 1.3,
+                color: COLORS.BLANCO,
+                textAlign: 'center',
+                fontFamily: 'Mont-Bold',
+              }}>
+              {nf}
+            </Text>
+          )}
+        />
+      </ZoomIn>
     );
   };
 
-  renderProduct = (p) => {
+  renderProduct = (p, key) => {
     return (
       <View
         key={p.id}
         style={{
-          paddingVertical: 16,
-          marginTop: 16,
-          borderRadius: 24,
-          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-          borderWidth: 0.2,
+          paddingVertical: MARGIN_HORIZONTAL,
+          borderTopWidth: key > 0 ? 0.3 : 0,
+          borderColor: '#EAE8EA',
         }}>
-        <React.Fragment>
-          <View
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+          }}>
+          <Text
             style={{
-              paddingHorizontal: 16,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
+              flex: 1,
+              color: COLORS.NEGRO,
+              fontSize: TITULO_TAM * 0.7,
+              marginBottom: 16,
+              fontFamily: 'Mont-Bold',
             }}>
-            <Image
-              source={{uri: p.imagen}}
-              style={{
-                width: 64,
-                height: 64,
-                borderRadius: 8,
-                marginRight: 16,
-                borderWidth: 0.2,
-                borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-              }}
-            />
-            <Text
-              style={{
-                flex: 1,
-                color: COLORS.SECONDARY_COLOR_LIGHTER,
-                fontSize: 18,
-                marginBottom: 16,
-                fontFamily: 'Roboto-Medium',
-              }}>
-              {p.id} {p.titulo}
-            </Text>
-            <Switch
-              value={p.seleccionado}
-              onValueChange={(estado) => this.seleccionarProducto(estado, p.id)}
-            />
-          </View>
-          {this.renderFormularios(p)}
-          <View style={{paddingHorizontal: 16}}>
-            {this.renderVariaciones(p)}
-          </View>
-        </React.Fragment>
+            {p.titulo}
+          </Text>
+          <Switch
+            value={p.seleccionado}
+            onValueChange={(estado) => this.seleccionarProducto(estado, p.id)}
+          />
+        </View>
+        {this.renderFormularios(p)}
+
+        {this.renderVariaciones(p)}
       </View>
     );
   };
 
-  guardar = async () => {
+  guardar = () => {
     this.setState({cargando: true});
-    let hubo_errores = false;
-    let total = parseFloat(this.state.precio);
-    this.state.productos
-      .filter((p) => p.seleccionado)
-      .forEach((p) => {
-        p.variaciones.forEach((v) => {
-          total += v.cantidad * v.valor;
-        });
-      });
-
-    const {id, titulo, productos} = this.props.route.params;
-    const {cliente} = this.props.route.params;
-
-    let data = {
-      plan: id,
-      cliente: cliente,
-      total_pagado: total,
-      metodo_pago: 'contado',
-      planes: [],
-      formularios: [],
-    };
-
-    for await (let formulario of this.state.formularios) {
-      let total_errores = await this['ref-form-' + formulario.id].validar();
-      console.log('Errores ', total_errores);
-      if (total_errores > 0) {
-        hubo_errores = true;
-        Alert.alert(
-          formulario.titulo,
-          'Diligencie la información faltante para continuar el proceso.',
-        );
-        this.setState({cargando: false});
-        return;
-      } else {
-        data.formularios.push(
-          this['ref-form-' + formulario.id].obtenerValores(),
-        );
-      }
-    }
-    if (hubo_errores) {
-      return;
-    }
-
-    const productsSelected = this.state.productos.find((p) => p.seleccionado);
-    if (!productsSelected) {
-      Alert.alert('Selecciona algunos productos', '');
-      this.setState({cargando: false});
-      return;
-    }
-
-    Object.keys(Validaciones).forEach((k) => {
-      let value = this.state.values[k];
-      validar(this, value, k, Validaciones[k].validacion, false);
-    });
-
-    setTimeout(() => {
-      if (totalErrores(this) > 0) {
-        Alert.alert(
-          'Información faltante',
-          'Diligencie la información faltante para continuar el proceso.',
-        );
-        this.setState({cargando: false});
-        return;
-      }
-
+    requestAnimationFrame(async () => {
+      let hubo_errores = false;
+      let total = parseFloat(this.state.precio);
       this.state.productos
         .filter((p) => p.seleccionado)
         .forEach((p) => {
-          let plan = {id: p.id, variaciones: [], formularios: []};
-
           p.variaciones.forEach((v) => {
-            let variacion = {id: v.id, valor: v.cantidad, formularios: []};
-            v._formularios.forEach((f) => {
-              variacion.formularios.push({
+            total += v.cantidad * v.valor;
+          });
+        });
+
+      const {id, cliente} = this.props.route.params;
+
+      let data = {
+        plan: id,
+        cliente: cliente,
+        total_pagado: total,
+        metodo_pago: 'contado',
+        planes: [],
+        formularios: [],
+      };
+
+      for await (let formulario of this.state.formularios) {
+        let total_errores = await this['ref-form-' + formulario.id].validar();
+
+        if (total_errores > 0) {
+          hubo_errores = true;
+          Alert.alert(
+            formulario.titulo,
+            'Diligencie la información faltante para continuar el proceso.',
+          );
+          this.setState({cargando: false});
+          return;
+        } else {
+          data.formularios.push(
+            this['ref-form-' + formulario.id].obtenerValores(),
+          );
+        }
+      }
+
+      if (hubo_errores) {
+        return;
+      }
+
+      const productsSelected = this.state.productos.find((p) => p.seleccionado);
+      if (!productsSelected) {
+        Alert.alert('Selecciona algunos productos', '');
+        this.setState({cargando: false});
+        return;
+      }
+
+      Object.keys(Validaciones).forEach((k) => {
+        let value = this.state.values[k];
+        validar(this, value, k, Validaciones[k].validacion, false);
+      });
+
+      setTimeout(() => {
+        if (totalErrores(this) > 0) {
+          Alert.alert(
+            'Información faltante',
+            'Diligencie la información faltante para continuar el proceso.',
+          );
+          this.setState({cargando: false});
+          return;
+        }
+
+        this.state.productos
+          .filter((p) => p.seleccionado)
+          .forEach((p) => {
+            let plan = {id: p.id, variaciones: [], formularios: []};
+
+            p.variaciones.forEach((v) => {
+              let variacion = {id: v.id, valor: v.cantidad, formularios: []};
+              v._formularios.forEach((f) => {
+                variacion.formularios.push({
+                  id: f.id,
+                  campos: f.preguntas.map((p) => ({
+                    id: p.id,
+                    respuesta: p.respuesta,
+                  })),
+                });
+              });
+              plan.variaciones.push(variacion);
+            });
+
+            p.formularios.forEach((f) => {
+              let formulario = {
                 id: f.id,
                 campos: f.preguntas.map((p) => ({
                   id: p.id,
                   respuesta: p.respuesta,
                 })),
-              });
+              };
+              plan.formularios.push(formulario);
             });
-            plan.variaciones.push(variacion);
+
+            data.planes.push(plan);
           });
 
-          p.formularios.forEach((f) => {
-            let formulario = {
-              id: f.id,
-              campos: f.preguntas.map((p) => ({
-                id: p.id,
-                respuesta: p.respuesta,
-              })),
-            };
-            plan.formularios.push(formulario);
-          });
-
-          data.planes.push(plan);
-        });
-
-      console.log(JSON.stringify(data));
-      fetch(SERVER_ADDRESS + 'api/ordenes/registrar/', {
-        method: 'post',
-        body: JSON.stringify(data),
-        headers: {
-          Authorization: 'Token ' + this.props.token,
-          Accept: 'application/json',
-          'content-type': 'application/json',
-        },
-      })
-        .then((r) => r.json())
-        .then((r) => {
-          console.log(r);
-          this.setState({guardando: false});
-          setTimeout(() => {
-            Alert.alert(
-              'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
-              'Instrucciones enviadas a ' +
-                r.cliente_str +
-                ' para finalizar el proceso de compra.',
-            );
-            this.props.navigation.pop();
-          }, 800);
+        console.log(JSON.stringify(data));
+        fetch(SERVER_ADDRESS + 'api/ordenes/registrar/', {
+          method: 'post',
+          body: JSON.stringify(data),
+          headers: {
+            Authorization: 'Token ' + this.props.token,
+            Accept: 'application/json',
+            'content-type': 'application/json',
+          },
         })
-        .catch((error) => {
-          console.log(error);
-          this.setState({cargando: false});
-        });
+          .then((r) => r.json())
+          .then((r) => {
+            console.log(r);
+            this.setState({cargando: false});
+            if (r.error) {
+              Alert.alert(r.error, '');
+            } else {
+              setTimeout(() => {
+                this.props.navigation.navigate('ClientProfile');
+                Alert.alert(
+                  'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
+                  'Instrucciones enviadas a ' +
+                    r.cliente_str +
+                    ' para finalizar el proceso de compra.',
+                  [
+                    {
+                      text: 'Perfecto',
+                      onPress: () => {
+                        this.props.addOrden(r);
+                      },
+                    },
+                  ],
+                  {cancelable: false},
+                );
+              }, 800);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.setState({cargando: false});
+          });
+      });
     });
   };
 
   render() {
+    const {imagen} = this.props.route.params;
+
     return (
       <KeyboardAvoidingView style={{flex: 1}}>
-        <GradientContainer style={{flex: 1}}>
+        <StatusBar
+          translucent={true}
+          backgroundColor={'transparent'}
+          barStyle={'dark-content'}
+        />
+        <ColorfullContainer style={{flex: 1, backgroundColor: COLORS.BLANCO}}>
           <Loader loading={this.state.cargando} />
-          <Navbar back title={this.state.nombre_plan} {...this.props} />
+          <StatusBar
+            translucent={true}
+            backgroundColor={'transparent'}
+            barStyle={'light-content'}
+          />
+          <Image
+            source={{uri: imagen}}
+            style={{width: '100%', height: '25%', position: 'absolute', top: 0}}
+          />
           <View
             style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingBotton: 8,
-            }}>
-            {this.total()}
-          </View>
-          <View
-            style={{
-              position: 'relative',
-            }}></View>
-          <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+              position: 'absolute',
+              width: '100%',
+              height: '25%',
+              backgroundColor: 'rgba(0,0,0,.7)',
+            }}
+          />
+          <Navbar
+            transparent
+            back
+            title={this.state.nombre_plan}
+            {...this.props}
+            icon_color={COLORS.BLANCO}
+            style_title={{color: COLORS.BLANCO}}
+          />
+
+          {this.total()}
+
+          <ScrollView
+            style={{flex: 1, marginTop: '15%'}}
+            showsVerticalScrollIndicator={false}>
             <View
               style={{
                 flex: 1,
-                margin: 16,
+                marginHorizontal: MARGIN_HORIZONTAL,
               }}>
               <View style={{flex: 1, paddingBottom: 32}}>
                 {this.state.formularios.map((formulario) => (
@@ -836,17 +853,35 @@ class AdquirirPlan extends React.Component {
                   />
                 ))}
 
-                {this.state.productos.map((p, i) => this.renderProduct(p))}
+                <View
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,.5)',
+                    borderRadius: CURVA,
+                    paddingHorizontal: MARGIN_HORIZONTAL,
+                    marginTop: MARGIN_VERTICAL,
+                  }}>
+                  {this.state.productos.map((p, i) => this.renderProduct(p, i))}
+                </View>
+
+                <Select
+                  marginTop={1}
+                  value={this.state.metodo_pago}
+                  placeholder="Metodo pago"
+                  options={[
+                    {key: 'Contado', label: 'Contado'},
+                    {key: 'Financiacón', label: 'Financiacón'},
+                  ]}
+                />
 
                 <Button
-                  buttonStyle={[styleButton.wrapper, {fontSize: 32}]}
+                  marginTop={2}
                   onPress={() => this.guardar()}
                   title="Vender"
                 />
               </View>
             </View>
           </ScrollView>
-        </GradientContainer>
+        </ColorfullContainer>
       </KeyboardAvoidingView>
     );
   }

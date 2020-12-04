@@ -1,4 +1,5 @@
 import {
+  ACTION_USUARIO_HABILITAR,
   ACTION_CAMBIAR_NOMBRE_USUARIO,
   ACTION_USUARIO_CAMBIANDO_FOTO_PERFIL,
   ACTION_USUARIO_FOTO_PERFIL_CAMBIADA,
@@ -43,6 +44,9 @@ const initialState = {
 export default Usuario = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case ACTION_USUARIO_HABILITAR:
+        draft.habilitado = action.state;
+        break;
       case ACTION_USUARIO_ACCEDER:
         draft.error = '';
         draft.logeado = false;

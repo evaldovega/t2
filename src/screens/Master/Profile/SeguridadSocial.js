@@ -4,26 +4,38 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  Text,
   View,
   Modal,
 } from 'react-native';
-import {
-  Button,
-  Paragraph,
-  Title,
-  Text,
-  Card,
-  FAB,
-  Colors,
-} from 'react-native-paper';
+import {Title, Card, FAB} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
-import {COLORS} from 'constants';
+import {COLORS, CURVA, MARGIN_VERTICAL, TEXTO_TAM, TITULO_TAM} from 'constants';
 import {connect} from 'react-redux';
 import {subir, cargar, borrar} from 'redux/actions/SeguridadSocial';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/Feather';
-import {TextInput} from 'react-native-gesture-handler';
+
+import Button from 'components/Button';
+import InputText from 'components/InputText';
+import Select from 'components/Select';
+
 import moment from 'moment';
+
+const MONTHS = [
+  {label: 'Enero', key: 1},
+  {label: 'Febrero', key: 2},
+  {label: 'Marzo', key: 3},
+  {label: 'Abril', key: 4},
+  {label: 'Mayo', key: 5},
+  {label: 'Junio', key: 6},
+  {label: 'Julio', key: 7},
+  {label: 'Agosto', key: 8},
+  {label: 'Septiembre', key: 9},
+  {label: 'Octubre', key: 10},
+  {label: 'Noviembre', key: 11},
+  {label: 'Diciembre', key: 12},
+];
 
 class SeguridadSocial extends React.Component {
   state = {
@@ -45,11 +57,20 @@ class SeguridadSocial extends React.Component {
     ) {
       Alert.alert('Algo anda mal', this.props.error_subiendo);
     }
+
     if (
       prev.error_cargando != this.props.error_cargando &&
       this.props.error_cargando != ''
     ) {
       Alert.alert('Algo anda mal', this.props.error_cargando);
+    }
+
+    if (
+      !this.props.subiendo &&
+      prev.subiendo &&
+      this.props.error_cargando == ''
+    ) {
+      this.setState({mostrar: false});
     }
   }
 
@@ -84,24 +105,27 @@ class SeguridadSocial extends React.Component {
             }).catch(error=>{
                 console.log(error)
             })*/
-      setTimeout(() => {
-        this.props.subir(
-          res,
-          this.state.year + '-' + this.state.periodo + '-01',
-        );
-      }, 1500);
+
+      this.props.subir(res, this.state.year + '-' + this.state.periodo + '-01');
     } catch (error) {
       console.log(error);
     }
   };
+
   borrar = (id) => {
     this.props.borrar(id);
   };
+
   renderPeriodos = () => {
     try {
       return this.props.archivos.map((a) => {
         return (
-          <Card style={{marginTop: 8, borderRadius: 16}}>
+          <Card
+            style={{
+              marginTop: MARGIN_VERTICAL,
+              borderRadius: CURVA,
+              elevation: 0,
+            }}>
             <Card.Title
               title={
                 'Mes de ' + a.mes_correspondiente_display + ' ' + a.anio
@@ -111,15 +135,16 @@ class SeguridadSocial extends React.Component {
                 icon="delete"
                 loading={a.borrando}
                 onPress={() => this.borrar(a.id)}
-                color={Colors.red200}>
-                {a.borrando ? 'Borrando...' : 'Borrar'}
-              </Button>
+                color="rojo"
+                title={a.borrando ? 'Borrando...' : 'Borrar'}
+              />
             </Card.Actions>
           </Card>
         );
       });
     } catch (error) {}
   };
+
   ventana = () => (
     <Modal transparent={true} animationType="fade" visible={this.state.mostrar}>
       <View
@@ -133,7 +158,7 @@ class SeguridadSocial extends React.Component {
           style={{
             backgroundColor: '#ffff',
             overflow: 'hidden',
-            borderRadius: 24,
+            borderRadius: CURVA,
             alignSelf: 'center',
             elevation: 3,
             width: '80%',
@@ -141,7 +166,7 @@ class SeguridadSocial extends React.Component {
           }}>
           <View
             style={{
-              backgroundColor: '#FFA26B',
+              backgroundColor: COLORS.MORADO,
               paddingTop: 20,
               paddingLeft: 24,
               paddingBottom: 23,
@@ -152,61 +177,44 @@ class SeguridadSocial extends React.Component {
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
-              <Title style={{color: '#ffff'}}>Seguridad Social</Title>
+              <Text
+                style={{
+                  color: '#ffff',
+                  fontFamily: 'Mont-Bold',
+                  fontSize: TITULO_TAM * 0.7,
+                }}>
+                Seguridad Social
+              </Text>
               <FAB
                 icon="close"
                 onPress={() => this.mostrar(false)}
                 style={{backgroundColor: 'transparent', elevation: 0}}
               />
             </View>
-            <Text style={{fontSize: 20, color: '#FFF', fontWeight: '500'}}>
-              Recuerda cargarla cada mes 👍
+            <Text
+              style={{
+                fontSize: TEXTO_TAM * 0.7,
+                color: '#FFF',
+                fontFamily: 'Mont-Regular',
+              }}>
+              Recuerda cargarla cada mes.
             </Text>
           </View>
           <View style={{padding: 42}}>
             <Text>Periodo</Text>
-            <DropDownPicker
-              items={[
-                {label: 'Enero', value: 1},
-                {label: 'Febrero', value: 2},
-                {label: 'Marzo', value: 3},
-                {label: 'Abril', value: 4},
-                {label: 'Mayo', value: 5},
-                {label: 'Junio', value: 6},
-                {label: 'Julio', value: 7},
-                {label: 'Agosto', value: 8},
-                {label: 'Septiembre', value: 9},
-                {label: 'Octubre', value: '10'},
-                {label: 'Noviembre', value: '11'},
-                {label: 'Diciembre', value: '12'},
-              ]}
-              defaultValue={this.state.periodo}
-              containerStyle={{
-                height: 56,
-                borderRadius: 24,
-                marginTop: 16,
-              }}
-              style={{
-                backgroundColor: '#fafafa',
-                borderWidth: 1,
-                borderColor: '#fafafa',
-              }}
-              itemStyle={{
-                justifyContent: 'flex-start',
-              }}
-              dropDownStyle={{backgroundColor: '#fafafa', borderRadius: 24}}
-              onChangeItem={(item) =>
-                this.setState({
-                  periodo: item.value,
-                })
-              }
+            <Select
+              marginTop={1}
+              placeholder={this.state.periodo}
+              value={this.state.periodo}
+              onSelect={(item) => this.setState({periodo: item.key})}
+              options={MONTHS}
             />
 
-            <Text>Año</Text>
-            <TextInput
-              keyboardType="decimal-pad"
+            <Text style={{marginTop: MARGIN_VERTICAL}}>Año</Text>
+            <InputText
+              marginTop={1}
+              input={{keyboardType: 'decimal-pad'}}
               value={this.state.year}
-              style={{backgroundColor: '#fafafa'}}
               onChangeText={(year) => this.setState({year: year})}
             />
 
@@ -214,9 +222,11 @@ class SeguridadSocial extends React.Component {
               icon="upload"
               style={{marginTop: 32}}
               loading={this.props.subiendo}
-              onPress={this.seleccionar}>
-              {this.props.subiendo ? 'Enviando...' : 'Seleccionar Archivo'}
-            </Button>
+              onPress={this.seleccionar}
+              title={
+                this.props.subiendo ? 'Enviando...' : 'Seleccionar Archivo'
+              }
+            />
           </View>
         </View>
       </View>
@@ -233,15 +243,23 @@ class SeguridadSocial extends React.Component {
             justifyContent: 'space-between',
             marginBottom: 32,
           }}>
-          <Title style={{color: COLORS.PRIMARY_COLOR}}>Seguridad Social</Title>
+          <Text
+            style={{
+              color: COLORS.NEGRO,
+              fontFamily: 'Mont-Bold',
+              fontSize: TITULO_TAM * 0.8,
+            }}>
+            Seguridad Social
+          </Text>
         </View>
 
-        <Paragraph>Recuerda subir tu seguridad social cada mes.</Paragraph>
         {this.renderPeriodos()}
 
-        <Button onPress={() => this.mostrar(true)}>
-          Cargar seguridad social
-        </Button>
+        <Button
+          marginTop={2}
+          onPress={() => this.mostrar(true)}
+          title="Subir seguridad social"
+        />
       </SafeAreaView>
     );
   }

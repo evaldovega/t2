@@ -17,7 +17,13 @@ import {withAnchorPoint} from 'react-native-anchor-point';
 import {Montserrat, Lato} from 'utils/fonts';
 
 import Loader from 'components/Loader';
-import {COLORS} from 'constants';
+import {
+  COLORS,
+  CURVA,
+  MARGIN_HORIZONTAL,
+  MARGIN_VERTICAL,
+  TITULO_TAM,
+} from 'constants';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
 const dataTime = ['DAYS', 'WEEKS', 'MONTHS', 'YEARS'];
@@ -27,7 +33,7 @@ import {styleText} from 'styles';
 import {connect} from 'react-redux';
 import {capacitacionDetalleCargar} from '../../../redux/actions';
 import Navbar from 'components/Navbar';
-import GradientContainer from 'components/GradientContainer';
+import ColorfullContainer from 'components/ColorfullContainer';
 
 class CapacitacionDetalle extends React.Component {
   state = {
@@ -95,9 +101,9 @@ class CapacitacionDetalle extends React.Component {
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'space-around',
+              justifyContent: 'space-between',
               alignItems: 'flex-start',
-              paddingRight: 16,
+              paddingRight: MARGIN_VERTICAL,
               position: 'relative',
             }}>
             <View style={styles.shadowHole}>
@@ -113,16 +119,16 @@ class CapacitacionDetalle extends React.Component {
             <View
               style={{
                 flex: 1,
-                marginLeft: -16,
+                marginLeft: -MARGIN_VERTICAL,
                 borderLeftColor: COLORS.PRIMARY_COLOR,
                 borderLeftWidth: !last ? 1.5 : 0,
-                paddingLeft: 25,
-                paddingBottom: 16,
+                paddingLeft: MARGIN_VERTICAL * 2,
+                paddingBottom: MARGIN_VERTICAL * 2,
               }}>
-              <Text style={{fontFamily: 'Roboto-Medium'}}>{a.titulo}</Text>
+              <Text style={{fontFamily: 'Mont-Regular'}}>{a.titulo}</Text>
               <Text
                 style={{
-                  fontFamily: 'Roboto-Light',
+                  fontFamily: 'Mont-Regular',
                   textTransform: 'capitalize',
                 }}>
                 {a.tipo}
@@ -132,8 +138,8 @@ class CapacitacionDetalle extends React.Component {
             <View>
               <SimpleLineIcons
                 name="arrow-right"
-                size={24}
-                color={COLORS.PRIMARY_COLOR}
+                size={16}
+                color={COLORS.NEGRO}
               />
             </View>
           </View>
@@ -151,30 +157,34 @@ class CapacitacionDetalle extends React.Component {
     }
     return this.props.secciones.map((s, key) => {
       return (
-        <View
-          style={{
-            borderRadius: 25,
-            paddingLeft: 16,
-            margin: 25,
-            marginBottom: 32,
-            backgroundColor: COLORS.BG_BLUE,
-            borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-            borderWidth: 0.3,
-          }}>
-          <View key={key}>
-            <Text
-              style={{
-                fontFamily: 'Roboto-Medium',
-                fontSize: 18,
-                marginVertical: 18,
-              }}>
-              {s.titulo}
-            </Text>
-            <View style={{marginBottom: 24, position: 'relative'}}>
-              {this.renderActividades(s.id, s.actividades)}
+        <React.Fragment>
+          <Text
+            style={{
+              fontFamily: 'Mont-Regular',
+              fontSize: TITULO_TAM * 0.7,
+              marginTop: MARGIN_VERTICAL * 2,
+              marginVertical: MARGIN_VERTICAL,
+            }}>
+            {s.titulo}
+          </Text>
+
+          <View
+            style={{
+              borderRadius: CURVA,
+              padding: MARGIN_VERTICAL,
+              marginTop: MARGIN_VERTICAL,
+              paddingTop: MARGIN_VERTICAL * 2,
+              borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+              borderWidth: 0.2,
+              backgroundColor: 'rgba(255,255,255,.6)',
+            }}>
+            <View key={key}>
+              <View style={{marginBottom: 24, position: 'relative'}}>
+                {this.renderActividades(s.id, s.actividades)}
+              </View>
             </View>
           </View>
-        </View>
+        </React.Fragment>
       );
     });
   };
@@ -197,51 +207,38 @@ class CapacitacionDetalle extends React.Component {
       console.log(this.top);
     }
     return (
-      <GradientContainer style={styles.container}>
+      <ColorfullContainer style={styles.container}>
         <Loader loading={this.props.cargando} />
         <Navbar back {...this.props} title="Detalle capacitación" />
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{paddingHorizontal: 16}}>
+          <View style={{paddingHorizontal: MARGIN_HORIZONTAL}}>
             <Text
               style={{
                 textAlign: 'center',
                 color: COLORS.DARK,
-                fontFamily: 'Roboto-Medium',
-                fontSize: 32,
-                marginTop: 16,
+                fontFamily: 'Mont-Bold',
+                fontSize: TITULO_TAM,
+                marginTop: MARGIN_VERTICAL * 4,
+                fontWeight: 'Bold',
               }}>
               {item.titulo}
             </Text>
             <Text
               style={{
                 textAlign: 'center',
+                marginTop: MARGIN_VERTICAL,
+                marginBottom: MARGIN_VERTICAL * 3,
                 color: COLORS.SECONDARY_COLOR_LIGHTER,
-                fontFamily: 'Roboto-Medium',
+                fontFamily: 'Mont-Regular',
               }}>
               {item.descripcion}
             </Text>
-          </View>
 
-          {/*<View style={styles.containerInfo}>
-            <View style={styles.col}>
-              <Text style={styles.value}>{this.totalActividades()}</Text>
-              <Text style={styles.title}>Actividades</Text>
-            </View>
-            <View style={styles.line} />
-            <View style={styles.col}>
-              <Text style={styles.value}>{this.totalActividades()}</Text>
-              <Text style={styles.title}>Realizadas</Text>
-            </View>
-            <View style={styles.line} />
-            <View style={styles.col}>
-              <Text style={styles.value}>{this.totalActividades()}</Text>
-              <Text style={styles.title}>Faltantes</Text>
-            </View>
-          </View>*/}
-          {this.renderSecciones()}
+            {this.renderSecciones()}
+          </View>
         </ScrollView>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }

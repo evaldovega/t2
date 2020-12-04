@@ -1,7 +1,23 @@
 export const SERVER_ADDRESS = 'http://servi.ufotech.co/';
 export const SOCKET_ADDRESS = 'http://servi.ufotech.co:8080';
 
+export const MARGIN_HORIZONTAL = 21;
+export const TITULO_TAM = 24;
+export const TEXTO_TAM = 21;
+export const MARGIN_VERTICAL = 10.6;
+export const ALTURA = 52;
+export const CURVA = 10.5;
+
 export const COLORS = {
+  VERDE: '#72D4C2',
+  GRIS: '#F2FAFE',
+  AZUL: '#113B50',
+  NEGRO: '#3A3842',
+  NEGRO_N1: '#4d4a57',
+  BLANCO: '#FFFF',
+  MORADO: '#6E55F6',
+  ROJO: '#ff7171',
+
   BG_BLUE: '#F2FAFE',
   BG_GRAY: '#f7f7f7',
   DARK: '#113b50',

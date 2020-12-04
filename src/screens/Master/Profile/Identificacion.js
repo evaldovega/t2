@@ -1,11 +1,12 @@
 import React from 'react';
-import {Title, Subheading, Button, Text, Card} from 'react-native-paper';
-import {Image, View, StyleSheet, Alert, Linking} from 'react-native';
+import {Title, Subheading, Card} from 'react-native-paper';
+import {Image, View, StyleSheet, Alert, Linking, Text} from 'react-native';
 import {connect} from 'react-redux';
 import {subirFotoIde} from 'redux/actions/Usuario';
-import {COLORS} from 'constants';
+import {COLORS, MARGIN_VERTICAL, TITULO_TAM} from 'constants';
 import ImagePicker from 'react-native-image-crop-picker';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import Button from 'components/Button';
 
 class ProfileIdentificacion extends React.Component {
   capturar = (lado) => {
@@ -32,14 +33,15 @@ class ProfileIdentificacion extends React.Component {
     console.log(this.props.ide_foto_respaldo);
     return (
       <>
-        <Title
+        <Text
           style={{
-            color: COLORS.PRIMARY_COLOR,
-            marginTop: 16,
-            textAlign: 'center',
+            color: COLORS.NEGRO,
+            marginTop: MARGIN_VERTICAL * 3,
+            fontFamily: 'Mont-Bold',
+            fontSize: TITULO_TAM * 0.7,
           }}>
           Documento de Identificación
-        </Title>
+        </Text>
 
         <Card style={{marginTop: 8, borderRadius: 16, overflow: 'hidden'}}>
           <TouchableOpacity
@@ -56,11 +58,12 @@ class ProfileIdentificacion extends React.Component {
           </Card.Actions> */}
         </Card>
         <Button
+          marginTop={1}
           icon="camera"
           loading={this.props.subiendo_ide}
-          onPress={() => this.capturar('frente')}>
-          Capturar Foto de frente
-        </Button>
+          title="Tomar foto de frente"
+          onPress={() => this.capturar('frente')}
+        />
 
         <Card style={{marginTop: 8, borderRadius: 16, overflow: 'hidden'}}>
           <Card.Cover source={{uri: this.props.ide_foto_respaldo}} />
@@ -71,11 +74,12 @@ class ProfileIdentificacion extends React.Component {
           </Card.Actions> */}
         </Card>
         <Button
+          marginTop={1}
           icon="camera"
           loading={this.props.subiendo_ide}
-          onPress={() => this.capturar('respaldo')}>
-          Capturar Foto de respaldo
-        </Button>
+          onPress={() => this.capturar('respaldo')}
+          title="Tomar foto de respaldo"
+        />
       </>
     );
   }

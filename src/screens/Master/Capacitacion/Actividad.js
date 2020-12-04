@@ -14,7 +14,7 @@ import {
 import {withAnchorPoint} from 'react-native-anchor-point';
 import {WebView} from 'react-native-webview';
 import YoutubePlayer, {getYoutubeMeta} from 'react-native-youtube-iframe';
-import {Card, Button, Switch, FAB, Title, Paragraph} from 'react-native-paper';
+import {Card, Switch, FAB, Title, Paragraph} from 'react-native-paper';
 import {CheckBox} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loader from 'components/Loader';
@@ -27,11 +27,20 @@ import {
   actividadSeleccionarOpcion,
   actividadEnviarCuestionario,
 } from '../../../redux/actions';
-import {COLORS} from 'constants';
+import {habilitar} from 'redux/actions/Usuario';
+
+import {
+  COLORS,
+  CURVA,
+  MARGIN_HORIZONTAL,
+  MARGIN_VERTICAL,
+  TITULO_TAM,
+} from 'constants';
 import Check from 'svgs/Check';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Navbar from 'components/Navbar';
-import GradientContainer from 'components/GradientContainer';
+import ColorfullContainer from 'components/ColorfullContainer';
+import Button from 'components/Button';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,7 +49,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: '#FFF',
-    borderRadius: 24,
+    borderRadius: CURVA,
     paddingBottom: 20,
     paddingTop: 0,
     paddingHorizontal: 0,
@@ -99,6 +108,11 @@ class Actividad extends React.Component {
         this.setState({video_cover: meta.thumbnail_url});
       });
     }
+
+    if (prev.habilitado != this.props.habilitado) {
+      this.props.habilitar(this.props.habilitado);
+    }
+
     console.log('ERRROR ', this.props.error);
     if (this.props.error != '' && this.props.error != prev.error) {
       Alert.alert('Algo anda mal', this.props.error);
@@ -154,8 +168,7 @@ class Actividad extends React.Component {
           padding: 0,
           marginVertical: 24,
           marginHorizontal: 24,
-          backgroundColor: COLORS.BG_GRAY,
-          borderRadius: 20,
+          borderRadius: CURVA,
           overflow: 'hidden',
           borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
           borderWidth: 0.3,
@@ -218,21 +231,22 @@ class Actividad extends React.Component {
         <Card
           key={k}
           style={{
-            borderRadius: 16,
-            marginBottom: 16,
-            backgroundColor: COLORS.BG_GRAY,
+            borderRadius: CURVA,
+            marginBottom: MARGIN_VERTICAL,
+            backgroundColor: COLORS.BLANCO,
             borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-            borderWidth: 0.3,
+            borderWidth: 0.2,
+            elevation: 0,
           }}>
           <Card.Content>
             <Text
               style={{
-                fontFamily: 'Roboto-Medium',
-                color: COLORS.SECONDARY_COLOR_LIGHTER,
+                fontFamily: 'Mont-Regular',
+                color: COLORS.NEGRO,
                 fontSize: 18,
                 marginBottom: 20,
               }}>
-              {p.pregunta}
+              ¿{p.pregunta}?
             </Text>
             {p.opciones.map((o, k2) => this.renderOpcion(o, p, k, k2))}
             {p.error && p.error != '' ? (
@@ -252,18 +266,12 @@ class Actividad extends React.Component {
       <View
         style={{
           flex: 1,
-          marginHorizontal: 4,
-          borderRadius: 20,
+          marginHorizontal: MARGIN_HORIZONTAL,
         }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{flex: 1, padding: 16}}>{preguntas}</View>
-          <View style={{padding: 16}}>
-            <TouchableOpacity
-              style={styleButton.wrapper}
-              onPress={this.enviarCuestionario}>
-              <Text style={styleButton.text}>Enviar Respuestas</Text>
-            </TouchableOpacity>
-          </View>
+          <Button onPress={this.enviarCuestionario} title="Enviar Respuestas" />
+          <View style={{padding: 16}}></View>
         </ScrollView>
       </View>
     );
@@ -296,8 +304,8 @@ class Actividad extends React.Component {
       <View
         style={{
           overflow: 'hidden',
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
+          borderTopLeftRadius: CURVA,
+          borderTopRightRadius: CURVA,
           height: 250,
         }}>
         {this.state.estado_video != 'playing' &&
@@ -336,7 +344,7 @@ class Actividad extends React.Component {
     console.log(data.preguntas);
 
     return (
-      <GradientContainer style={styles.container}>
+      <ColorfullContainer style={styles.container}>
         <Loader loading={cargando} />
         <Navbar back title={data.tipo} {...this.props} />
 
@@ -347,68 +355,14 @@ class Actividad extends React.Component {
               justifyContent: 'flex-start',
               alignItems: 'stretch',
             }}>
-            {/*<Card
-              style={{
-                borderRadius: 16,
-                marginHorizontal: 16,
-                marginTop: 32,
-                marginBottom: 8,
-              }}
-              elevation={4}>
-              {this.renderVideo(data)}
-              <Card.Content>
-                <View
-                  style={{
-                    paddingHorizontal: 20,
-                    paddingTop: 20,
-                    marginBottom: 20,
-                    flexDirection: 'column',
-                  }}>
-                  <Title>{data.titulo}</Title>
-
-                  {data.tipo == 'cuestionario' && (
-                    <View style={{}}>
-                      <Paragraph>
-                        Intentos {data.intentos_user}/{data.intentos}
-                      </Paragraph>
-                      <Paragraph>Calificacion {data.calificacion}</Paragraph>
-                    </View>
-                  )}
-
-                  {data.tipo == 'video' && this.state.video_cover != '' && (
-                    <FAB
-                      icon={
-                        this.state.estado_video == 'playing' ? 'pause' : 'play'
-                      }
-                      loading={this.state.estado_video == 'buffering'}
-                      onPress={this.playVideo}
-                    />
-                  )}
-
-                  {data.tipo == 'lectura' ? (
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        alignSelf: 'flex-end',
-                      }}>
-                      <Text style={styleText.small}>Marcar como leido</Text>
-                      <Switch
-                        value={data.visualizado}
-                        onValueChange={() => this.marcarLeida()}></Switch>
-                    </View>
-                  ) : null}
-                </View>
-              </Card.Content>
-            </Card>*/}
             <View>
               <Text
                 style={{
-                  fontFamily: 'Roboto-Medium',
-                  fontSize: 24,
+                  fontFamily: 'Mont-Bold',
+                  fontSize: TITULO_TAM,
                   textAlign: 'center',
                   color: COLORS.DARK,
-                  marginVertical: 16,
+                  marginVertical: MARGIN_VERTICAL,
                 }}>
                 {data.titulo}
               </Text>
@@ -433,7 +387,7 @@ class Actividad extends React.Component {
             {this.renderCuestionario(data)}
           </View>
         </View>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }
@@ -444,10 +398,14 @@ const mapToState = (state) => {
     cargando: state.Capacitacion.cargando,
     error: state.Capacitacion.error,
     cuestionario_aprobado: state.Capacitacion.cuestionario_aprobado,
+    habilitado: state.Capacitacion.habilitado,
   };
 };
 const mapToActions = (dispatch) => {
   return {
+    habilitar: (state) => {
+      dispatch(habilitar(state));
+    },
     cargar: (seccion, actividad) => {
       dispatch(capacitacionDetalleObtenerActividad(seccion, actividad));
     },

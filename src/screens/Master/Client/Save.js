@@ -14,12 +14,16 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loader from 'components/Loader';
 import {styleHeader, styleInput, styleButton} from 'styles';
-import {Colors, Button} from 'react-native-paper';
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import {loadClient, changeProp, save} from '../../../redux/actions/Clients';
 import {validar, totalErrores, renderErrores} from 'utils/Validar';
-import GradientContainer from 'components/GradientContainer';
+import ColorfullContainer from 'components/ColorfullContainer';
 import Navbar from 'components/Navbar';
+import Button from 'components/Button';
+import InputText from 'components/InputText';
+import InputMask from 'components/InputMask';
+import Select from 'components/Select';
+import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
 
 const styles = StyleSheet.create({
   container: {
@@ -80,7 +84,7 @@ class ClientSave extends React.Component {
 
     if (prev.success != this.props.success && this.props.success != '') {
       Alert.alert('Buen trabajo', this.props.success);
-      this.props.navigation.pop();
+      this.props.navigation.navigate('ProfileClient');
     }
   }
 
@@ -98,175 +102,157 @@ class ClientSave extends React.Component {
 
   render() {
     return (
-      <GradientContainer style={styles.container}>
+      <ColorfullContainer style={styles.container}>
         <Loader loading={this.props.loading} />
         <Navbar {...this.props} title="Guardar cliente" back />
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{paddingHorizontal: 16, paddingVertical: 32}}>
-            <View style={styleInput.wrapper}>
-              <Text style={styleInput.label}>Primer nombre:</Text>
-              <TextInput
-                style={styleInput.input}
-                placeholder=""
-                value={this.props.primer_nombre}
-                onChangeText={(i) => this.props.changeProp('primer_nombre', i)}
-                onBlur={() =>
-                  validar(
-                    this,
-                    this.props.primer_nombre,
-                    'primer_nombre',
-                    validations.primer_nombre,
-                  )
-                }
-              />
-            </View>
+          <View
+            style={{
+              marginHorizontal: MARGIN_HORIZONTAL,
+              marginVertical: MARGIN_VERTICAL,
+              backgroundColor: 'rgba(255,255,255,.5)',
+              borderRadius: CURVA,
+              padding: MARGIN_HORIZONTAL,
+            }}>
+            <Text style={styleInput.label}>Primer nombre:</Text>
+            <InputText
+              marginTop={1}
+              value={this.props.primer_nombre}
+              onChangeText={(i) => this.props.changeProp('primer_nombre', i)}
+              onBlur={() =>
+                validar(
+                  this,
+                  this.props.primer_nombre,
+                  'primer_nombre',
+                  validations.primer_nombre,
+                )
+              }
+              input={{keyboardType: 'textPersonName|textCapWords'}}
+            />
             {renderErrores(this, 'primer_nombre')}
 
-            <View style={styleInput.wrapper}>
-              <Text style={styleInput.label}>Segundo nombre:</Text>
-              <TextInput
-                style={styleInput.input}
-                placeholder=""
-                value={this.props.segundo_nombre}
-                onChangeText={(i) => this.props.changeProp('segundo_nombre', i)}
-                onBlur={() =>
-                  validar(
-                    this,
-                    this.props.segundo_nombre,
-                    'segundo_nombre',
-                    validations.segundo_nombre,
-                  )
-                }
-              />
-            </View>
+            <Text style={styleInput.label}>Segundo nombre:</Text>
+            <InputText
+              marginTop={1}
+              value={this.props.segundo_nombre}
+              onChangeText={(i) => this.props.changeProp('segundo_nombre', i)}
+              onBlur={() =>
+                validar(
+                  this,
+                  this.props.segundo_nombre,
+                  'segundo_nombre',
+                  validations.segundo_nombre,
+                )
+              }
+              input={{keyboardType: 'textPersonName|textCapWords'}}
+            />
             {renderErrores(this, 'segundo_nombre')}
 
-            <View style={styleInput.wrapper}>
-              <Text style={styleInput.label}>Primer apellido:</Text>
-              <TextInput
-                style={styleInput.input}
-                placeholder=""
-                value={this.props.primer_apellido}
-                onChangeText={(i) =>
-                  this.props.changeProp('primer_apellido', i)
-                }
-                onBlur={() =>
-                  validar(
-                    this,
-                    this.props.primer_apellido,
-                    'primer_apellido',
-                    validations.primer_apellido,
-                  )
-                }
-              />
-            </View>
+            <Text style={styleInput.label}>Primer apellido:</Text>
+            <InputText
+              marginTop={1}
+              value={this.props.primer_apellido}
+              onChangeText={(i) => this.props.changeProp('primer_apellido', i)}
+              onBlur={() =>
+                validar(
+                  this,
+                  this.props.primer_apellido,
+                  'primer_apellido',
+                  validations.primer_apellido,
+                )
+              }
+              input={{keyboardType: 'textPersonName|textCapWords'}}
+            />
             {renderErrores(this, 'primer_apellido')}
 
-            <View style={styleInput.wrapper}>
-              <Text style={styleInput.label}>Segundo apellido:</Text>
-              <TextInput
-                style={styleInput.input}
-                placeholder=""
-                value={this.props.segundo_apellido}
-                onChangeText={(i) =>
-                  this.props.changeProp('segundo_apellido', i)
-                }
-                onBlur={() =>
-                  validar(
-                    this,
-                    this.props.segundo_apellido,
-                    'segundo_apellido',
-                    validations.segundo_apellido,
-                  )
-                }
-              />
-            </View>
+            <Text style={styleInput.label}>Segundo apellido:</Text>
+            <InputText
+              marginTop={1}
+              value={this.props.segundo_apellido}
+              onChangeText={(i) => this.props.changeProp('segundo_apellido', i)}
+              onBlur={() =>
+                validar(
+                  this,
+                  this.props.segundo_apellido,
+                  'segundo_apellido',
+                  validations.segundo_apellido,
+                )
+              }
+              input={{keyboardType: 'textPersonName|textCapWords'}}
+            />
             {renderErrores(this, 'segundo_apellido')}
 
-            <View style={styleInput.wrapper}>
-              <Text style={styleInput.label}>Número de documento:</Text>
-              <TextInput
-                style={styleInput.input}
-                placeholder=""
-                keyboardType="number-pad"
-                value={this.props.numero_cedula}
-                onChangeText={(i) => this.props.changeProp('numero_cedula', i)}
-                onBlur={() =>
-                  validar(
-                    this,
-                    this.props.numero_cedula,
-                    'numero_cedula',
-                    validations.numero_cedula,
-                  )
-                }
-              />
-            </View>
+            <Text style={styleInput.label}>Número de documento:</Text>
+            <InputText
+              marginTop={1}
+              value={this.props.numero_cedula}
+              onChangeText={(i) => this.props.changeProp('numero_cedula', i)}
+              onBlur={() =>
+                validar(
+                  this,
+                  this.props.numero_cedula,
+                  'numero_cedula',
+                  validations.numero_cedula,
+                )
+              }
+              input={{keyboardType: 'number-pad'}}
+            />
             {renderErrores(this, 'numero_cedula')}
 
-            <View style={styleInput.wrapper}>
-              <Text style={styleInput.label}>Genero:</Text>
-              <Picker
-                selectedValue={this.props.genero}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.props.changeProp('genero', itemValue)
-                }
-                style={styleInput.input}>
-                <Picker.Item label="Mujer" value="F" />
-                <Picker.Item label="Hombre" value="M" />
-              </Picker>
-            </View>
+            <Text style={styleInput.label}>Genero:</Text>
+            <Select
+              value={this.props.genero}
+              onSelect={(item) => this.props.changeProp('genero', item.key)}
+              options={[
+                {key: 'F', label: 'Mujer'},
+                {key: 'M', label: 'Hombre'},
+              ]}
+            />
 
-            <View style={styleInput.wrapper}>
-              <Text style={styleInput.label}>Número de teléfono:</Text>
-              <TextInput
-                style={styleInput.input}
-                placeholder=""
-                value={this.props.numero_telefono}
-                onChangeText={(i) =>
-                  this.props.changeProp('numero_telefono', i)
-                }
-                onBlur={() =>
-                  validar(
-                    this,
-                    this.props.numero_telefono,
-                    validations.numero_telefono,
-                  )
-                }
-              />
-            </View>
+            <Text style={styleInput.label}>Número de teléfono:</Text>
+            <InputText
+              marginTop={1}
+              value={this.props.numero_telefono}
+              onChangeText={(i) => this.props.changeProp('numero_cedula', i)}
+              onBlur={() =>
+                validar(
+                  this,
+                  this.props.numero_telefono,
+                  'numero_telefono',
+                  validations.numero_telefono,
+                )
+              }
+              input={{keyboardType: 'number-pad'}}
+            />
             {renderErrores(this, 'numero_telefono')}
 
-            <View style={styleInput.wrapper}>
-              <TextInput
-                style={styleInput.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                value={this.props.correo_electronico}
-                onChangeText={(i) =>
-                  this.props.changeProp('correo_electronico', i)
-                }
-                onBlur={() =>
-                  validar(
-                    this,
-                    this.props.correo_electronico,
-                    'correo_electronico',
-                    validations.correo_electronico,
-                  )
-                }
-              />
-            </View>
+            <Text style={styleInput.label}>Email:</Text>
+            <InputText
+              marginTop={1}
+              value={this.props.correo_electronico}
+              onChangeText={(i) =>
+                this.props.changeProp('correo_electronico', i)
+              }
+              onBlur={() =>
+                validar(
+                  this,
+                  this.props.correo_electronico,
+                  'correo_electronico',
+                  validations.correo_electronico,
+                )
+              }
+              input={{keyboardType: 'email-address'}}
+            />
             {renderErrores(this, 'correo_electronico')}
 
             <Button
-              style={styleButton.wrapper}
-              dark={true}
-              color="white"
-              onPress={() => this.guardar()}>
-              Guardar
-            </Button>
+              marginTop={2}
+              onPress={() => this.guardar()}
+              title="Guardar"
+            />
           </View>
         </ScrollView>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }

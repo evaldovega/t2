@@ -26,36 +26,46 @@ import {
 } from 'react-native-paper';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
-import {loadClient, taskRemove} from 'redux/actions/Clients';
+import {loadClient, taskRemove, removeOrden} from 'redux/actions/Clients';
 import ClientAgenda from './Agenda';
-import {COLORS} from 'constants';
+import {
+  COLORS,
+  CURVA,
+  MARGIN_HORIZONTAL,
+  MARGIN_VERTICAL,
+  TITULO_TAM,
+} from 'constants';
 import NumberFormat from 'react-number-format';
 import Navbar from 'components/Navbar';
-import GradientContainer from 'components/GradientContainer';
+import ColorfullContainer from 'components/ColorfullContainer';
+
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import ClienteOrdenes from './Ordenes';
+
 const styles = StyleSheet.create({
-  container: {flex: 1},
+  container: {flex: 1, backgroundColor: COLORS.BLANCO},
 });
 
 class ClientProfile extends React.Component {
   componentDidMount() {
     this.props.load(this.props.route.params.id);
   }
+
   componentDidUpdate(prev) {
     const orden = this.props.route.params?.orden;
     const prev_orden = prev.route.params?.orden;
 
     if (orden && prev_orden != orden) {
-      Alert.alert(
-        'Orden ' + orden + ' generada',
-        'Entrara en un proceso de validación',
-      );
     }
+
     if (this.props.error != prev.error && this.props.error != '') {
       Alert.alert('Algo anda mal', this.props.error);
     }
   }
+
   call = () => {
     if (this.props.numero_telefono == '') {
       Alert.alert('Número de teléfono no configurado', 'Hazlo ahora');
@@ -72,66 +82,10 @@ class ClientProfile extends React.Component {
     this.props.navigation.push('ClientSave', {id: this.props.id});
   };
 
-  renderProduct = ({item}) => (
-    <View style={{flexDirection: 'row', marginTop: 8}}>
-      <Image
-        source={{uri: item.imagen_producto}}
-        style={{
-          width: 64,
-          height: 64,
-          borderRadius: 16,
-          marginRight: 8,
-          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-          borderWidth: 0.2,
-        }}
-      />
-      <View style={{marginLeft: 8}}>
-        <Text style={{fontFamily: 'Roboto-Medium', fontSize: 14}}>
-          {item.producto}
-        </Text>
-        <Text style={{fontFamily: 'Roboto-Light', fontSize: 12}}>
-          Nº {item.numero_orden}
-        </Text>
-        <NumberFormat
-          value={item.precio_pagado}
-          displayType={'text'}
-          thousandSeparator={true}
-          prefix={'$'}
-          renderText={(nf) => (
-            <Text style={{fontFamily: 'Roboto-Light', fontSize: 12}}>{nf}</Text>
-          )}
-        />
-      </View>
-    </View>
-  );
-
-  renderLoadingClientInfor = () => (
-    <SkeletonPlaceholder>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <View style={{width: 64, height: 64, borderRadius: 32}} />
-        <View>
-          <View
-            style={[
-              styleText.h1,
-              {height: 26, width: 200, marginBottom: 4},
-            ]}></View>
-          <View style={{height: 20, width: 150, marginBottom: 4}}></View>
-          <View style={{height: 20, width: 150, marginBottom: 4}}></View>
-          <View style={{height: 20, width: 150}}></View>
-        </View>
-        <View style={{width: 64, height: 64, borderRadius: 32}} />
-      </View>
-    </SkeletonPlaceholder>
-  );
-
   renderInfoClient = () => (
     <View
       style={{
+        marginTop: MARGIN_VERTICAL,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -142,9 +96,9 @@ class ClientProfile extends React.Component {
         <Text
           style={[
             {
-              color: COLORS.PRIMARY_COLOR,
-              fontFamily: 'Roboto-Medium',
-              fontSize: 18,
+              color: COLORS.NEGRO,
+              fontFamily: 'Mont-Bold',
+              fontSize: TITULO_TAM * 0.7,
             },
           ]}>
           {!this.props.loading &&
@@ -156,118 +110,31 @@ class ClientProfile extends React.Component {
               ' ' +
               this.props.segundo_apellido}
         </Text>
-        <Caption style={{color: COLORS.DARK}}>
+        <Text style={{color: COLORS.NEGRO}}>
           {this.props.numero_cedula || '...'}
-        </Caption>
-        <Caption style={{color: COLORS.DARK}}>
+        </Text>
+        <Text style={{color: COLORS.NEGRO}}>
           {this.props.correo_electronico || '...'}
-        </Caption>
-        <Caption style={{color: COLORS.DARK}}>
+        </Text>
+        <Text style={{color: COLORS.NEGRO}}>
           {this.props.numero_telefono || '...'}
-        </Caption>
+        </Text>
       </TouchableOpacity>
-      <FAB
-        size={64}
-        icon="phone"
-        color={COLORS.SECONDARY_COLOR_LIGHTER}
-        style={{
-          elevation: 0,
-          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-          backgroundColor: 'transparent',
-          borderWidth: 0.2,
-        }}
+
+      <TouchableOpacity
         onPress={this.call}
-      />
+        style={{
+          backgroundColor: COLORS.PRIMARY_COLOR,
+          width: 64,
+          height: 64,
+          borderRadius: CURVA,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <MaterialCommunityIcons name="phone" size={32} color={COLORS.BLANCO} />
+      </TouchableOpacity>
     </View>
   );
-
-  planes = () => {
-    const nombre = `${this.props.primer_nombre} ${this.props.segundo_nombre} ${this.props.primer_apellido} ${this.props.segundo_apellido}`;
-    requestAnimationFrame(() => {
-      this.props.navigation.push('Planes', {
-        cliente_id: this.props.id,
-        nombre_cliente: nombre,
-      });
-    });
-  };
-
-  renderPlanes = () => {
-    if (!this.props.loading) {
-      if (this.props.ordenes.length > 0) {
-        return (
-          <React.Fragment>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 16,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: COLORS.SECONDARY_COLOR_MUTED,
-                  fontFamily: 'Roboto-Medium',
-                  fontSize: 18,
-                  marginRight: 16,
-                }}>
-                Planes Adquiridos
-              </Text>
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                onPress={this.planes}>
-                <EvilIcons name="cart" size={24} color={COLORS.PRIMARY_COLOR} />
-                <Text
-                  style={{
-                    fontFamily: 'Roboto-Medium',
-                    color: COLORS.PRIMARY_COLOR,
-                  }}>
-                  Vender plan
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <Card
-              style={{
-                borderRadius: 24,
-                marginTop: 32,
-                elevation: 0,
-                borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-                borderWidth: 0.2,
-              }}
-              elevation={2}>
-              <Card.Content>
-                <FlatList
-                  data={this.props.ordenes}
-                  renderItem={this.renderProduct}
-                  keyExtractor={(item) => item.id}
-                />
-              </Card.Content>
-            </Card>
-          </React.Fragment>
-        );
-      } else {
-        return (
-          <View
-            style={{backgroundColor: '#ffff', padding: 16, borderRadius: 16}}>
-            <Text
-              style={{
-                textAlign: 'center',
-                fontFamily: 'Roboto-Thin',
-                fontSize: 16,
-              }}>
-              No ha comprado ningún plan
-            </Text>
-            <Button icon="plus" onPress={this.planes}>
-              Vender uno ahora
-            </Button>
-          </View>
-        );
-      }
-    }
-  };
 
   renderAgenda = () => {
     if (!this.props.loading) {
@@ -276,44 +143,41 @@ class ClientProfile extends React.Component {
           <View
             style={{
               flexDirection: 'row',
-              marginTop: 16,
+              marginTop: MARGIN_VERTICAL,
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
             <Text
               style={{
-                color: COLORS.SECONDARY_COLOR_MUTED,
-                fontFamily: 'Roboto-Medium',
-                fontSize: 18,
-                marginRight: 16,
+                color: COLORS.NEGRO,
+                fontFamily: 'Mont-Regular',
+                fontWeight: 'bold',
+                fontSize: TITULO_TAM * 0.7,
               }}>
               Agenda
             </Text>
             <TouchableOpacity
-              style={{flexDirection: 'row'}}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: COLORS.MORADO,
+                width: 32,
+                height: 32,
+                borderRadius: CURVA,
+              }}
               onPress={() =>
                 this.props.navigation.push('TaskSave', {
                   cliente_id: this.props.route.params.id,
                 })
               }>
-              <EvilIcons
-                name="calendar"
-                color={COLORS.PRIMARY_COLOR}
-                size={24}
-              />
-              <Text
-                style={{
-                  color: COLORS.PRIMARY_COLOR,
-                  fontFamily: 'Roboto-Medium',
-                }}>
-                Agendar cita
-              </Text>
+              <AntDesign name="plus" color={COLORS.BLANCO} />
             </TouchableOpacity>
           </View>
           <Card
             style={{
-              borderRadius: 24,
-              marginTop: 32,
+              borderRadius: CURVA,
+              marginTop: MARGIN_VERTICAL,
               elevation: 0,
               borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
               borderWidth: 0.2,
@@ -331,27 +195,23 @@ class ClientProfile extends React.Component {
   render() {
     const nombre = `${this.props.primer_nombre} ${this.props.segundo_nombre} ${this.props.primer_apellido} ${this.props.segundo_apellido}`;
     return (
-      <GradientContainer style={styles.container}>
+      <ColorfullContainer style={styles.container}>
         <Navbar
           back
+          transparent
           title="Detalle cliente"
           right={
             <TouchableOpacity
               onPress={this.edit}
               style={{
-                flexDirection: 'row',
+                backgroundColor: COLORS.MORADO,
+                width: 32,
+                height: 32,
+                borderRadius: CURVA,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <SimpleLineIcons color="#ffff" name="pencil" />
-              <Text
-                style={{
-                  marginLeft: 4,
-                  color: '#ffff',
-                  fontFamily: 'Roboto-Thin',
-                }}>
-                Editar
-              </Text>
+              <AntDesign name="edit" color={COLORS.BLANCO} />
             </TouchableOpacity>
           }
           {...this.props}
@@ -365,28 +225,37 @@ class ClientProfile extends React.Component {
               onRefresh={() => this.props.load(this.props.route.params.id)}
             />
           }>
-          <View style={{padding: 16, minHeight: 150}}>
+          <View style={{marginHorizontal: MARGIN_HORIZONTAL, minHeight: 150}}>
             {!this.props.loading ? this.renderInfoClient() : null}
           </View>
 
           <View
             style={{
               flex: 1,
-              padding: 16,
-              borderTopRightRadius: 24,
-              borderTopLeftRadius: 24,
+              marginHorizontal: MARGIN_HORIZONTAL * 1.2,
             }}>
-            {this.renderPlanes()}
+            {!this.props.loading && (
+              <ClienteOrdenes
+                token={this.props.token}
+                removeOrden={this.props.removeOrden}
+                loading={this.props.loading}
+                navigation={this.props.navigation}
+                ordenes={this.props.ordenes}
+                cliente={this.props.id}
+              />
+            )}
+
             {this.renderAgenda()}
           </View>
         </ScrollView>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }
 
 const mapToState = (state) => {
   return {
+    token: state.Usuario.token,
     id: state.Client.id,
     primer_nombre: state.Client.primer_nombre,
     segundo_nombre: state.Client.segundo_nombre,
@@ -409,6 +278,9 @@ const mapToActions = (dispatch) => {
     },
     taskRemove: (id) => {
       dispatch(taskRemove(id));
+    },
+    removeOrden: (orden) => {
+      dispatch(removeOrden(orden));
     },
   };
 };

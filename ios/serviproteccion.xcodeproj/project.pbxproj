@@ -77,6 +77,8 @@
 		94708F69DBE34DBC8B8557D2 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 088E3EDBFC66483C9948966A /* Roboto-Regular.ttf */; };
 		DC45A7F20A8C45A5A1CB97BE /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E1F49DA0257947CBABC21F96 /* Roboto-Thin.ttf */; };
 		889C67710A9C4F2280D0DE43 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A6FD79CD145F4225A9D1886E /* Roboto-ThinItalic.ttf */; };
+		BC221E3A2B7A4102A0C871F6 /* Mont-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C3CB4AE8B23F4D9D948B339D /* Mont-Bold.otf */; };
+		2F4FE1CC1AD9466E81EEC7B4 /* Mont-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5496357772A243A5BC216279 /* Mont-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -182,6 +184,8 @@
 		088E3EDBFC66483C9948966A /* Roboto-Regular.ttf */ = {isa = PBXFileReference; name = "Roboto-Regular.ttf"; path = "../assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		E1F49DA0257947CBABC21F96 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; name = "Roboto-Thin.ttf"; path = "../assets/fonts/Roboto-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		A6FD79CD145F4225A9D1886E /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; name = "Roboto-ThinItalic.ttf"; path = "../assets/fonts/Roboto-ThinItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C3CB4AE8B23F4D9D948B339D /* Mont-Bold.otf */ = {isa = PBXFileReference; name = "Mont-Bold.otf"; path = "../assets/fonts/Mont-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5496357772A243A5BC216279 /* Mont-Regular.ttf */ = {isa = PBXFileReference; name = "Mont-Regular.ttf"; path = "../assets/fonts/Mont-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -374,6 +378,8 @@
 				088E3EDBFC66483C9948966A /* Roboto-Regular.ttf */,
 				E1F49DA0257947CBABC21F96 /* Roboto-Thin.ttf */,
 				A6FD79CD145F4225A9D1886E /* Roboto-ThinItalic.ttf */,
+				C3CB4AE8B23F4D9D948B339D /* Mont-Bold.otf */,
+				5496357772A243A5BC216279 /* Mont-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -579,6 +585,8 @@
 				94708F69DBE34DBC8B8557D2 /* Roboto-Regular.ttf in Resources */,
 				DC45A7F20A8C45A5A1CB97BE /* Roboto-Thin.ttf in Resources */,
 				889C67710A9C4F2280D0DE43 /* Roboto-ThinItalic.ttf in Resources */,
+				BC221E3A2B7A4102A0C871F6 /* Mont-Bold.otf in Resources */,
+				2F4FE1CC1AD9466E81EEC7B4 /* Mont-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

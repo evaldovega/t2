@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {COLORS} from 'constants';
+import {COLORS, MARGIN_VERTICAL} from 'constants';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -101,13 +101,12 @@ const styleInput = StyleSheet.create({
     paddingHorizontal: 24,
   },
   label: {
-    fontFamily: 'Montserrat',
-    color: COLORS.PRIMARY_COLOR_DARK_1,
-    fontWeight: 'bold',
+    fontFamily: 'Mont-Bold',
+    color: COLORS.NEGRO_N1,
     fontSize: 14,
     flex: 1,
     padding: 0,
-    marginBottom: 14,
+    marginTop: MARGIN_VERTICAL,
   },
   input: {
     fontFamily: 'Lato-Regular',

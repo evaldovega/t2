@@ -18,22 +18,24 @@ class ClientAgenda extends React.Component {
       start.add(15, 'minutes');
     }
     const markers = {};
-    this.props.tareas.forEach((task) => {
-      const date = moment(task.fecha_agendamiento).format('YYYY-MM-DD');
-      if (!markers[date]) {
-        markers[date] = {
-          dots: [],
-          selectedColor: COLORS.PRIMARY_COLOR,
-          marked: true,
-          selected: true,
-        };
-      }
-      markers[date].dots.push({
-        selectedDotColor: 'red',
-        key: task.id,
-        color: 'red',
+    if (this.props.tareas) {
+      this.props.tareas.forEach((task) => {
+        const date = moment(task.fecha_agendamiento).format('YYYY-MM-DD');
+        if (!markers[date]) {
+          markers[date] = {
+            dots: [],
+            selectedColor: COLORS.PRIMARY_COLOR,
+            marked: true,
+            selected: true,
+          };
+        }
+        markers[date].dots.push({
+          selectedDotColor: 'red',
+          key: task.id,
+          color: 'red',
+        });
       });
-    });
+    }
 
     return (
       <View>

@@ -10,10 +10,8 @@ import {
   SafeAreaView,
   Modal,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
-import {Neomorph} from 'react-native-neomorph-shadows';
 import {connect} from 'react-redux';
 import {
   CambiarNombre,
@@ -21,26 +19,23 @@ import {
   initUsuario,
 } from 'redux/actions/Usuario';
 
-import {
-  Avatar,
-  FAB,
-  Subheading,
-  TextInput,
-  Title,
-  Caption,
-  Button,
-  Colors,
-  Paragraph,
-} from 'react-native-paper';
-import {TouchableNativeFeedback} from 'react-native-gesture-handler';
+import {Avatar} from 'react-native-paper';
+
 import ImagePicker from 'react-native-image-crop-picker';
-import {COLORS} from 'constants';
+import {
+  COLORS,
+  MARGIN_HORIZONTAL,
+  MARGIN_VERTICAL,
+  TITULO_TAM,
+} from 'constants';
 import {styleHeader} from 'styles';
 import ProfileIdentificacion from './Identificacion';
 import {actualizarDatos, cambiarProp} from 'redux/actions/Usuario';
 
 import Navbar from 'components/Navbar';
-import GradientContainer from 'components/GradientContainer';
+import ColorfullContainer from 'components/ColorfullContainer';
+import Button from 'components/Button';
+import InputText from 'components/InputText';
 
 const SeguridadSocial = React.lazy(() => import('./SeguridadSocial'));
 
@@ -82,8 +77,8 @@ class Profile extends React.Component {
 
   render() {
     return (
-      <GradientContainer style={styles.container}>
-        <Navbar menu title="Perfil" {...this.props} />
+      <ColorfullContainer style={styles.container}>
+        <Navbar transparent menu title="Perfil" {...this.props} />
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View
@@ -91,111 +86,112 @@ class Profile extends React.Component {
               flexDirection: 'row',
               justifyContent: 'flex-start',
               alignItems: 'center',
-              paddingHorizontal: 24,
-              marginTop: 32,
+              paddingHorizontal: MARGIN_HORIZONTAL,
+              marginTop: MARGIN_VERTICAL,
             }}>
-            <Neomorph
-              style={{
-                shadowRadius: 3,
-                borderRadius: 36,
-                backgroundColor: COLORS.PRIMARY_COLOR,
-                width: 72,
-                height: 72,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Neomorph
-                inner
-                style={{
-                  shadowRadius: 7,
-                  borderRadius: 32,
-                  backgroundColor: COLORS.PRIMARY_COLOR,
-                  width: 64,
-                  height: 64,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  overflow: 'hidden',
-                }}>
-                <Avatar.Image
-                  onPress={this.cambiarFoto}
-                  size={64}
-                  source={{uri: this.props.usuario.foto_perfil}}
-                />
-              </Neomorph>
-            </Neomorph>
+            <Avatar.Image
+              onPress={this.cambiarFoto}
+              size={96}
+              source={{uri: this.props.usuario.foto_perfil}}
+            />
 
             <View style={{marginLeft: 8}}>
-              <Title style={{textAlign: 'center', color: COLORS.DARK}}>
+              <Text
+                style={{
+                  textAlign: 'left',
+                  color: COLORS.NEGRO,
+                  fontFamily: 'Mont-Bold',
+                  fontSize: TITULO_TAM,
+                }}>
                 {this.props.usuario.nombre || 'Nombre del usuario'}
-              </Title>
-              <Subheading style={{textAlign: 'center', color: COLORS.DARK}}>
+              </Text>
+              <Text
+                style={{
+                  textAlign: 'left',
+                  color: COLORS.NEGRO,
+                  fontFamily: 'Mont-Regular',
+                  fontSize: TITULO_TAM * 0.7,
+                }}>
                 {this.props.usuario.num_documento_identidad}
-              </Subheading>
+              </Text>
             </View>
           </View>
 
           {!this.props.usuario.habilitado ? (
-            <TouchableOpacity
-              style={styles.btnUpdate}
-              onPress={() => this.props.navigation.navigate('Capacitaciones')}>
-              <Text style={styles.txtUpdate}>Completar entrenamiento</Text>
-            </TouchableOpacity>
+            <Button
+              onPress={() => this.props.navigation.navigate('Capacitaciones')}
+              title="Completar entrenamiento"
+            />
           ) : null}
 
           <View style={styles.containerInfo}>
             <View style={styles.col}>
-              <Subheading style={{color: COLORS.DARK}}>3.890</Subheading>
-              <Caption style={{color: COLORS.DARK}}>Clientes</Caption>
+              <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Bold'}}>
+                3.890
+              </Text>
+              <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Regular'}}>
+                Clientes
+              </Text>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Subheading style={{color: COLORS.DARK}}>257</Subheading>
-              <Caption style={{color: COLORS.DARK}}>Ventas</Caption>
+              <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Bold'}}>
+                257
+              </Text>
+              <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Regular'}}>
+                Ventas
+              </Text>
             </View>
             <View style={styles.line} />
             <View style={styles.col}>
-              <Subheading style={{color: COLORS.DARK}}>1.000.468</Subheading>
-              <Caption style={{color: COLORS.DARK}}>Ganancias</Caption>
+              <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Bold'}}>
+                1.000.468
+              </Text>
+              <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Regular'}}>
+                Ganancias
+              </Text>
             </View>
           </View>
 
           <View style={styles.content}>
-            <Title style={{color: COLORS.PRIMARY_COLOR, textAlign: 'center'}}>
-              Datos Personales
-            </Title>
+            <Text style={styles.titleContent}>Datos Personales</Text>
 
-            <TextInput
-              label="Número de Documento"
-              textContentType="number"
-              onChangeText={(t) =>
-                this.props.cambiarProp('num_documento_identidad', t)
-              }
-              value={this.props.usuario.num_documento_identidad}
-              style={{backgroundColor: 'transparent'}}
-            />
-
-            <TextInput
-              label="Correo Electrónico"
-              textContentType="emailAddress"
-              value={this.props.usuario.email}
+            <Text
+              style={{
+                fontFamily: 'Mont-Regular',
+                marginTop: MARGIN_VERTICAL,
+                color: COLORS.NEGRO_N1,
+              }}>
+              Correo Electrónico
+            </Text>
+            <InputText
+              marginTop={1}
+              input={{keyboardType: 'email-address'}}
               onChangeText={(t) => this.props.cambiarProp('email', t)}
-              style={{backgroundColor: 'transparent'}}
+              value={this.props.usuario.email}
             />
-            <TextInput
-              label="Número de Celular"
-              textContentType="telephoneNumber"
+            <Text
+              style={{
+                fontFamily: 'Mont-Regular',
+                marginTop: MARGIN_VERTICAL,
+                color: COLORS.NEGRO_N1,
+              }}>
+              Número de Celular
+            </Text>
+            <InputText
+              marginTop={1}
+              input={{keyboardType: 'phone-pad'}}
               onChangeText={(t) => this.props.cambiarProp('cel', t)}
               value={this.props.usuario.cel}
-              style={{backgroundColor: 'transparent'}}
             />
 
             <Button
+              marginTop={1}
               icon="pencil"
-              style={{marginVertical: 16}}
               onPress={this.props.actualizarDatos}
-              loading={this.props.usuario.actualizando_perfil}>
-              Actualizar Datos
-            </Button>
+              loading={this.props.usuario.actualizando_perfil}
+              title="Actualizar Datos"
+            />
 
             <ProfileIdentificacion />
 
@@ -207,7 +203,7 @@ class Profile extends React.Component {
             </Suspense>
           </View>
         </ScrollView>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }
@@ -242,7 +238,7 @@ export default connect(mapToState, mapTopActions)(Profile);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    elevation: 0,
+    backgroundColor: COLORS.BLANCO,
   },
   back: {
     position: 'absolute',
@@ -314,25 +310,22 @@ const styles = StyleSheet.create({
   },
   line: {
     width: 1,
-    backgroundColor: '#EAE8EA',
+    backgroundColor: COLORS.NEGRO_N1,
     height: 32,
   },
   content: {
     flex: 1,
-    backgroundColor: '#FFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 32,
     paddingBottom: 20,
     paddingTop: 32,
-    elevation: 16,
   },
   titleContent: {
-    fontFamily: Montserrat,
-    fontSize: 16,
-    color: '#1A051D',
-    textTransform: 'uppercase',
-    marginTop: 28,
+    fontFamily: 'Mont-Bold',
+    fontSize: TITULO_TAM * 0.8,
+    color: COLORS.NEGRO,
+    marginVertical: MARGIN_VERTICAL * 2,
   },
   titleWork: {
     position: 'absolute',

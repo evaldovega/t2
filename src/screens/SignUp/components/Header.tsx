@@ -1,20 +1,15 @@
 import React, {memo} from 'react';
 import {StyleSheet, Text, View, Image} from "react-native";
-import SvgLogo from "svgs/signIn/SvgLogo";
-import {Montserrat} from "utils/fonts";
-import SvgPerson from "svgs/signIn/SvgPerson";
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {getStatusBarHeight} from "react-native-iphone-x-helper";
-import { COLORS } from 'constants';
+import { COLORS,MARGIN_VERTICAL,TITULO_TAM } from 'constants';
 
-const Header = memo(() => {
+const Header = memo((props) => {
     return (
         <View style={styles.container}>
-            <Image style={styles.logo} resizeMode='contain' source={require('utils/images/icon.png')}></Image>
-            <Text style={styles.txtWelcome}>¡Hola!</Text>
-            <Text style={styles.txtTo}>Crea tu cuenta {'\n'}en Servi</Text>
-            {/* <View style={styles.circle}/> */}
-            {/* <SvgPerson style={styles.svgPerson}/> */}
-            <Image style={styles.image} source={require('screens/SignUp/components/HeaderImage.png')}></Image>
+            <SimpleLineIcons name='arrow-left' size={16} onPress={()=>props.navigation.pop()}/>
+            <Text style={styles.txtTo}>Crea tu cuenta {'\n'}en Servi!</Text>
+            <Image style={styles.image} resizeMode='contain' source={require('utils/images/registro.png')}></Image>
         </View>
     )
 });
@@ -26,31 +21,30 @@ const styles = StyleSheet.create({
         marginTop: getStatusBarHeight(true) + 20,
         paddingLeft: 40,
         paddingTop: 30,
-        height: 176
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+        marginBottom:(MARGIN_VERTICAL*2)
     },
     txtWelcome: {
-        fontSize: 32,
+        fontSize: 18,
         color: COLORS.PRIMARY_COLOR,
-        fontWeight: '600',
-        fontFamily: Montserrat,
-        marginTop: 30
+        fontFamily: 'Mont-Bold'
     },
     logo: {
         width: 60,
         height: 60
     },
     image: {
-        width: 240,
-        height: 240,
-        position: 'absolute',
-        right: -60,
-        top: -10
+        width: 150,
+        height: 150
     },
     txtTo: {
-        fontSize: 24,
-        color: COLORS.PRIMARY_COLOR_DARK_1,
-        fontWeight: '500',
-        fontFamily: Montserrat
+        fontSize: TITULO_TAM,
+        color: COLORS.NEGRO,
+        fontFamily:'Mont-Bold',
+        fontWeight:'bold'
+        
     },
     circle: {
         width: 176,

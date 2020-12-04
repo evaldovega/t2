@@ -17,16 +17,13 @@ import SvgGlueco from 'svgs/staticsHealth/SvgGlueco';
 import SvgEdit from 'svgs/staticsHealth/SvgEdit';
 import SvgWeight from 'svgs/staticsHealth/SvgWeight';
 import Chart from 'screens/StaticsHealth/components/Chart';
-const dataTime = ['DAYS', 'WEEKS', 'MONTHS', 'YEARS'];
-import {styleHeader} from 'styles';
+
 import {connect} from 'react-redux';
 import {CambiarNombre} from '../../redux/actions/Usuario';
-import Icon from 'react-native-vector-icons/Entypo';
-import {COLORS} from 'constants';
+import {COLORS, MARGIN_VERTICAL} from 'constants';
 import LottieView from 'lottie-react-native';
 import Navbar from 'components/Navbar';
-import GradientContainer from 'components/GradientContainer';
-import {Neomorph} from 'react-native-neomorph-shadows';
+import ColorfullContainer from 'components/ColorfullContainer';
 
 const {width, height} = Dimensions.get('screen');
 class Dashboard extends React.Component {
@@ -46,8 +43,8 @@ class Dashboard extends React.Component {
   }
   render() {
     return (
-      <GradientContainer style={styles.container}>
-        <Navbar menu title="Dashboard" {...this.props}></Navbar>
+      <ColorfullContainer style={styles.container}>
+        <Navbar transparent menu title="Dashboard" {...this.props}></Navbar>
 
         {/*<View style={styles.containerTime}>
           {dataTime.map((item) => {
@@ -61,26 +58,6 @@ class Dashboard extends React.Component {
         </View>*/}
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Neomorph
-            swapShadows // <- change zIndex of each shadow color
-            style={{
-              shadowRadius: 5,
-              borderRadius: 25,
-              padding: 25,
-              backgroundColor: '#FFA26B',
-              width: width - 50,
-              height: 100,
-              marginHorizontal: 24,
-              marginVertical: 25,
-            }}>
-            <View style={{flex: 1}}>
-              <Text style={styles.txtGood}>Buen trabajo 👍</Text>
-              <Text style={styles.txtKeep}>
-                Este mes haz alcanzado tus metas!
-              </Text>
-            </View>
-          </Neomorph>
-
           <View style={styles.containerChart}>
             <View style={styles.boxHeader}>
               <SvgGlueco />
@@ -122,7 +99,7 @@ class Dashboard extends React.Component {
             </View>
           </View>
         </ScrollView>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }
@@ -215,6 +192,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   containerChart: {
+    marginTop: MARGIN_VERTICAL * 3,
     borderRadius: 16,
     backgroundColor: '#FFF',
     paddingHorizontal: 16,

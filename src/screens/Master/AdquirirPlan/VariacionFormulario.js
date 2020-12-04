@@ -1,31 +1,38 @@
 import React from 'react';
-import {
-  Text,
-  ScrollView,
-  View,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-} from 'react-native';
-import GradientContainer from 'components/GradientContainer';
+import {Text, ScrollView, View, Alert} from 'react-native';
+import ColorfullContainer from 'components/ColorfullContainer';
 import Navbar from 'components/Navbar';
-import ModalFilterPicker from 'react-native-modal-filter-picker';
-import TextInputMask from 'react-native-text-input-mask';
-import {COLORS, SERVER_ADDRESS} from 'constants';
+import {
+  COLORS,
+  CURVA,
+  MARGIN_HORIZONTAL,
+  MARGIN_VERTICAL,
+  SERVER_ADDRESS,
+  TITULO_TAM,
+} from 'constants';
 import {validar, totalErrores, renderErrores} from 'utils/Validar';
 import produce from 'immer';
+
+import Loader from 'components/Loader';
+import Button from 'components/Button';
+import InputText from 'components/InputText';
+import InputMask from 'components/InputMask';
+import Select from 'components/Select';
 
 let Validaciones = {};
 
 class VariacionFormulario extends React.Component {
   state = {
+    cargando: false,
     values: {},
     error: {},
     variacion: {},
   };
+  validando = false;
+
   onBlur = (pregunta) => {
     if (Validaciones['pregunta' + pregunta.id]) {
-      validar(
+      return validar(
         this,
         pregunta.respuesta,
         'pregunta' + pregunta.id,
@@ -33,6 +40,10 @@ class VariacionFormulario extends React.Component {
         false,
       );
     }
+
+    return new Promise((resolve) => {
+      resolve(null);
+    });
   };
   //--------------Choice
   abrirOpciones = (pregunta, estado = true) => {
@@ -57,38 +68,22 @@ class VariacionFormulario extends React.Component {
     );
     setTimeout(() => {
       this.onBlur({id: pregunta.id, respuesta: opcion});
-    }, 500);
+    }, 100);
   };
 
   renderChoices = (pregunta) => {
-    console.log(pregunta);
     const {tipo_pregunta, opciones, mostrar_selector, respuesta} = pregunta;
     if (tipo_pregunta == 'choice') {
       return (
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 4,
-            borderWidth: 0.2,
-            padding: 8,
-          }}>
-          <TouchableOpacity onPress={() => this.abrirOpciones(pregunta)}>
-            <Text>
-              {respuesta && respuesta != ''
-                ? opciones.find((o) => o.id == respuesta).opcion
-                : 'Seleccione'}
-            </Text>
-          </TouchableOpacity>
-          <ModalFilterPicker
-            visible={mostrar_selector}
-            onSelect={(opcion) => this.seleccionarOpcion(pregunta, opcion.key)}
-            onCancel={() => this.abrirOpciones(pregunta, false)}
-            options={opciones.map((o) => ({
-              key: o.id,
-              label: o.opcion,
-            }))}
-          />
-        </View>
+        <Select
+          marginTop={1}
+          value={respuesta}
+          onSelect={(opcion) => this.seleccionarOpcion(pregunta, opcion.key)}
+          options={opciones.map((o) => ({
+            key: o.id,
+            label: o.opcion,
+          }))}
+        />
       );
     }
   };
@@ -117,21 +112,13 @@ class VariacionFormulario extends React.Component {
         props.numberOfLines = 4;
       }
       return (
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 4,
-            borderWidth: 0.2,
-            padding: 8,
-          }}>
-          <TextInput
-            style={{padding: 0}}
-            value={pregunta.respuesta}
-            onBlur={() => this.onBlur(pregunta)}
-            onChangeText={(v) => this.ingresarRespuesta(pregunta, v)}
-            {...props}
-          />
-        </View>
+        <InputText
+          input={props}
+          marginTop={1}
+          value={pregunta.respuesta}
+          onBlur={() => this.onBlur(pregunta)}
+          onChangeText={(v) => this.ingresarRespuesta(pregunta, v)}
+        />
       );
     }
   };
@@ -139,24 +126,16 @@ class VariacionFormulario extends React.Component {
     const {tipo_pregunta, respuesta} = pregunta;
     if (tipo_pregunta == 'date') {
       return (
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 4,
-            borderWidth: 0.2,
-            padding: 8,
-          }}>
-          <TextInputMask
-            style={{margin: 0, padding: 0}}
-            placeholder="0000-00-00"
-            value={pregunta.respuesta}
-            onChangeText={(formatted, extracted) => {
-              this.ingresarRespuesta(pregunta, formatted);
-            }}
-            onBlur={() => this.onBlur(pregunta)}
-            mask={'[0000]-[00]-[00]'}
-          />
-        </View>
+        <InputMask
+          marginTop={1}
+          placeholder="0000-00-00"
+          value={pregunta.respuesta}
+          onBlur={() => this.onBlur(pregunta)}
+          mask={'[0000]-[00]-[00]'}
+          onChangeText={(formatted, extracted) => {
+            this.ingresarRespuesta(pregunta, formatted);
+          }}
+        />
       );
     }
   };
@@ -165,8 +144,8 @@ class VariacionFormulario extends React.Component {
     const {preguntas} = formulario;
 
     return preguntas.map((p) => (
-      <View style={{marginTop: 16}}>
-        <Text style={{fontFamily: 'Roboto-Light', fontSize: 14}}>
+      <View style={{marginTop: MARGIN_VERTICAL}}>
+        <Text style={{fontFamily: 'Mont-Regular', fontSize: TITULO_TAM * 0.7}}>
           {p.pregunta + ' ' + (p.obligatorio ? '*' : '')}
         </Text>
         {this.renderChoices(p)}
@@ -178,16 +157,22 @@ class VariacionFormulario extends React.Component {
   };
 
   guardar = () => {
-    this.state.variacion.formularios[0].preguntas.forEach((p) => {
-      this.onBlur(p);
-    });
+    this.setState({cargando: true});
 
-    setTimeout(() => {
+    requestAnimationFrame(async () => {
+      for await (let pregunta of this.state.variacion.formularios[0]
+        .preguntas) {
+        let v = await this.onBlur(pregunta);
+        console.log(v);
+      }
+
       if (totalErrores(this) > 0) {
         Alert.alert(
           'Información faltante',
           'Diligencie la información faltante para continuar el proceso.',
         );
+        this.validando = false;
+        this.setState({cargando: false});
         return;
       }
       let data = {
@@ -242,56 +227,43 @@ class VariacionFormulario extends React.Component {
   }
 
   render() {
-    const {variacion} = this.state;
+    const {variacion, cargando} = this.state;
 
     return (
-      <GradientContainer style={{flex: 1}}>
-        <Navbar back title={variacion.titulo} {...this.props} />
+      <ColorfullContainer style={{flex: 1}}>
+        <Navbar transparent back title={variacion.titulo} {...this.props} />
+        <Loader loading={cargando} />
         <ScrollView style={{flex: 1}}>
-          <View style={{marginHorizontal: 16}}>
+          <View
+            style={{
+              marginHorizontal: MARGIN_HORIZONTAL,
+              marginVertical: MARGIN_VERTICAL,
+            }}>
             {variacion.formularios &&
               variacion.formularios.map((f) => (
                 <View
                   style={{
-                    padding: 16,
-                    marginTop: 16,
-                    borderRadius: 24,
-                    borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-                    borderWidth: 0.2,
+                    padding: MARGIN_HORIZONTAL,
+                    marginTop: MARGIN_VERTICAL,
+                    borderRadius: CURVA,
+                    backgroundColor: 'rgba(255,255,255,.7)',
                   }}>
                   <Text
                     style={{
-                      fontFamily: 'Roboto-Medium',
-                      textAlign: 'center',
-                      fontSize: 16,
+                      fontFamily: 'Mont-Regular',
+                      fontSize: TITULO_TAM * 0.7,
+                      marginVertical: MARGIN_VERTICAL,
                     }}>
                     {f.titulo}
                   </Text>
                   {this.renderPreguntas(f)}
                 </View>
               ))}
-            <TouchableOpacity
-              onPress={this.guardar}
-              style={{
-                marginVertical: 24,
-                elevation: 2,
-                backgroundColor: COLORS.PRIMARY_COLOR,
-                padding: 24,
-                borderRadius: 24,
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 16,
-                  fontFamily: 'Roboto-Black',
-                  color: '#ffff',
-                }}>
-                Añadir
-              </Text>
-            </TouchableOpacity>
+
+            <Button marginTop={1} title="Añadir" onPress={this.guardar} />
           </View>
         </ScrollView>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }

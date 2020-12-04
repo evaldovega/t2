@@ -1,5 +1,13 @@
 import React from 'react';
-import {COLORS, SERVER_ADDRESS} from 'constants';
+import {
+  COLORS,
+  CURVA,
+  MARGIN_HORIZONTAL,
+  MARGIN_VERTICAL,
+  SERVER_ADDRESS,
+  TITULO_TAM,
+  TEXTO_TAM,
+} from 'constants';
 import {connect} from 'react-redux';
 import {
   View,
@@ -8,24 +16,13 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import NumberFormat from 'react-number-format';
-import {
-  FAB,
-  Avatar,
-  Title,
-  Colors,
-  Caption,
-  Subheading,
-  Card,
-  Button,
-  Paragraph,
-  List,
-} from 'react-native-paper';
-import ModalWebView from 'components/ModalWebView';
 import Navbar from 'components/Navbar';
-import GradientContainer from 'components/GradientContainer';
+import ColorfullContainer from 'components/ColorfullContainer';
+import ZoomIn from 'components/ZoomIn';
 
 class Planes extends React.Component {
   state = {
@@ -57,123 +54,101 @@ class Planes extends React.Component {
 
   seleccionar = (i) => {
     console.log(i);
-    this.setState({modal_show: true, doc: i});
-    return;
-  };
-
-  adquirir = () => {
-    console.log('ADQUIRIR');
-    this.setState({modal_show: false});
-    this.props.navigation.push('AdquirirPlan', {
-      ...this.state.doc,
+    //this.setState({modal_show: true, doc: i});
+    this.props.navigation.push('PlanDetale', {
+      doc: i,
       cliente: this.props.route.params.cliente_id,
     });
-  };
-
-  onClose = () => {
-    this.setState({modal_show: false});
+    return;
   };
 
   render() {
     return (
-      <GradientContainer style={{flex: 1}}>
-        <Navbar back title="Seleccione un Plan" {...this.props} />
-        <ModalWebView
-          html={this.state.doc.informacion}
-          visible={this.state.modal_show}
-          onClose={this.onClose}
-          footer={
-            <TouchableOpacity
-              mode="contained"
-              style={{
-                backgroundColor: COLORS.PRIMARY_COLOR,
-                padding: 24,
-                borderRadius: 24,
-                alignSelf: 'flex-end',
-              }}
-              onPress={() => this.adquirir()}>
-              <Text
-                style={{
-                  fontFamily: 'Roboto-Medium',
-                  color: '#ffff',
-                  fontSize: 18,
-                }}>
-                Crear Orden
-              </Text>
-            </TouchableOpacity>
-          }
+      <ColorfullContainer style={{flex: 1, backgroundColor: COLORS.BLANCO}}>
+        <StatusBar
+          translucent={true}
+          backgroundColor={'transparent'}
+          barStyle={'dark-content'}
         />
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <Navbar transparent back title="Seleccione un Plan" {...this.props} />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{paddingHorizontal: MARGIN_HORIZONTAL}}>
           {this.state.docs.map((i, k) => {
             return (
-              <TouchableOpacity
-                key={k}
-                onPress={() => this.seleccionar(i)}
-                style={{
-                  borderRadius: 24,
-                  backgroundColor: COLORS.BG_BLUE,
-                  marginTop: 16,
-                  marginHorizontal: 16,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  flex: 1,
-                  padding: 16,
-                  elevation: 0,
-                  borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-                  borderWidth: 0.2,
-                }}>
-                <View style={{flexDirection: 'column', flex: 1}}>
-                  <Image
-                    source={{uri: i.imagen}}
-                    style={{
-                      flex: 1,
-                      height: 200,
-                      borderRadius: 8,
-                      overflow: 'hidden',
-                      borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-                      borderWidth: 0.2,
-                    }}
-                  />
-                  <View style={{flex: 1, marginLeft: 16, alignSelf: 'center'}}>
-                    <Text
+              <ZoomIn>
+                <TouchableOpacity
+                  key={k}
+                  onPress={() => this.seleccionar(i)}
+                  style={{
+                    borderRadius: CURVA,
+                    marginTop: MARGIN_VERTICAL * 2,
+                    elevation: 0,
+                    overflow: 'hidden',
+                    borderColor: COLORS.NEGRO,
+                    borderWidth: 0.2,
+                    backgroundColor: COLORS.BLANCO,
+                  }}>
+                  <View>
+                    <Image
+                      source={{uri: i.imagen}}
                       style={{
-                        fontSize: 16,
-                        color: COLORS.DARK,
-                        fontFamily: 'Roboto-Medium',
-                        alignSelf: 'center',
-                        marginTop: 10,
-                      }}>
-                      {i.titulo}
-                    </Text>
-                    <NumberFormat
-                      value={i.precio}
-                      displayType={'text'}
-                      thousandSeparator={true}
-                      prefix={'$'}
-                      renderText={(nf) => (
-                        <Text
-                          style={{
-                            fontSize: 14,
-                            fontFamily: 'Roboto-Light',
-                            backgroundColor: COLORS.PRIMARY_COLOR,
-                            paddingVertical: 4,
-                            paddingHorizontal: 8,
-                            color: 'white',
-                            alignSelf: 'center',
-                            marginTop: 6,
-                          }}>
-                          {nf}
-                        </Text>
-                      )}
+                        flex: 1,
+                        height: 200,
+                        overflow: 'hidden',
+                        borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+                        borderWidth: 0.2,
+                      }}
                     />
+                    <View
+                      style={{
+                        paddingVertical: MARGIN_VERTICAL,
+                        paddingHorizontal: MARGIN_HORIZONTAL,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: TITULO_TAM * 0.6,
+                          color: COLORS.NEGRO,
+                          fontFamily: 'Mont-Bold',
+                          marginTop: MARGIN_VERTICAL,
+                        }}>
+                        {i.titulo}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: 'Mont-Regular',
+                          fontSize: TEXTO_TAM * 0.6,
+                          marginVertical: MARGIN_VERTICAL,
+                        }}>
+                        {i.descripcion ||
+                          'Este plan no tiene una descripció por favor comunicarle al administrador.'}
+                      </Text>
+                      <NumberFormat
+                        value={i.precio}
+                        displayType={'text'}
+                        thousandSeparator={true}
+                        prefix={'$'}
+                        renderText={(nf) => (
+                          <Text
+                            style={{
+                              fontSize: TITULO_TAM * 0.6,
+                              fontFamily: 'Mont-Bold',
+                              color: COLORS.NEGRO_N1,
+                              marginTop: MARGIN_VERTICAL,
+                            }}>
+                            {nf}
+                          </Text>
+                        )}
+                      />
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </ZoomIn>
             );
           })}
           <View style={{height: 30}}></View>
         </ScrollView>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }

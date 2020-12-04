@@ -15,6 +15,7 @@ import {
   ACTION_ACTIVIDAD_ENVIAR_CUESTIONARIO_OK,
   ACTION_ACTIVIDAD_MARCAR_ERROR_PREGUNTA,
   ACTION_ACTIVIDAD_INTENTO,
+  ACTION_USUARIO_HABILITAR,
 } from '../Constantes';
 import SInfo from 'react-native-sensitive-info';
 import {Token} from '../Utils';
@@ -114,6 +115,7 @@ export const actividadMarcarLeida = (
     )
       .then((r) => r.json())
       .then((data) => {
+        console.log(data);
         dispatch({
           type: ACTION_ACTIVIDAD_MARCAR_LEIDA,
           seccion_index,
@@ -210,6 +212,7 @@ export const actividadEnviarCuestionario = (
             actividad_id: actividad_id,
             calificacion: r.calificacion,
             aprobado: r.aprobado,
+            habilitado: r.habilitado,
           });
         }
       })

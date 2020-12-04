@@ -2,6 +2,7 @@ import React, {memo, useCallback, useState} from "react";
 import {StyleSheet, TextInput, Text, TouchableOpacity, View} from "react-native";
 import {Lato} from "utils/fonts";
 import SvgEyes from "svgs/signIn/SvgEyes";
+import {COLORS} from 'constants'
 
 interface Props {
     mt?: number;
@@ -69,11 +70,11 @@ export default Input;
 
 const styles = StyleSheet.create({
     container: {
-        marginHorizontal: 40,
-        borderRadius: 24,
+        borderRadius: 8,
         borderWidth: 1,
         borderColor: '#EAE8EA',
-        height: 48,
+        backgroundColor:COLORS.BLANCO,
+        height: 52,
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 16

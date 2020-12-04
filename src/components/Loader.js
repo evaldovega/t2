@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Modal, ActivityIndicator} from 'react-native';
+import {CURVA, TEXTO_TAM, COLORS, MARGIN_VERTICAL} from 'constants';
+import {StyleSheet, View, Modal, ActivityIndicator, Text} from 'react-native';
 
 const Loader = (props) => {
-  const {loading, ...attributes} = props;
+  const {loading, message} = props;
 
   return (
     <Modal
@@ -14,7 +15,10 @@ const Loader = (props) => {
       }}>
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
-          <ActivityIndicator animating={loading} color="blue" size="large" />
+          <ActivityIndicator animating={loading} size="large" />
+          <Text style={{fontFamily: 'Mont-Regular', fontSize: TEXTO_TAM}}>
+            {message || '...'}
+          </Text>
         </View>
       </View>
     </Modal>
@@ -30,10 +34,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000040',
   },
   activityIndicatorWrapper: {
-    backgroundColor: '#FFFFFF',
-    height: 100,
-    width: 100,
-    borderRadius: 10,
+    backgroundColor: COLORS.BLANCO,
+    borderRadius: CURVA,
+    padding: MARGIN_VERTICAL,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around',

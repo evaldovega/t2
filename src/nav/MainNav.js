@@ -56,6 +56,7 @@ const Planes = React.lazy(() => {
   ]).then(([moduleExports]) => moduleExports);
 });
 
+import PlanDetale from 'screens/Master/AdquirirPlan/PlanDetalle';
 import AdquirirPlan from '../screens/Master/AdquirirPlan/Completar';
 import VariacionFormulario from '../screens/Master/AdquirirPlan/VariacionFormulario';
 
@@ -220,13 +221,17 @@ const MainNavigation = memo(() => {
                   options={optionNavigator}
                 />
               )}
-              {Planes && (
-                <Screen
-                  name="Planes"
-                  component={Planes}
-                  options={optionNavigator}
-                />
-              )}
+
+              <Screen
+                name="Planes"
+                component={Planes}
+                options={optionNavigator}
+              />
+              <Screen
+                name="PlanDetale"
+                component={PlanDetale}
+                options={optionNavigator}
+              />
 
               <Screen
                 name="AdquirirPlan"

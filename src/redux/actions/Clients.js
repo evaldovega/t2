@@ -16,6 +16,7 @@ import {
   ACTION_CLIENTS_EDIT,
   ACTION_CLIENT_CLEAN,
   ACTION_CLIENT_ADD_ORDEN,
+  ACTION_CLIENT_REMOVE_ORDEN,
   ACTION_CLIENT_SAVED_TASK,
   ACTION_CLIENT_SAVING_TASK,
   ACTION_CLIENT_ERROR_TASK,
@@ -66,10 +67,11 @@ export const loadClient = (id) => {
       .then((r) => r.json())
       .then((r) => {
         console.log('Loaded clients');
-        console.log(r);
-        setTimeout(() => {
-          dispatch({type: ACTION_CLIENT_LOADED, data: r});
-        }, 1000);
+
+        if (r.ordenes) {
+          r.ordenes = r.ordenes.map((o) => ({...o, ...{animacion: 'in'}}));
+        }
+        dispatch({type: ACTION_CLIENT_LOADED, data: r});
       })
       .catch((error) => {
         console.log(error);
@@ -181,6 +183,18 @@ export const taskRemove = (id) => {
 export const addOrden = (orden) => {
   return (dispatch) => {
     dispatch({type: ACTION_CLIENT_ADD_ORDEN, orden: orden});
+  };
+};
+
+export const removeOrden = (orden) => {
+  return (dispatch) => {
+    dispatch({
+      type: ACTION_CLIENT_REMOVE_ORDEN,
+      orden: {...orden, ...{animar: true}},
+    });
+    setTimeout(() => {
+      dispatch({type: ACTION_CLIENT_REMOVE_ORDEN, orden: orden});
+    }, 500);
   };
 };
 

@@ -1,22 +1,20 @@
-import React, {memo, useCallback, useState, useEffect } from 'react';
-import {View, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Picker, Text, Alert, Switch, Linking} from "react-native";
+import React from 'react';
+import {View, ScrollView, StyleSheet, TouchableOpacity, Text, Alert, Switch} from "react-native";
 import Header from "screens/SignUp/components/Header";
-import Input from "screens/SiginIn/components/Input";
-import {Montserrat} from "utils/fonts";
-import SvgFaceId from "svgs/signIn/SvgFaceId";
-import {getBottomSpace, getStatusBarHeight} from "react-native-iphone-x-helper";
-import {ROUTERS} from "utils/navigation";
-import {SERVER_ADDRESS, COLORS} from "constants"
+
+import {SERVER_ADDRESS, COLORS, MARGIN_HORIZONTAL, MARGIN_VERTICAL, CURVA} from "constants"
 import Loader from "components/Loader"
-import ModalFilterPicker from 'react-native-modal-filter-picker';
-import DatePicker from 'react-native-datepicker'
 import ModalWebView from 'components/ModalWebView';
 import ModalPrompt from 'components/ModalPrompt';
 import SignatureCapture from 'react-native-signature-capture';
 import produce from 'immer'
-import { Caption, Divider, FAB,Colors } from 'react-native-paper';
+import { Caption, FAB } from 'react-native-paper';
 import {validar, totalErrores, renderErrores} from 'utils/Validar';
-
+import ColorfullContianer from 'components/ColorfullContainer'
+import Button from 'components/Button'
+import InputMask from 'components/InputMask'
+import InputText from 'components/InputText'
+import Select from 'components/Select'
 
 const validations = {
     firstname:{
@@ -35,7 +33,7 @@ const validations = {
     password2:{
         equality:{
             attribute:"password1",
-            message:'^Las contraseñas introducidas no coinciden!'
+            message:'^Las contraseñas introducidas no coinciden!',
         },
         presence: {allowEmpty: false, message: '^Este campo es requerido'},
     },
@@ -55,6 +53,7 @@ class SignUp extends React.Component {
         super(props);
         
         this.state = {
+            step:0,
             contratoVisualizacion: false,
             isEnabled:false,
             loading: false,
@@ -92,6 +91,7 @@ class SignUp extends React.Component {
             
             visibleGenero: false,
             pickedGenero: null,
+            genero:'',
 
             visibleDepto: false,
             pickedDepto: null,
@@ -104,6 +104,7 @@ class SignUp extends React.Component {
             optsDepartamentos: [],
             optsMunicipios: [],
             optsTiposDocs: [],
+            tipo_doc:'',
 
             inputCodeRegistration:"",
             inputCodeRegistrationError: false,
@@ -143,6 +144,7 @@ class SignUp extends React.Component {
     onSwitchAcceptChange = () => {
         this.setState({isEnabled: !this.state.isEnabled})
     }
+
     onChangeValue=(name,value)=>{
         this.setState(produce(draft=>{
             draft.values[name]=value
@@ -155,6 +157,7 @@ class SignUp extends React.Component {
         if(!this.state.aceptacionContrato){
             if(this.state.email == ""){
                 Alert.alert("Debe ingresar un correo electrónico válido", "")
+                this.setState({step:0})
                 return
             }
             this.setState({contratoValidationVisible: true})
@@ -238,10 +241,6 @@ class SignUp extends React.Component {
         })
     }
 
-    onPressBack = () => {
-        this.props.navigation.pop()
-    }
-
     /* Modal para selección de genero */
     generoOpts = [
         {
@@ -257,34 +256,13 @@ class SignUp extends React.Component {
             label: "Otro"
         }
     ]
-    generoOnShow = () => {
-        this.setState({ visibleGenero: true });
-    }
+    
 
-    generoOnSelect = (picked) => {
+    cargarMunicipios = (dep) => {
         this.setState({
-            pickedGenero: {key:picked.key, label:picked.label},
-            visibleGenero: false
-        })
-    }
-
-    generoOnCancel = () => {
-        this.setState({
-            visibleGenero: false
-        });
-    }
-
-    deptoOnShow = () => {
-        this.setState({ visibleDepto: true });
-    }
-
-    deptoOnSelect = (picked) => {
-        this.setState({
-            pickedDepto: {key:picked.key, label:picked.label},
-            visibleDepto: false,
             loading: true
         })
-        fetch(SERVER_ADDRESS+`api/config/municipios?d=${picked.key}`).then(r=>r.json()).then(response => {
+        fetch(SERVER_ADDRESS+`api/config/municipios?d=${dep}`).then(r=>r.json()).then(response => {
             let mpios = []
             response.forEach((item) => {
                 mpios.push({'key': item.id, 'label': item.descripcion})
@@ -295,47 +273,7 @@ class SignUp extends React.Component {
         })
     }
 
-    deptoOnCancel = () => {
-        this.setState({
-            visibleDepto: false
-        });
-    }
-  
-
-    mpioOnShow = () => {
-        this.setState({ visibleMpio: true });
-    }
-
-    mpioOnSelect = (picked) => {
-        this.setState({
-            pickedMpio: {key:picked.key, label:picked.label},
-            visibleMpio: false
-        })
-    }
-
-    mpioOnCancel = () => {
-        this.setState({
-            visibleMpio: false
-        });
-    }
-
-
-    tdocOnShow = () => {
-        this.setState({ visibleTDoc: true });
-    }
-
-    tdocOnSelect = (picked) => {
-        this.setState({
-            pickedTDoc: {key:picked.key, label:picked.label},
-            visibleTDoc: false
-        })
-    }
-
-    tdocOnCancel = () => {
-        this.setState({
-            visibleTDoc: false
-        });
-    }
+    
 
     firmaGuardada   =   (result)  =>{
         this.enviar(result.encoded)
@@ -364,12 +302,12 @@ class SignUp extends React.Component {
             },
             firma:firma,
             numero_whatsapp: this.state.numWhatsapp,
-            genero: this.state.pickedGenero.key,
-            departamento: this.state.pickedDepto.key,
-            municipio: this.state.pickedMpio.key,
+            genero: this.state.genero,
+            departamento: this.state.dep,
+            municipio: this.state.mun,
             direccion: this.state.direccion,
             fecha_nacimiento: this.state.fechaNac,
-            tipo_documento_identidad: this.state.pickedTDoc.key,
+            tipo_documento_identidad: this.state.tipo_doc,
             num_documento_identidad: this.state.numDocumento,
             contrato_aprobado: this.state.aceptacionContrato
         })
@@ -399,32 +337,12 @@ class SignUp extends React.Component {
 
     onPressRegister = () => {
        
-        console.log("Registrar")
+        
         Object.keys(validations).forEach((k) => {
             validar(this, k, validations[k]);
         });
         if (totalErrores(this) > 0) {
             Alert.alert('Corrija los errores', '');
-            return
-        }
-
-
-        if(this.state.pickedGenero == null){
-            return
-        }
-
-
-        if(this.state.pickedDepto == null){
-            return
-        }
-        if(this.state.pickedMpio == null){
-            return
-        }
-       
-        if(this.state.fechaNac == ""){
-            return
-        }
-        if(this.state.pickedTDoc == null){
             return
         }
        
@@ -444,128 +362,105 @@ class SignUp extends React.Component {
         this.setState({contratoVisualizacion: false})
     } 
 
-    render() {
+    nextStep=(plus)=>{
+        if(plus>-1){
+            if(this.state.step==0){
+                validar(this,this.state.firstname,'firstname',validations.firstname,false)
+                validar(this,this.state.lastname,'firstname',validations.lastname,false)
+                validar(this,this.state.email,'email',validations.email,false)
+                validar(this,this.state.password1,'password1',validations.password1,false)
+                validar(this,{password2:this.state.password2,password1:this.state.password1},'password2',validations.password2,false)
+                
+                if(
+                    this.state.error['firstname'].length>0 || 
+                    this.state.error['lastname'].length>0 || 
+                    this.state.error['email'].length>0 || 
+                    this.state.error['password1'].length>0 || 
+                    this.state.error['password2'].length>0 
+                ){
+                    return
+                }
+            }else if(this.state.step==1){
+                validar(this,this.state.direccion,'direccion',validations.direccion,false)
+                validar(this,this.state.numWhatsapp,'numWhatsapp',validations.numWhatsapp,false)
+                if(
+                    this.state.error['numWhatsapp'].length>0 || 
+                    this.state.error['direccion'].length>0){
+                        return
+                    }   
+            }
+        }
+        
+        this.setState(produce(draft=>{
+            const current=parseInt(draft.step)
+            const next=current+plus
+            draft.step=next
+        }))
+    }
+
+    stepOne=()=>{
         return (
-            <View style={styles.container}>
+            <View>
+                <InputText placeholder='Nombres' value={this.state.firstname} onChangeText={v=>this.onChangeValue('firstname',v)} onBlur={() =>validar(this,this.state.firstname, 'firstname', validations.firstname,false)}/>
+                <View>{renderErrores(this, 'firstname')}</View>
                 
-                <ModalWebView visible={this.state.contratoVisualizacion} html={this.state.contratoContent} cancelButtonText="Volver" onClose={this.cerrarContrato}></ModalWebView>
-                <ModalWebView visible={this.state.mostrarTerminos} html={this.state.terminosHtml} cancelButtonText="Volver" onClose={this.noMostrarTerminos}></ModalWebView>
-
-                <ModalPrompt visible={this.state.contratoValidationVisible} dismissModal={() => this.setState({contratoValidationVisible: false})} mt={16} valid={this.state.contratoValidated} actionDisabled={this.state.contratoValidated} error={this.state.inputCodeRegistrationError} textMessage={this.state.textResponseCodeValidation} value={this.state.inputCodeRegistration} onChangeText={(i)=>this.setState({inputCodeRegistration: i})} onCodeValidation={this.validateCodeRegistration}></ModalPrompt>
+                <InputText marginTop={1} input={{secureTextEntry:true}}  placeholder={'Apellidos'} value={this.state.lastname} onChangeText={v=>this.onChangeValue('lastname',v)} onBlur={() =>validar(this,this.state.lastname, 'lastname', validations.lastname,false)} />
+                <View>{renderErrores(this, 'lastname')}</View>
                 
-                <ScrollView>
-                    <View>
-                        <Header/>
-                        <Loader loading={this.state.loading}></Loader>
-                        <Input mt={60} pass={false} placeholder={'Nombres'} value={this.state.firstname} onChangeText={v=>this.onChangeValue('firstname',v)} onBlur={() =>validar(this,this.state.firstname, 'firstname', validations.firstname,false)}/>
-                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'firstname')}</View>
-                        
-                        <Input mt={16} pass={false}  placeholder={'Apellidos'} value={this.state.lastname} onChangeText={v=>this.onChangeValue('lastname',v)} onBlur={() =>validar(this,this.state.lastname, 'lastname', validations.lastname,false)} />
-                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'lastname')}</View>
+                <InputText 
+                marginTop={1}
+                placeholder={'Correo electrónico'} 
+                value={this.state.email} 
+                onChangeText={v=>this.onChangeValue('email',v)}
+                onBlur={() =>validar(this,this.state.email,'email', validations.email,false)} />
+                <View>{renderErrores(this, 'email')}</View>
 
-                        <Input 
-                        mt={16} 
-                        pass={false} 
-                        placeholder={'Correo electrónico'} 
-                        value={this.state.email} 
-                        onChangeText={v=>this.onChangeValue('email',v)}
-                        onBlur={() =>validar(this,this.state.email,'email', validations.email,false)} />
-                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'email')}</View>
+                <InputText marginTop={1} password  placeholder={'Contraseña'} value={this.state.password1} onChangeText={v=>this.onChangeValue('password1',v)} onBlur={()=>validar(this,this.state.password1,'password1',validations.password1,false)} />
+                <View>{renderErrores(this, 'password1')}</View>
+                
+                <InputText marginTop={1} password placeholder={'Confirma tu contraseña'} value={this.state.password2} onChangeText={v=>this.onChangeValue('password2',v)} onBlur={()=>validar(this,{password2:this.state.password2,password1:this.state.password1},'password2',validations.password2,false)}/>
+                <View>{renderErrores(this, 'password2')}</View>
 
-                        <Input mt={16} pass={true}  placeholder={'Contraseña'} value={this.state.password1} onChangeText={v=>this.onChangeValue('password1',v)} onBlur={()=>validar(this,this.state.password1,'password1',validations.password1,false)} />
-                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'password1')}</View>
+                <Button title='Siguiente' marginTop={3} onPress={()=>this.nextStep(1)}/>
+            </View>
+        )
+    }
 
-                        <Input mt={16} pass={true} error={this.state.password2Errors} placeholder={'Confirma tu contraseña'} value={this.state.password2} onChangeText={v=>this.onChangeValue('password2',v)} onBlur={()=>validar(this,this.state.password2,'password2',validations.password2,false)}/>
-                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'password2')}</View>
+    stepTwo=()=>{
+        return (<View>
+        <InputText marginTop={1} placeholder={'Número de WhatsApp'} value={this.state.numWhatsapp} onChangeText={v=>this.onChangeValue('numWhatsapp',v)} onBlur={()=>validar(this,this.state.numWhatsapp,'numWhatsapp',validations.numWhatsapp,false)} />
+        <View>{renderErrores(this, 'numWhatsapp')}</View>
+        
 
-                        <View style={[styles.line, {marginTop:20}]}></View>
-                        <View style={styles.containerSignIn}>
-                            <Text>INFORMACIÓN COMPLEMENTARIA</Text>
-                        </View>
-                        
-                        {/* Formulario complementario */}
-                        <Input mt={30} pass={false} placeholder={'Número de WhatsApp'} value={this.state.numWhatsapp} onChangeText={v=>this.onChangeValue('numWhatsapp',v)} onBlur={()=>validar(this,this.state.numWhatsapp,'numWhatsapp',validations.numWhatsapp,false)} />
-                        <View style={{paddingHorizontal:32}}>{renderErrores(this, 'numWhatsapp')}</View>
+        <Select marginTop={1} value={this.state.genero} options={this.generoOpts}  placeholder={'Seleccione un genero'} onSelect={(item)=>this.setState({genero:item.key})}/>
 
-                        <View style={[styles.containerDropdown, this.state.pickedGenero ? null : styles.errorDropDown]}>
-                            <TouchableOpacity style={styles.btnInputSelect} onPress={this.generoOnShow}>
-                                <Text>{this.state.pickedGenero ? this.state.pickedGenero.label : "Seleccionar género" }</Text>
-                            </TouchableOpacity>     
-                            <ModalFilterPicker
-                                visible={this.state.visibleGenero}
-                                onSelect={this.generoOnSelect}
-                                onCancel={this.generoOnCancel}
-                                options={this.generoOpts}
-                            />
-                        </View>
+        <Select marginTop={1} value={this.state.dep} options={this.state.optsDepartamentos}  placeholder={'Seleccione un dep.'} onSelect={(item)=>{this.setState({dep:item.key});this.cargarMunicipios(item.key)}}/>
 
-                        <View style={styles.containerDropdown}>
-                            <TouchableOpacity style={styles.btnInputSelect} onPress={this.deptoOnShow}>
-                                <Text>{this.state.pickedDepto ? this.state.pickedDepto.label : "Seleccionar departamento" }</Text>
-                            </TouchableOpacity>     
-                            <ModalFilterPicker
-                                visible={this.state.visibleDepto}
-                                onSelect={this.deptoOnSelect}
-                                onCancel={this.deptoOnCancel}
-                                options={this.state.optsDepartamentos}
-                            />
-                        </View>
+        <Select marginTop={1} value={this.state.mun} options={this.state.optsMunicipios}  placeholder={'Seleccione un mun.'} onSelect={(item)=>this.setState({mun:item.key})}/>
 
-                        <View style={styles.containerDropdown}>
-                            <TouchableOpacity style={styles.btnInputSelect} onPress={this.mpioOnShow}>
-                                <Text>{this.state.pickedMpio ? this.state.pickedMpio.label : "Seleccionar municipio" }</Text>
-                            </TouchableOpacity>      
-                            <ModalFilterPicker
-                                visible={this.state.visibleMpio}
-                                onSelect={this.mpioOnSelect}
-                                onCancel={this.mpioOnCancel}
-                                options={this.state.optsMunicipios}
-                            />
-                        </View>
-                        
-                        <Input mt={16} pass={false}  placeholder={'Dirección'} value={this.state.direccion} onChangeText={v=>this.onChangeValue('direccion',v)} onBlur={()=>validar(this,this.state.direccion,'direccion',validations.direccion,false)} />
-                        <View style={{paddingHorizontal:32}}>{renderErrores(this,'direccion')}</View>
+        
+        <InputText marginTop={1} placeholder={'Dirección'} value={this.state.direccion} onChangeText={v=>this.onChangeValue('direccion',v)} onBlur={()=>validar(this,this.state.direccion,'direccion',validations.direccion,false)} />
+        <View>{renderErrores(this,'direccion')}</View>
+        
+        <InputMask marginTop={1} value={this.state.fechaNac} mask={'[0000]-[00]-[00]'} placeholder='0000-00-00' onChangeText={(date) => {this.setState({fechaNac: date})}} />
 
-                        <View style={styles.inputDatePickerContainer}>
-                            <DatePicker
-                                style={styles.inputDatePicker}
-                                date={this.state.fechaNac}
-                                mode="date"
-                                placeholder="Fecha de nacimiento"
-                                format="YYYY-MM-DD"
-                                minDate="1990-01-01"
-                                maxDate="2040-06-01"
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
-                                showIcon={false}
-                                customStyles={{
-                                    dateInput: {
-                                        borderWidth:0,
-                                        height:48,
-                                        marginTop:5,
-                                        alignItems:'flex-start'
-                                    }
-                                }}
-                                onDateChange={(date) => {this.setState({fechaNac: date})}}
-                            />
-                        </View>
+        <Select marginTop={1} value={this.state.tipo_doc} options={this.state.optsTiposDocs}  placeholder={'Seleccione un tipo doc.'} onSelect={(item)=>this.setState({tipo_doc:item.key})}/>
 
-                        <View style={styles.containerDropdown}>
-                            <TouchableOpacity style={styles.btnInputSelect} onPress={this.tdocOnShow}>
-                                <Text>{this.state.pickedTDoc ? this.state.pickedTDoc.label : "Seleccionar tipo de documento" }</Text>
-                            </TouchableOpacity>      
-                            <ModalFilterPicker
-                                visible={this.state.visibleTDoc}
-                                onSelect={this.tdocOnSelect}
-                                onCancel={this.tdocOnCancel}
-                                options={this.state.optsTiposDocs}
-                            />
-                        </View>
-                        <Input mt={16} pass={false} errorMsg={this.state.numDocumentoErrors} borderColor={this.state.numDocumentoBorderColor} placeholder={'Número de documento'} value={this.state.numDocumento} onChangeText={no=>this.setState({numDocumento:no})} />
+        
+        <InputText marginTop={1}  placeholder={'Número de documento'} value={this.state.numDocumento} onChangeText={no=>this.setState({numDocumento:no})} />
 
+        
+        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atras'/>
+            <Button title='Siguiente' onPress={()=>this.nextStep(1)} marginTop={3}/>
+        </View>
+    </View>)
+    }
 
-
-                        <View style={styles.containerSignIn}>
+    stepThree=()=>{
+        return (
+            <React.Fragment>
+                <View style={styles.containerSignIn}>
                             <TouchableOpacity style={{flex:1}} onPress={this.terminosYcondiciones}>
                                 <Text>
                                     Acepto los
@@ -575,7 +470,7 @@ class SignUp extends React.Component {
                                 </Text>
                             </TouchableOpacity>
                             <Switch
-                                trackColor={{ false: COLORS.PRIMARY_COLOR, true: COLORS.SECONDARY_COLOR_LIGHTER }}
+                                
                                 thumbColor={this.state.isEnabled ? COLORS.SECONDARY_COLOR : "#f4f3f4"}
                                 ios_backgroundColor="#3e3e3e"
                                 onValueChange={this.onSwitchAcceptChange}
@@ -591,7 +486,7 @@ class SignUp extends React.Component {
                                 </Text>
                             </View>
                             <Switch
-                                trackColor={{ false: COLORS.PRIMARY_COLOR, true: COLORS.SECONDARY_COLOR_LIGHTER }}
+                                
                                 thumbColor={this.state.aceptacionContrato ? COLORS.SECONDARY_COLOR : "#f4f3f4"}
                                 ios_backgroundColor="#3e3e3e"
                                 disabled={this.state.aceptacionContrato}
@@ -599,32 +494,73 @@ class SignUp extends React.Component {
                                 value={this.state.aceptacionContrato}
                             />
                         </View>
+                <View style={{marginTop:MARGIN_VERTICAL,paddingHorizontal:MARGIN_HORIZONTAL,paddingVertical:16,backgroundColor:COLORS.GRIS,justifyContent:'center',borderRadius:CURVA,elevation:2}}>
+                    
+                    
+                    <SignatureCapture ref='firma' onSaveEvent={this.firmaGuardada} saveImageFileInExtStorage={false} minStrokeWidth={1} and maxStrokeWidth={4} showNativeButtons={false} style={{width:'100%',aspectRatio:16/9,marginVertical:8}}/>
+                    <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginVertical:4}}>
+                        <Caption style={{color:COLORS.NEGRO}}>Firmar Contrato</Caption>
+                        <FAB  icon='eraser' onPress={()=>this.refs['firma'].resetImage()} style={{backgroundColor:COLORS.ROJO}} color={COLORS.BLANCO}/>
+                    </View>
+                    
+                   
+                </View>
+                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                    <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atras'/>
+                    <Button marginTop={3} disabled={this.state.isEnabled && this.state.aceptacionContrato ? false : true} onPress={this.onPressRegister} title='Empezar a vender'/>
+                </View>
+            </React.Fragment>
+        )
+    }
 
-                         
-                        <View style={{marginTop:24,paddingHorizontal:16,paddingVertical:16,backgroundColor:COLORS.SECONDARY_COLOR,justifyContent:'center'}}>
-                            <Divider/>
-                            
-                            <SignatureCapture ref='firma' onSaveEvent={this.firmaGuardada} saveImageFileInExtStorage={false} minStrokeWidth={1} and maxStrokeWidth={4} showNativeButtons={false} style={{width:'100%',aspectRatio:16/9,marginVertical:8}}/>
-                            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginVertical:4}}>
-                                <Caption style={{color:'white'}}>Firmar Contrato</Caption>
-                                <FAB small icon='eraser' onPress={()=>this.refs['firma'].resetImage()} label='Borrar'/>
+    steps=(step)=>{
+        switch (step) {
+            case 0:
+                return this.stepOne()
+                break;
+            case 1:
+                return this.stepTwo()
+            break
+            case 2:
+                return this.stepThree()
+            break
+            default:
+                break;
+        }
+    }
+
+    render() {
+        const step=parseInt(this.state.step)
+        return (
+            <ColorfullContianer style={styles.container}>
+                
+                <ModalWebView visible={this.state.contratoVisualizacion} html={this.state.contratoContent} cancelButtonText="Volver" onClose={this.cerrarContrato}></ModalWebView>
+                <ModalWebView visible={this.state.mostrarTerminos} html={this.state.terminosHtml} cancelButtonText="Volver" onClose={this.noMostrarTerminos}></ModalWebView>
+
+                <ModalPrompt visible={this.state.contratoValidationVisible} dismissModal={() => this.setState({contratoValidationVisible: false})} mt={16} valid={this.state.contratoValidated} actionDisabled={this.state.contratoValidated} error={this.state.inputCodeRegistrationError} textMessage={this.state.textResponseCodeValidation} value={this.state.inputCodeRegistration} onChangeText={(i)=>this.setState({inputCodeRegistration: i})} onCodeValidation={this.validateCodeRegistration}></ModalPrompt>
+                
+                <ScrollView showsHorizontalScrollIndicator={false}>
+                    <Header navigation={this.props.navigation}/>
+                    <Loader loading={this.state.loading}></Loader>
+                    <View style={{paddingHorizontal:MARGIN_HORIZONTAL,marginBottom:(MARGIN_VERTICAL*4)}}>
+                        
+                        
+                        <View style={{overflow:'visible',width:'100%',height:30,backgroundColor:COLORS.GRIS,borderRadius:CURVA,marginVertical:MARGIN_VERTICAL*3,justifyContent:'space-between',alignItems:'center',flexDirection:'row'}}>
+                            <View style={{position:'absolute',backgroundColor:COLORS.VERDE,height:30,width:(step==1 ? '50%' : step==2 ? '90%' : '0%'),top:0,left:5}}></View>
+                            <View style={{elevation:step==0?3:0,backgroundColor:step>0?COLORS.VERDE:COLORS.GRIS,width:64,height:64,borderRadius:32,justifyContent:'center',alignItems:'center'}}>
+                                <Text style={{fontFamily:'Mont-Bold'}}>1</Text>
                             </View>
-                            <Divider/>
+                            <View style={{elevation:step==1?3:0,backgroundColor:step>1?COLORS.VERDE:COLORS.GRIS,width:64,height:64,borderRadius:32,justifyContent:'center',alignItems:'center'}}>
+                                <Text style={{fontFamily:'Mont-Bold'}}>2</Text>
+                            </View>
+                            <View style={{elevation:step==2?3:0,backgroundColor:COLORS.GRIS,width:64,height:64,borderRadius:32,justifyContent:'center',alignItems:'center'}}>
+                                <Text style={{fontFamily:'Mont-Bold'}}>3</Text>
+                            </View>
                         </View>
-
-                        <View style={styles.containerSignIn}>
-                            <TouchableOpacity style={ this.state.isEnabled && this.state.aceptacionContrato ? styles.btnSignIn : styles.btnSignInDisabled} disabled={this.state.isEnabled && this.state.aceptacionContrato ? false : true} onPress={this.onPressRegister}>
-                                <Text style={styles.txtSignIn}>Continuar</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.containerSignIn, {marginBottom:30}]}>
-                            <TouchableOpacity style={styles.btnBack} onPress={this.onPressBack}>
-                                <Text style={styles.txtGoBack}>¿Ya tienes una cuenta? Inicia sesión</Text>
-                            </TouchableOpacity>
-                        </View>
+                    {this.steps(step)}
                     </View>
                 </ScrollView>
-            </View>
+            </ColorfullContianer>
         )
     }
 }
@@ -634,7 +570,7 @@ export default SignUp;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFF'
+        backgroundColor:COLORS.BLANCO
     },
     containerSignIn: {
         flexDirection: 'row',
@@ -690,6 +626,7 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         borderWidth: 1,
         borderColor: '#EAE8EA',
+        backgroundColor:COLORS.BLANCO,
         height: 48,
         flex: 1,
         paddingHorizontal: 16
@@ -707,13 +644,11 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     txtSignIn: {
-        fontFamily: Montserrat,
         fontWeight: '600',
         color: '#FFF',
         fontSize: 17
     },
     txtGoBack: {
-        fontFamily: Montserrat,
         fontWeight: '600',
         color: '#FFF',
         fontSize: 14
@@ -734,7 +669,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         fontSize: 16,
         color: '#1A051D',
-        fontFamily: Montserrat,
         fontWeight: 'normal'
     },
     btnBack: {
@@ -766,7 +700,6 @@ const styles = StyleSheet.create({
     txtSignUp: {
         fontSize: 12,
         color: '#0F4C81',
-        fontFamily: Montserrat,
         fontWeight: '500'
     }
 })

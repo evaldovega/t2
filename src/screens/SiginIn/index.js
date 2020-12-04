@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useState, useEffect} from 'react';
+import React from 'react';
 import {
   View,
   StyleSheet,
@@ -12,17 +12,13 @@ import {
   ScrollView,
 } from 'react-native';
 import Input from 'screens/SiginIn/components/Input';
-import {Montserrat} from 'utils/fonts';
-import LottieView from 'lottie-react-native';
-import {Colors, Paragraph, Title} from 'react-native-paper';
-import {getBottomSpace} from 'react-native-iphone-x-helper';
+import ColorfullContianer from 'components/ColorfullContainer';
+import Button from 'components/Button';
+import InputText from 'components/InputText';
+
 import {ROUTERS} from 'utils/navigation';
 import {SERVER_ADDRESS, COLORS} from 'constants';
 import Loader from 'components/Loader';
-
-import LinearGradient from 'react-native-linear-gradient';
-import {Shadow, Neomorph} from 'react-native-neomorph-shadows';
-
 import {connect} from 'react-redux';
 import {acceder, initUsuario} from 'redux/actions/Usuario';
 
@@ -42,7 +38,6 @@ class SignIn extends React.Component {
     };
   }
 
-  componentDidMount() {}
   componentDidUpdate(prev) {
     if (prev != this.props.logeado && this.props.logeado) {
       this.props.initUsuario();
@@ -81,62 +76,58 @@ class SignIn extends React.Component {
 
   render() {
     return (
-      <LinearGradient
-        colors={['#ffff', '#C2C4C7']}
-        style={styles.container}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}>
+      <ColorfullContianer style={{flex: 1, justifyContent: 'center'}}>
         <Loader loading={this.props.accediendo}></Loader>
 
-        <Neomorph
-          darkShadowColor={COLORS.ACCENT}
-          lightShadowColor={COLORS.PRIMARY_COLOR}
-          swapShadows
-          style={{
-            shadowOpacity: 0.1,
-            shadowRadius: 15,
-            backgroundColor: '#F7F7F7',
-            width: width * 0.8,
-            height: height * 0.75,
-            borderRadius: 72,
-          }}>
+        <View style={{flex: 1, paddingHorizontal: 16, marginTop: 24}}>
           <Image
             style={{
-              width: 100,
-              height: 100,
-              position: 'absolute',
-              left: width * 0.4 - 50,
-              top: -42,
+              width: 150,
+              height: 150,
+              alignSelf: 'center',
             }}
             resizeMode="contain"
-            source={require('utils/images/icon.png')}
+            source={require('utils/images/logo_black.png')}
+          />
+          <View style={{marginBottom: '16%'}}>
+            <Text
+              style={{
+                fontSize: 30,
+                color: COLORS.VERDE,
+                fontFamily: 'Mont-Bold',
+              }}>
+              Hola
+            </Text>
+            <Text
+              style={{
+                fontSize: 30,
+                color: COLORS.NEGRO,
+                fontFamily: 'Mont-Bold',
+              }}>
+              Bienvenido a Servi
+            </Text>
+          </View>
+
+          <InputText
+            placeholder="Nombre de usuario"
+            onChangeText={(t) => this.setState({u: t})}
+            value={this.state.u}
           />
 
-          <Input
-            mt={70}
-            pass={false}
-            errorMsg={this.state.errorMsgUser}
-            borderColor={this.state.userborderColor}
-            placeholder={'Usuario'}
-            value={this.state.u}
-            onChangeText={(t) => this.setState({u: t})}
-          />
-          <Input
-            mt={16}
-            pass={true}
-            errorMsg={this.state.errorMsgPass}
-            borderColor={this.state.passborderColor}
+          <InputText
+            marginTop={1}
+            password
             placeholder={'Contraseña'}
             value={this.state.k}
             onChangeText={(p) => this.setState({k: p})}
           />
-          <View style={styles.containerSignIn}>
-            <TouchableOpacity
-              style={styles.btnSignIn}
-              onPress={this.onPressSignIn}>
-              <Text style={styles.txtSignIn}>Iniciar sesión</Text>
-            </TouchableOpacity>
-          </View>
+
+          <Button
+            onPress={this.onPressSignIn}
+            marginTop={1}
+            title="Iniciar sesión"
+          />
+
           <TouchableOpacity
             style={styles.btnForgot}
             onPress={this.onPressForgot}>
@@ -149,19 +140,13 @@ class SignIn extends React.Component {
             <View style={styles.line} />
           </View>
 
-          <TouchableOpacity
-            style={styles.btnSignFb}
-            onPress={this.onPressRegister}>
-            <Text style={styles.txtSignInFb}>Regístrate</Text>
-          </TouchableOpacity>
-
-          <Image
-            source={require('utils/images/logo_black.png')}
-            style={{width: 100, height: 50, alignSelf: 'center', marginTop: 32}}
-            resizeMode="contain"
+          <Button
+            title="Regístrate"
+            color="morado"
+            onPress={this.onPressRegister}
           />
-        </Neomorph>
-      </LinearGradient>
+        </View>
+      </ColorfullContianer>
     );
   }
 }
@@ -193,21 +178,19 @@ const styles = StyleSheet.create({
   },
   containerSignIn: {
     flexDirection: 'row',
-    marginHorizontal: 40,
-    marginTop: 24,
+    justifyContent: 'center',
   },
   btnSignIn: {
-    backgroundColor: COLORS.ACCENT,
-    borderRadius: 64,
-    flex: 1,
-    height: 48,
+    width: '100%',
+    backgroundColor: COLORS.VERDE,
+    borderRadius: 8,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2,
   },
   txtSignIn: {
-    fontFamily: 'Roboto-Light',
-    color: '#FFF',
+    fontFamily: 'Mont-Regular',
+    color: COLORS.BLANCO,
     fontSize: 17,
   },
   btnForgot: {
@@ -227,8 +210,9 @@ const styles = StyleSheet.create({
   },
   line: {
     flex: 1,
-    height: 1,
+    height: 0.5,
     backgroundColor: COLORS.TEXT,
+    marginVertical: '8%',
   },
   txtOr: {
     marginHorizontal: 20,
@@ -237,38 +221,21 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
   },
   btnSignFb: {
-    marginHorizontal: 40,
-    height: 48,
-    borderRadius: 64,
-    backgroundColor: COLORS.PRIMARY_COLOR,
-    marginTop: 16,
+    backgroundColor: COLORS.MORADO,
+    borderRadius: 8,
+    width: '100%',
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2,
   },
   txtSignInFb: {
-    fontFamily: 'Roboto-Light',
+    fontFamily: 'Mont-Regular',
     fontSize: 17,
-    color: '#FFF',
-  },
-  btnSignInGoogle: {
-    marginHorizontal: 40,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FF647C',
-    marginTop: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    color: COLORS.BLANCO,
   },
   btnSignUp: {
     alignSelf: 'center',
     marginTop: 10,
-  },
-  txtSignUp: {
-    fontSize: 12,
-    color: '#0F4C81',
-    fontFamily: Montserrat,
-    fontWeight: '500',
   },
   logo: {
     width: 100,

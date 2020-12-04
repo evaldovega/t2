@@ -3,12 +3,13 @@ import {Text} from 'react-native';
 import {styleInput} from 'styles';
 import validate from 'utils/validate.min.js';
 import produce from 'immer';
+import scour from 'scourjs';
+import {screensEnabled} from 'react-native-screens';
 
 export const totalErrores = (scope) => {
   let total = 0;
-  console.log(Object.keys(scope.state.error));
+
   Object.keys(scope.state.error).forEach((k) => {
-    console.log(k, ' Tiene ', scope.state.error[k].length, ' errores');
     total += scope.state.error[k].length;
   });
   return total;
@@ -21,48 +22,67 @@ export const validar = (
   constraint,
   por_props = true,
 ) => {
-  let errores = {};
-  let object = {};
+  return new Promise((resolve, reject) => {
+    let start = new Date().getTime();
+    let errores = {};
+    let object = {};
+    let value = null;
 
-  scope.setState(
-    produce((draft) => {
-      draft.values[key_error] = input;
-    }),
-  );
+    if (typeof input == 'object') {
+      value = input[key_error];
+      object = input;
+    } else {
+      value = input;
+      object[key_error] = input;
+    }
 
-  object[key_error] = input;
+    value = !value ? '' : value;
 
-  let constraints = {};
-  constraints[key_error] = constraint;
+    requestAnimationFrame(() => {
+      scope.setState(
+        produce((draft) => {
+          draft.values[key_error] = value;
+        }),
+      );
+    });
 
-  errores = validate(object, constraints);
+    /*
+    try{
+      
+      let state=scour(scope.state.values).set(key_error,value)
+      scope.setState({values:{...state.get(key_error).value}})
+    }catch(error){
+      console.log(error)
+    }*/
 
-  if (errores && errores[key_error]) {
-    //let r = {};
-    //r[input] = errores[input];
-    //errores = Object.assign(scope.state.error, r);
-    //scope.setState({error: {...errores}});
-    scope.setState(
-      produce((draft) => {
-        draft.error[key_error] = errores[key_error];
-      }),
-    );
-  } else {
-    scope.setState(
-      produce((draft) => {
-        draft.error[key_error] = [];
-      }),
-    );
-    let r = {};
-    r[input] = [];
-    //errores = Object.assign(scope.state.error, r);
-    //scope.setState({error: errores});
-  }
+    let constraints = {};
+    constraints[key_error] = constraint;
+    errores = validate(object, constraints);
+
+    if (errores && errores[key_error]) {
+      scope.setState(
+        produce((draft) => {
+          draft.error[key_error] = errores[key_error];
+        }),
+      );
+    } else {
+      scope.setState(
+        produce((draft) => {
+          draft.error[key_error] = [];
+        }),
+      );
+
+      let r = {};
+      r[input] = [];
+    }
+    let end = new Date().getTime();
+    console.log('Duracion ', end - start);
+    resolve(errores);
+  });
 };
 
 export const renderErrores = (scope, input) => {
   if (!scope.state.error[input]) {
-    console.log(input, 'No encontrado');
     return;
   }
   return scope.state.error[input].map((e) => {

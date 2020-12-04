@@ -32,13 +32,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {styleHeader} from 'styles';
 import {loadClients, trash} from 'redux/actions/Clients';
-import {COLORS} from 'constants';
+import {COLORS, CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
 import Navbar from 'components/Navbar';
-import GradientContainer from 'components/GradientContainer';
+import ColorfullContainer from 'components/ColorfullContainer';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: COLORS.BLANCO,
   },
 });
 
@@ -60,30 +61,27 @@ class Lead extends React.Component {
   Item = (item) => {
     const nombre = `${item.primer_nombre} ${item.segundo_nombre} ${item.primer_apellido} ${item.segundo_apellido}`;
     return (
-      <Card
+      <View
         style={{
-          borderRadius: 16,
-          overflow: 'hidden',
+          marginHorizontal: MARGIN_HORIZONTAL,
+          paddingVertical: MARGIN_VERTICAL,
           padding: 0,
-          marginBottom: 8,
-          backgroundColor: COLORS.BG_BLUE,
-          borderWidth: 0.2,
-          elevation: 0,
-          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+          marginBottom: MARGIN_VERTICAL,
+          backgroundColor: 'rgba(255,255,255,.7)',
+          borderRadius: CURVA,
         }}>
-        <Card.Content
+        <View
           style={{
-            paddingVertical: 8,
+            paddingVertical: MARGIN_VERTICAL,
             flexDirection: 'row',
             alignItems: 'center',
           }}>
           <FAB
             icon="phone"
-            color={COLORS.SECONDARY_COLOR_LIGHTER}
+            color={COLORS.BLANCO}
             style={{
-              borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
               borderWidth: 0.2,
-              backgroundColor: COLORS.BG_GRAY,
+              backgroundColor: COLORS.VERDE,
             }}
             onPress={() => this.call(item)}
           />
@@ -92,25 +90,25 @@ class Lead extends React.Component {
             onPress={() => this.detail(item)}>
             <Text
               style={{
-                marginTop: 16,
-                marginBottom: 8,
-                color: COLORS.DARK,
+                marginTop: MARGIN_VERTICAL,
+                marginBottom: MARGIN_VERTICAL,
+                color: COLORS.NEGRO,
                 fontSize: 18,
-                fontFamily: 'Roboto-Medium',
+                fontFamily: 'Mont-Regular',
               }}>
               {nombre}
             </Text>
             <Text
               style={{
-                color: COLORS.PRIMARY_COLOR,
-                fontFamily: 'Roboto-Light',
+                color: COLORS.NEGRO_N1,
+                fontFamily: 'Mont-Regular',
                 fontSize: 12,
               }}>
               {item.numero_telefono}
             </Text>
           </TouchableOpacity>
-        </Card.Content>
-      </Card>
+        </View>
+      </View>
     );
   };
 
@@ -170,9 +168,9 @@ class Lead extends React.Component {
 
   render() {
     return (
-      <GradientContainer style={styles.container}>
-        <Navbar menu title="Clientes" {...this.props} />
-        <View style={{flex: 1, marginHorizontal: 16}}>
+      <ColorfullContainer style={styles.container}>
+        <Navbar transparent menu title="Clientes" {...this.props} />
+        <View style={{paddingHorizontal: MARGIN_HORIZONTAL}}>
           <View
             style={{
               width: '100%',
@@ -200,23 +198,23 @@ class Lead extends React.Component {
               }}
             />
           </View>
-
-          <VirtualizedList
-            style={{flex: 1}}
-            data={this.props.items}
-            initialNumToRender={10}
-            renderItem={({item}) => this.Item(item)}
-            keyExtractor={(item) => item.id}
-            getItemCount={this.getItemCount}
-            getItem={this.getItem}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.props.loading}
-                onRefresh={this.props.load}
-              />
-            }
-          />
         </View>
+        <VirtualizedList
+          style={{flex: 1, overflow: 'visible'}}
+          data={this.props.items}
+          initialNumToRender={10}
+          renderItem={({item}) => this.Item(item)}
+          keyExtractor={(item) => item.id}
+          getItemCount={this.getItemCount}
+          getItem={this.getItem}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.props.loading}
+              onRefresh={this.props.load}
+            />
+          }
+        />
+
         <View
           style={{flexDirection: 'row', justifyContent: 'flex-end', margin: 8}}>
           <FAB
@@ -241,7 +239,7 @@ class Lead extends React.Component {
             icon="card-account-phone"
           />
         </View>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }

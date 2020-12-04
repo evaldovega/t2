@@ -8,6 +8,7 @@ import {
   ACTION_CLIENT_SAVED,
   ACTION_CLIENT_CLEAN,
   ACTION_CLIENT_ADD_ORDEN,
+  ACTION_CLIENT_REMOVE_ORDEN,
   ACTION_CLIENT_SAVED_TASK,
   ACTION_CLIENT_SAVING_TASK,
   ACTION_CLIENT_ERROR_TASK,
@@ -107,7 +108,19 @@ export default Client = (state = initial_state, action) => {
         }
         break;
       case ACTION_CLIENT_ADD_ORDEN:
-        draft.ordenes.push(action.orden);
+        draft.ordenes.unshift({...action.orden, ...{resaltar: true}});
+        break;
+      case ACTION_CLIENT_REMOVE_ORDEN:
+        let index_orden = draft.ordenes.findIndex(
+          (o) => o.id == action.orden.id,
+        );
+        if (index_orden > -1) {
+          if (action.orden.animar) {
+            draft.ordenes[index_orden].animacion = 'out';
+          } else {
+            draft.ordenes.splice(index_orden, 1);
+          }
+        }
         break;
       case ACTION_CLIENT_SAVING_TASK:
         draft.loading = true;

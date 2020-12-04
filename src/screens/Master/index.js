@@ -60,6 +60,7 @@ class Master extends React.Component {
     this.props.initUsuario();
     this.setState({mostrar_modal_capacitacion: this.props.habilitado});
   }
+
   componentDidUpdate(prev) {
     if (this.state.mostrar_modal_capacitacion && this.props.habilitado) {
       //this.setState({mostrar_modal_capacitacion:false})
@@ -72,7 +73,7 @@ class Master extends React.Component {
         <StatusBar
           translucent={true}
           backgroundColor={'transparent'}
-          barStyle={'light-content'}
+          barStyle={'dark-content'}
         />
         <Drawer.Navigator
           drawerContent={(props) => <MenuLateral {...props} />}
@@ -92,12 +93,7 @@ class Master extends React.Component {
             <Drawer.Screen name="Soporte" component={Soporte} />
           )}
         </Drawer.Navigator>
-        <ModalCapacitarse
-          nombre={this.props.nombre}
-          habilitado={this.props.habilitado}
-          ready_validation={this.props.ready_validation}
-          navigation={this.props.navigation}
-        />
+        <ModalCapacitarse {...this.props} />
       </>
     );
   }
