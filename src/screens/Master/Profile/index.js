@@ -9,9 +9,13 @@ import {
   Alert,
   SafeAreaView,
   Modal,
+  TextInput,
+  Image,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+// import {Neomorph} from 'react-native-neomorph-shadows';
 import {connect} from 'react-redux';
 import {
   CambiarNombre,
@@ -21,6 +25,18 @@ import {
 
 import {Avatar} from 'react-native-paper';
 
+import {
+  Avatar,
+  FAB,
+  Subheading,
+  // TextInput,
+  Title,
+  Caption,
+  Button,
+  Colors,
+  Paragraph,
+} from 'react-native-paper';
+import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
 import {
   COLORS,
@@ -380,5 +396,60 @@ const styles = StyleSheet.create({
   },
   work: {
     marginTop: 16,
+  },
+  wrapper: {
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    backgroundColor: '#FFFFFF00',
+    paddingHorizontal: 24,
+    height: 96,
+    paddingTop: getStatusBarHeight(),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    zIndex: 99,
+    overflow: 'hidden',
+    elevation: 0.2,
+  },
+  title: {
+    marginLeft: 16,
+    fontSize: 17,
+    color: '#ffff',
+  },
+  btnLeft: {
+    zIndex: 1,
+    elevation: 0,
+  },
+  btnRight: {elevation: 0},
+
+  containerInput: {
+    marginHorizontal: 16,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#EAE8EA',
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    flex: 1,
+  },
+  textAlert: {
+    marginHorizontal: 40,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    color: 'red',
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    fontFamily: 'Roboto',
+    padding: 0,
+    margin: 0,
+  },
+  labelInput: {
+    marginHorizontal: 18,
+    marginTop: 15,
+    marginBottom: 5,
+    fontWeight: 'bold',
   },
 });
