@@ -36,6 +36,7 @@ import Navbar from 'components/Navbar';
 import ColorfullContainer from 'components/ColorfullContainer';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
+import Validator from 'components/Validator';
 
 const SeguridadSocial = React.lazy(() => import('./SeguridadSocial'));
 
@@ -43,6 +44,7 @@ class Profile extends React.Component {
   state = {
     mostrar_modal_capacitacion: false,
   };
+  formulario_datos_personales = {};
 
   componentDidMount() {
     console.log('Pagina perfil montada');
@@ -74,7 +76,18 @@ class Profile extends React.Component {
         console.log('error: ', error);
       });
   };
-
+  validar = () => {
+    let errores = [];
+    Object.keys(this.formulario_datos_personales).forEach((k) => {
+      const e = this.formulario_datos_personales[k].execute();
+      if (e.length > 0) {
+        errores = [...errores, {...e}];
+      }
+    });
+    if (errores.length == 0) {
+      this.props.actualizarDatos();
+    }
+  };
   render() {
     return (
       <ColorfullContainer style={styles.container}>
@@ -164,31 +177,52 @@ class Profile extends React.Component {
               }}>
               Correo Electrónico
             </Text>
-            <InputText
-              marginTop={1}
-              input={{keyboardType: 'email-address'}}
-              onChangeText={(t) => this.props.cambiarProp('email', t)}
+            <Validator
+              ref={(r) => (this.formulario_datos_personales['email'] = r)}
               value={this.props.usuario.email}
-            />
-            <Text
-              style={{
-                fontFamily: 'Mont-Regular',
-                marginTop: MARGIN_VERTICAL,
-                color: COLORS.NEGRO_N1,
+              constraints={{
+                presence: {
+                  allowEmpty: false,
+                  message: '^Diligencie éste campo',
+                },
               }}>
-              Número de Celular
-            </Text>
-            <InputText
-              marginTop={1}
-              input={{keyboardType: 'phone-pad'}}
-              onChangeText={(t) => this.props.cambiarProp('cel', t)}
+              <InputText
+                marginTop={1}
+                input={{keyboardType: 'email-address'}}
+                onChangeText={(t) => this.props.cambiarProp('email', t)}
+                value={this.props.usuario.email}
+              />
+            </Validator>
+
+            <Validator
+              ref={(r) => (this.formulario_datos_personales['tel'] = r)}
               value={this.props.usuario.cel}
-            />
+              constraints={{
+                presence: {
+                  allowEmpty: false,
+                  message: '^Diligencie éste campo',
+                },
+              }}>
+              <Text
+                style={{
+                  fontFamily: 'Mont-Regular',
+                  marginTop: MARGIN_VERTICAL,
+                  color: COLORS.NEGRO_N1,
+                }}>
+                Número de Celular
+              </Text>
+              <InputText
+                marginTop={1}
+                input={{keyboardType: 'phone-pad'}}
+                onChangeText={(t) => this.props.cambiarProp('cel', t)}
+                value={this.props.usuario.cel}
+              />
+            </Validator>
 
             <Button
               marginTop={1}
               icon="pencil"
-              onPress={this.props.actualizarDatos}
+              onPress={this.validar}
               loading={this.props.usuario.actualizando_perfil}
               title="Actualizar Datos"
             />

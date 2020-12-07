@@ -170,35 +170,7 @@ class Lead extends React.Component {
     return (
       <ColorfullContainer style={styles.container}>
         <Navbar transparent menu title="Clientes" {...this.props} />
-        <View style={{paddingHorizontal: MARGIN_HORIZONTAL}}>
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginVertical: 16,
-              borderWidth: 0.2,
-              borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-              borderRadius: 24,
-              padding: 12,
-            }}>
-            <EvilIcons
-              name="search"
-              color={COLORS.SECONDARY_COLOR_LIGHTER}
-              size={32}
-              style={{}}
-            />
-            <TextInput
-              placeholder="Buscar cliente..."
-              style={{
-                flex: 1,
-                color: COLORS.SECONDARY_COLOR_LIGHTER,
-                padding: 0,
-                margin: 0,
-              }}
-            />
-          </View>
-        </View>
+
         <VirtualizedList
           style={{flex: 1, overflow: 'visible'}}
           data={this.props.items}

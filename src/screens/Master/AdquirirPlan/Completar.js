@@ -19,8 +19,8 @@ import Loader from 'components/Loader';
 import ColorfullContainer from 'components/ColorfullContainer';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
-import InputMask from 'components/InputMask';
 import Select from 'components/Select';
+import FileSelector from 'components/FileSelector';
 
 import {
   COLORS,
@@ -37,15 +37,13 @@ import {validar, totalErrores, renderErrores} from 'utils/Validar';
 import Navbar from 'components/Navbar';
 import PlanFormulario from './PlanFormulario';
 import ZoomIn from 'components/ZoomIn';
+import Validator from 'components/Validator';
 
 const {width, height} = Dimensions.get('screen');
-let Validaciones = {};
 
 class AdquirirPlan extends React.Component {
   state = {
     amount: 0,
-    error: {},
-    values: {},
     indexActive: 0,
     nombre_plan: '',
     cargando: false,
@@ -54,6 +52,7 @@ class AdquirirPlan extends React.Component {
     mostrar_selector: false,
     data: {},
   };
+  Validations = {};
 
   componentDidMount() {
     const {id, titulo, productos, precio} = this.props.route.params;
@@ -132,70 +131,7 @@ class AdquirirPlan extends React.Component {
         let producto = draft.productos.find((p) => p.id == id);
 
         if (estado) {
-          //Validar los campos de las variaciones
-          producto.variaciones.forEach((v) => {
-            if (v.requerido) {
-              Validaciones['variacion' + v.id] = {
-                default_value: v.cantidad_minima,
-                validacion: {
-                  presence: {
-                    allowEmpty: false,
-                    message: '^Este campo es requerido',
-                  },
-                  numericality: {
-                    onlyInteger: true,
-                    greaterThanOrEqualTo: v.cantidad_minima,
-                    lessThanOrEqualTo: v.cantidad_maxima,
-                    message: '^Debe ser un número',
-                    message: `^ La cantidad debe ser entre ${v.cantidad_minima} y ${v.cantidad_maxima}`,
-                  },
-                },
-              };
-            }
-          });
-
-          //Validar los campos de los formularios
-          if (producto.formularios) {
-            producto.formularios.forEach((f) => {
-              f.preguntas
-                .filter((p) => p.obligatorio)
-                .forEach((p) => {
-                  Validaciones['pregunta' + p.id] = {
-                    default_value: '',
-                    validacion: {
-                      presence: {
-                        allowEmpty: false,
-                        message: 'Diligencie éste campo',
-                      },
-                    },
-                  };
-                  this.setState({values: {...{['pregunta' + p.id]: ''}}});
-                });
-            });
-          }
-
-          this.setState(
-            produce((draft) => {
-              Object.keys(Validaciones).forEach((k) => {
-                draft.values[k] = Validaciones[k].default_value;
-              });
-            }),
-          );
         } else {
-          //Remover validaciones de las variaciones
-          producto.variaciones.forEach((v) => {
-            if (v.requerido) {
-              delete Validaciones['variacion' + v.id];
-            }
-          });
-          //Remover validaciones de los campos de los formularios
-          producto.formularios.forEach((f) => {
-            f.preguntas
-              .filter((p) => p.obligatorio)
-              .forEach((p) => {
-                delete Validaciones['pregunta' + p.id];
-              });
-          });
         }
         producto.seleccionado = estado;
       }),
@@ -256,169 +192,6 @@ class AdquirirPlan extends React.Component {
             .variaciones.find((v) => v.id == variacion.id).cantidad += 1;
         }),
       );
-    }
-  };
-  //producto_id, k_f, k_p, k, v, pregunta_id
-  responderPregunta = (pregunta, campo, valor) => {
-    this.setState(
-      produce((draft) => {
-        draft.productos
-          .find((p) => p.id == pregunta.producto)
-          .formularios.find((f) => f.id == pregunta.formulario)
-          .preguntas.find((p) => p.id == pregunta.id)[campo] = valor;
-        draft.values['pregunta' + pregunta.id] = valor;
-      }),
-    );
-  };
-
-  //--------------Choice
-  abrirOpciones = (pregunta, estado = true) => {
-    this.setState(
-      produce((draft) => {
-        let _pregunta = draft.productos
-          .find((p) => p.id == pregunta.producto)
-          .formularios.find((f) => f.id == pregunta.formulario)
-          .preguntas.find((p) => p.id == pregunta.id);
-        _pregunta.mostrar_selector = estado;
-      }),
-    );
-    this.onBlur(pregunta);
-  };
-  seleccionarOpcion = (pregunta, opcion) => {
-    Alert.alert(opcion, '');
-    this.setState(
-      produce((draft) => {
-        let _pregunta = draft.productos
-          .find((p) => p.id == pregunta.producto)
-          .formularios.find((f) => f.id == pregunta.formulario)
-          .preguntas.find((p) => p.id == pregunta.id);
-        _pregunta.mostrar_selector = false;
-        _pregunta.respuesta = opcion;
-        draft.values['pregunta' + pregunta.id] = opcion;
-      }),
-    );
-    setTimeout(() => {
-      this.onBlur({id: pregunta.id, respuesta: opcion});
-    }, 500);
-  };
-  renderChoices = (pregunta) => {
-    console.log(pregunta);
-    const {tipo_pregunta, opciones, respuesta} = pregunta;
-    if (tipo_pregunta == 'choice') {
-      return (
-        <React.Fragment>
-          <Text>{respuesta}</Text>
-          <Select
-            value={respuesta}
-            onSelect={(opcion) => this.seleccionarOpcion(pregunta, opcion.key)}
-            options={opciones.map((o) => ({
-              key: o.id,
-              label: o.opcion,
-            }))}
-          />
-        </React.Fragment>
-      );
-    }
-  };
-
-  onBlur = (pregunta) => {
-    if (Validaciones['pregunta' + pregunta.id]) {
-      validar(
-        this,
-        pregunta.respuesta,
-        'pregunta' + pregunta.id,
-        Validaciones['pregunta' + pregunta.id].validacion,
-        false,
-      );
-    }
-  };
-
-  renderInput = (pregunta) => {
-    const tipo_validos = ['input', 'areatext', 'inputnumber'];
-    const {tipo_pregunta, respuesta} = pregunta;
-    if (tipo_validos.includes(tipo_pregunta)) {
-      let props = {};
-      if (tipo_pregunta == 'inputnumber') {
-        props.keyboardType = 'decimal-pad';
-      } else if (tipo_pregunta == 'areatext') {
-        props.multilines = true;
-        props.numberOfLines = 4;
-      }
-      return (
-        <InputText
-          value={pregunta.respuesta}
-          onChangeText={(value) => {
-            this.responderPregunta(pregunta, 'respuesta', value);
-          }}
-          onBlur={() => this.onBlur(pregunta)}
-        />
-      );
-    }
-  };
-  renderDate = (pregunta) => {
-    const {tipo_pregunta, respuesta} = pregunta;
-    if (tipo_pregunta == 'date') {
-      return (
-        <InputMask
-          placeholder="0000-00-00"
-          value={pregunta.respuesta}
-          onChangeText={(formatted, extracted) => {
-            this.responderPregunta(pregunta, 'respuesta', formatted);
-          }}
-          onBlur={() => this.onBlur(pregunta)}
-          mask={'[0000]-[00]-[00]'}
-        />
-      );
-    }
-  };
-
-  renderPreguntas = (formulario) => {
-    const {preguntas} = formulario;
-    return preguntas.map((pregunta) => (
-      <View style={{marginTop: 16}}>
-        <Text style={{fontFamily: 'Roboto-Light', fontSize: 14}}>
-          {pregunta.pregunta + ' ' + (pregunta.obligatorio ? '*' : '')}
-        </Text>
-        {this.renderInput(pregunta)}
-        {this.renderDate(pregunta)}
-        {this.renderChoices(pregunta)}
-        {renderErrores(this, 'pregunta' + pregunta.id)}
-      </View>
-    ));
-  };
-
-  renderFormulario = (formulario) => {
-    return (
-      <View
-        style={{
-          padding: 16,
-          marginTop: 16,
-          borderRadius: 24,
-          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-          borderWidth: 0.2,
-        }}>
-        <Text
-          style={{
-            fontFamily: 'Roboto-Medium',
-            textAlign: 'center',
-            fontSize: 16,
-            marginBottom: 24,
-          }}>
-          {formulario.titulo}
-        </Text>
-        {this.renderPreguntas(formulario)}
-      </View>
-    );
-  };
-
-  renderFormularios = (producto) => {
-    if (!producto.seleccionado) {
-      return;
-    }
-    if (producto.formularios) {
-      return producto.formularios.map((formulario, k_f) => {
-        return this.renderFormulario(formulario);
-      });
     }
   };
 
@@ -517,7 +290,6 @@ class AdquirirPlan extends React.Component {
                   )}
                 />
               </View>
-              {renderErrores(this, 'variacion' + v.id)}
 
               <View
                 style={{
@@ -644,7 +416,6 @@ class AdquirirPlan extends React.Component {
             onValueChange={(estado) => this.seleccionarProducto(estado, p.id)}
           />
         </View>
-        {this.renderFormularios(p)}
 
         {this.renderVariaciones(p)}
       </View>
@@ -670,15 +441,32 @@ class AdquirirPlan extends React.Component {
         plan: id,
         cliente: cliente,
         total_pagado: total,
-        metodo_pago: 'contado',
+        metodo_pago: '',
         planes: [],
         formularios: [],
       };
 
-      for await (let formulario of this.state.formularios) {
-        let total_errores = await this['ref-form-' + formulario.id].validar();
+      Object.keys(this.Validations).forEach((k) => {
+        if (this.Validations[k]) {
+          let errores = this.Validations[k].execute();
+          if (errores.length > 0) {
+            hubo_errores = true;
+          }
+        }
+      });
+      if (hubo_errores) {
+        this.setState({cargando: false});
+        return;
+      }
 
-        if (total_errores > 0) {
+      data.metodo_pago = this.state.metodo_pago;
+      data.numero_referencia = this.state.numero_contrato;
+      data.archivo = this.state.archivo_contrato;
+
+      for await (let formulario of this.state.formularios) {
+        let total_errores = this['ref-form-' + formulario.id].validar();
+
+        if (total_errores.length > 0) {
           hubo_errores = true;
           Alert.alert(
             formulario.titulo,
@@ -704,97 +492,113 @@ class AdquirirPlan extends React.Component {
         return;
       }
 
-      Object.keys(Validaciones).forEach((k) => {
-        let value = this.state.values[k];
-        validar(this, value, k, Validaciones[k].validacion, false);
-      });
+      this.state.productos
+        .filter((p) => p.seleccionado)
+        .forEach((p) => {
+          let plan = {id: p.id, variaciones: [], formularios: []};
 
-      setTimeout(() => {
-        if (totalErrores(this) > 0) {
-          Alert.alert(
-            'Información faltante',
-            'Diligencie la información faltante para continuar el proceso.',
-          );
-          this.setState({cargando: false});
-          return;
-        }
-
-        this.state.productos
-          .filter((p) => p.seleccionado)
-          .forEach((p) => {
-            let plan = {id: p.id, variaciones: [], formularios: []};
-
-            p.variaciones.forEach((v) => {
-              let variacion = {id: v.id, valor: v.cantidad, formularios: []};
-              v._formularios.forEach((f) => {
-                variacion.formularios.push({
-                  id: f.id,
-                  campos: f.preguntas.map((p) => ({
-                    id: p.id,
-                    respuesta: p.respuesta,
-                  })),
-                });
-              });
-              plan.variaciones.push(variacion);
-            });
-
-            p.formularios.forEach((f) => {
-              let formulario = {
+          p.variaciones.forEach((v) => {
+            let variacion = {id: v.id, valor: v.cantidad, formularios: []};
+            v._formularios.forEach((f) => {
+              variacion.formularios.push({
                 id: f.id,
                 campos: f.preguntas.map((p) => ({
                   id: p.id,
                   respuesta: p.respuesta,
                 })),
-              };
-              plan.formularios.push(formulario);
+              });
             });
-
-            data.planes.push(plan);
+            plan.variaciones.push(variacion);
           });
 
-        console.log(JSON.stringify(data));
-        fetch(SERVER_ADDRESS + 'api/ordenes/registrar/', {
-          method: 'post',
-          body: JSON.stringify(data),
-          headers: {
-            Authorization: 'Token ' + this.props.token,
-            Accept: 'application/json',
-            'content-type': 'application/json',
-          },
-        })
-          .then((r) => r.json())
-          .then((r) => {
-            console.log(r);
-            this.setState({cargando: false});
-            if (r.error) {
-              Alert.alert(r.error, '');
-            } else {
-              setTimeout(() => {
-                this.props.navigation.navigate('ClientProfile');
-                Alert.alert(
-                  'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
-                  'Instrucciones enviadas a ' +
-                    r.cliente_str +
-                    ' para finalizar el proceso de compra.',
-                  [
-                    {
-                      text: 'Perfecto',
-                      onPress: () => {
-                        this.props.addOrden(r);
-                      },
+          p.formularios.forEach((f) => {
+            let formulario = {
+              id: f.id,
+              campos: f.preguntas.map((p) => ({
+                id: p.id,
+                respuesta: p.respuesta,
+              })),
+            };
+            plan.formularios.push(formulario);
+          });
+
+          data.planes.push(plan);
+        });
+
+      console.log(JSON.stringify(data));
+      fetch(SERVER_ADDRESS + 'api/ordenes/registrar/', {
+        method: 'post',
+        body: JSON.stringify(data),
+        headers: {
+          Authorization: 'Token ' + this.props.token,
+          Accept: 'application/json',
+          'content-type': 'application/json',
+        },
+      })
+        .then((r) => r.json())
+        .then((r) => {
+          console.log(r);
+          this.setState({cargando: false});
+          if (r.error) {
+            Alert.alert(r.error, '');
+          } else {
+            setTimeout(() => {
+              this.props.navigation.navigate('ClientProfile');
+              Alert.alert(
+                'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
+                'Instrucciones enviadas a ' +
+                  r.cliente_str +
+                  ' para finalizar el proceso de compra.',
+                [
+                  {
+                    text: 'Perfecto',
+                    onPress: () => {
+                      this.props.addOrden(r);
                     },
-                  ],
-                  {cancelable: false},
-                );
-              }, 800);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-            this.setState({cargando: false});
-          });
-      });
+                  },
+                ],
+                {cancelable: false},
+              );
+            }, 800);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.setState({cargando: false});
+        });
     });
+  };
+
+  renderFinanciacion = () => {
+    return (
+      <View>
+        <Validator
+          ref={(r) => (this.Validations['archivo_contrato'] = r)}
+          value={this.state.archivo_contrato}
+          required="Seleccione un archivo de servicio público">
+          <FileSelector
+            marginTop={1}
+            onSelect={(doc) => {
+              this.setState({archivo_contrato: doc});
+            }}
+          />
+        </Validator>
+
+        <Validator
+          ref={(r) => (this.Validations['numero_contrato'] = r)}
+          value={this.state.numero_contrato}
+          required="Ingrese el número de contrato con la entidad">
+          <InputText
+            marginTop={1}
+            label="Número de contrato"
+            placeholder="Número de contrato"
+            marginTop={2}
+            value={this.state.numero_contrato}
+            onChangeText={(t) => this.setState({numero_contrato: t})}
+          />
+        </Validator>
+      </View>
+    );
   };
 
   render() {
@@ -863,18 +667,29 @@ class AdquirirPlan extends React.Component {
                   {this.state.productos.map((p, i) => this.renderProduct(p, i))}
                 </View>
 
-                <Select
-                  marginTop={1}
+                <Validator
+                  ref={(r) => (this.Validations['metodo_pago'] = r)}
                   value={this.state.metodo_pago}
-                  placeholder="Metodo pago"
-                  options={[
-                    {key: 'Contado', label: 'Contado'},
-                    {key: 'Financiacón', label: 'Financiacón'},
-                  ]}
-                />
+                  required="Seleccione un metodo de pago">
+                  <Select
+                    marginTop={1}
+                    value={this.state.metodo_pago}
+                    placeholder="Metodo pago"
+                    onSelect={(v) => {
+                      this.setState({metodo_pago: v.key});
+                    }}
+                    options={[
+                      {key: 'Contado', label: 'Contado'},
+                      {key: 'Financiacón', label: 'Financiacón'},
+                    ]}
+                  />
+                </Validator>
+                {this.state.metodo_pago == 'Financiacón'
+                  ? this.renderFinanciacion()
+                  : null}
 
                 <Button
-                  marginTop={2}
+                  marginTop={4}
                   onPress={() => this.guardar()}
                   title="Vender"
                 />

@@ -11,7 +11,7 @@ const ZoomIn = (props) => {
     Animated.parallel([
       Animated.timing(scale, {
         toValue: 1,
-        duration: 300,
+        duration: 1000,
         useNativeDriver: true,
       }),
       Animated.timing(opacity, {
@@ -34,7 +34,7 @@ const ZoomIn = (props) => {
       }),
       Animated.timing(opacity, {
         toValue: 0,
-        duration: 100,
+        duration: 1000,
         useNativeDriver: true,
       }),
     ]).start(() => {
