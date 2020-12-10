@@ -33,7 +33,6 @@ import {
 } from 'constants';
 import {connect} from 'react-redux';
 import {addOrden} from 'redux/actions/Clients';
-import {validar, totalErrores, renderErrores} from 'utils/Validar';
 import Navbar from 'components/Navbar';
 import PlanFormulario from './PlanFormulario';
 import ZoomIn from 'components/ZoomIn';

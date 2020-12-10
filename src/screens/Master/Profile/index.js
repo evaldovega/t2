@@ -23,8 +23,6 @@ import {
   initUsuario,
 } from 'redux/actions/Usuario';
 
-import {Avatar} from 'react-native-paper';
-
 import {
   Avatar,
   FAB,
@@ -32,7 +30,6 @@ import {
   // TextInput,
   Title,
   Caption,
-  Button,
   Colors,
   Paragraph,
 } from 'react-native-paper';
