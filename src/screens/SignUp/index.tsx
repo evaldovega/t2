@@ -451,7 +451,7 @@ class SignUp extends React.Component {
 
         
         <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-            <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atras'/>
+            <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atrás'/>
             <Button title='Siguiente' onPress={()=>this.nextStep(1)} marginTop={3}/>
         </View>
     </View>)
@@ -506,7 +506,7 @@ class SignUp extends React.Component {
                    
                 </View>
                 <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                    <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atras'/>
+                    <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atrás'/>
                     <Button marginTop={3} disabled={this.state.isEnabled && this.state.aceptacionContrato ? false : true} onPress={this.onPressRegister} title='Empezar a vender'/>
                 </View>
             </React.Fragment>

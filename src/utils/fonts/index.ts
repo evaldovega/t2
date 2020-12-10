@@ -1,2 +1,2 @@
-export const Lato = 'Lato-Regular';
-export const Montserrat = 'Montserrat-Regular';
+export const Lato = 'Mont-Regular';
+export const Montserrat = 'Mont-Regular';

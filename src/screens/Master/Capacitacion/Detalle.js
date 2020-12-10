@@ -209,7 +209,7 @@ class CapacitacionDetalle extends React.Component {
     return (
       <ColorfullContainer style={styles.container}>
         <Loader loading={this.props.cargando} />
-        <Navbar back {...this.props} title="Detalle capacitación" />
+        <Navbar back {...this.props} transparent title="Detalle capacitación" />
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{paddingHorizontal: MARGIN_HORIZONTAL}}>
@@ -220,7 +220,6 @@ class CapacitacionDetalle extends React.Component {
                 fontFamily: 'Mont-Bold',
                 fontSize: TITULO_TAM,
                 marginTop: MARGIN_VERTICAL * 4,
-                fontWeight: 'Bold',
               }}>
               {item.titulo}
             </Text>

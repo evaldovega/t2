@@ -73,7 +73,7 @@ export default function FileSelector(props) {
         style={[style.wrapper, props.style, extra_style]}>
         <SimpleLineIcons size={24} name="paper-clip" />
         <Text numberOfLines={1} ellipsizeMode="head" style={style.text}>
-          {filename}
+          {filename != '' ? filename : 'Seleccione un archivo'}
         </Text>
 
         {filename != '' ? (

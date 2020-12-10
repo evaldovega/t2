@@ -34,7 +34,7 @@ export const acceder = (data) => {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'content-type': 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       })

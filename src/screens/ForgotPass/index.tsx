@@ -37,7 +37,7 @@ class ForgotPass extends React.Component {
         this.state = {
             values:{},
             error:{},
-            email: "evaldo.vega@gmail.com",
+            email: "",
             loading:false,
             mailborderColor: '#EAE8EA',
             errorMsgMail: "",

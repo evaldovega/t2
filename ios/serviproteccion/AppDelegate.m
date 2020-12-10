@@ -44,7 +44,7 @@ NSURL *jsCodeLocation;
                                             initialProperties:nil];
 
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-  jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.39:8081/index.bundle?platform=ios&dev=true"];
+  jsCodeLocation = [NSURL URLWithString:@"http://10.0.82.225:8081/index.bundle?platform=ios&dev=true"];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];

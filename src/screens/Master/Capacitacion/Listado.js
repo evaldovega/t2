@@ -145,7 +145,7 @@ class CapacitacionListado extends React.Component {
   render() {
     return (
       <ColorfullContainer style={styles.container}>
-        <Navbar menu title="Capacitaciones" {...this.props} />
+        <Navbar menu title="Capacitaciones" transparent {...this.props} />
 
         <ScrollView
           showsVerticalScrollIndicator={false}
