@@ -60,9 +60,9 @@ class Dashboard extends React.Component {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.containerChart}>
             <View style={styles.boxHeader}>
-              <SvgGlueco />
               <Text style={styles.txtTitle}>
-                Glueco <Text style={{color: '#ABA4AC'}}>(mg/Dl)</Text>
+                Meta del mes{' '}
+                <Text style={{color: '#ABA4AC'}}>(ventas/semana)</Text>
               </Text>
               <SvgEdit />
             </View>
@@ -80,10 +80,7 @@ class Dashboard extends React.Component {
           </View>
           <View style={styles.containerChart}>
             <View style={styles.boxHeader}>
-              <SvgWeight />
-              <Text style={styles.txtTitle}>
-                Weight <Text style={{color: '#ABA4AC'}}>(kg)</Text>
-              </Text>
+              <Text style={styles.txtTitle}>Clientes adquiridos</Text>
               <SvgEdit />
             </View>
             <Chart />

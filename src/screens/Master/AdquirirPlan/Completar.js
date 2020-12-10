@@ -641,7 +641,7 @@ class AdquirirPlan extends React.Component {
           {this.total()}
 
           <ScrollView
-            style={{flex: 1, marginTop: '15%'}}
+            style={{flex: 1, marginTop: '25%'}}
             showsVerticalScrollIndicator={false}>
             <View
               style={{
@@ -678,12 +678,12 @@ class AdquirirPlan extends React.Component {
                       this.setState({metodo_pago: v.key});
                     }}
                     options={[
-                      {key: 'Contado', label: 'Contado'},
-                      {key: 'Financiacón', label: 'Financiacón'},
+                      {key: 'contado', label: 'Contado'},
+                      {key: 'financiacion', label: 'Financiación'},
                     ]}
                   />
                 </Validator>
-                {this.state.metodo_pago == 'Financiacón'
+                {this.state.metodo_pago == 'financiacion'
                   ? this.renderFinanciacion()
                   : null}
 

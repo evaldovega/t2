@@ -346,7 +346,7 @@ class Actividad extends React.Component {
     return (
       <ColorfullContainer style={styles.container}>
         <Loader loading={cargando} />
-        <Navbar back title={data.tipo} {...this.props} />
+        <Navbar back title={data.tipo} transparent {...this.props} />
 
         <View style={styles.container}>
           <View

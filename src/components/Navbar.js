@@ -122,7 +122,7 @@ const style = StyleSheet.create({
     backgroundColor: COLORS.BLANCO,
     paddingHorizontal: MARGIN_HORIZONTAL,
     minHeight: 96,
-    paddingTop: 24 + getStatusBarHeight(),
+    paddingTop: 42 + getStatusBarHeight(),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

@@ -12,6 +12,7 @@ import moment from 'moment';
 import GradientContainer from 'components/GradientContainer';
 import AntDesing from 'react-native-vector-icons/AntDesign';
 import {COLORS, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
+import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 
 class MenuLateral extends React.Component {
   componentDidMount() {}
@@ -27,6 +28,7 @@ class MenuLateral extends React.Component {
             width: 100,
             height: 80,
             alignSelf: 'center',
+            marginTop: getStatusBarHeight(),
             marginVertical: MARGIN_VERTICAL,
           }}
         />
@@ -52,21 +54,6 @@ class MenuLateral extends React.Component {
               })
             }
           />
-          <View
-            style={{
-              flexDirection: 'row',
-              paddingHorizontal: MARGIN_HORIZONTAL,
-            }}>
-            <AntDesing name="phone" size={24} color={COLORS.NEGRO_N1} />
-            <Text
-              style={{
-                marginLeft: 28,
-                fontFamily: 'Mont-Bold',
-                color: COLORS.NEGRO_N1,
-              }}>
-              Prueba
-            </Text>
-          </View>
           {this.props.habilitado ? (
             <Drawer.Item
               label="Dashboard"

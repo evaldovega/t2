@@ -103,7 +103,7 @@ class PlanFormulario extends React.Component {
   renderPreguntas = (preguntas) => {
     return preguntas.map((pregunta) => (
       <View style={{marginTop: 16}}>
-        <Text style={{fontFamily: 'Mont-Medium', fontSize: TITULO_TAM * 0.6}}>
+        <Text style={{fontFamily: 'Mont-Regular', fontSize: TITULO_TAM * 0.6}}>
           {pregunta.pregunta + ' ' + (pregunta.obligatorio ? '*' : '')}
         </Text>
         {this.renderInput(pregunta)}

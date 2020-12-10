@@ -12,6 +12,7 @@ import {Image, Text, View, StatusBar, Platform} from 'react-native';
 import NumberFormat from 'react-number-format';
 import WebView from 'react-native-webview';
 import ZoomIn from 'components/ZoomIn';
+import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 
 class PlanDetale extends React.PureComponent {
   componentDidMount() {}
@@ -41,13 +42,13 @@ class PlanDetale extends React.PureComponent {
         />
         <Image
           source={{uri: imagen}}
-          style={{width: '100%', height: '30%', position: 'absolute', top: 0}}
+          style={{width: '100%', height: '25%', position: 'absolute', top: 0}}
         />
         <View
           style={{
             position: 'absolute',
             width: '100%',
-            height: '30%',
+            height: '25%',
             backgroundColor: 'rgba(0,0,0,.7)',
           }}
         />
@@ -81,7 +82,7 @@ class PlanDetale extends React.PureComponent {
             )}
           />
         </ZoomIn>
-        <View style={{flex: 1, marginTop: '20%'}}>
+        <View style={{flex: 1, marginTop: '25%'}}>
           <WebView
             originWhitelist={['*']}
             source={{
