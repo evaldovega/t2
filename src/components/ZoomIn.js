@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Animated} from 'react-native';
+import {Animated, Easing} from 'react-native';
 const ZoomIn = (props) => {
   const opacity = new Animated.Value(0);
   const scale = new Animated.Value(0);
@@ -7,16 +7,18 @@ const ZoomIn = (props) => {
 
   const _in = () => {
     opacity.setValue(0);
-    scale.setValue(0);
+    scale.setValue(0.9);
     Animated.parallel([
       Animated.timing(scale, {
         toValue: 1,
-        duration: 1000,
+        duration: 500,
+        easing: Easing.in(Easing.quad),
         useNativeDriver: true,
       }),
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 1000,
+        duration: 200,
+        easing: Easing.in(Easing.quad),
         useNativeDriver: true,
       }),
     ]).start(() => {
@@ -29,12 +31,12 @@ const ZoomIn = (props) => {
     Animated.parallel([
       Animated.timing(scale, {
         toValue: 0,
-        duration: 1000,
+        duration: 600,
         useNativeDriver: true,
       }),
       Animated.timing(opacity, {
         toValue: 0,
-        duration: 1000,
+        duration: 200,
         useNativeDriver: true,
       }),
     ]).start(() => {

@@ -78,6 +78,9 @@ class ClienteOrdenes extends React.PureComponent {
           padding: MARGIN_VERTICAL,
           marginBottom: MARGIN_VERTICAL,
         }}
+        onPress={() =>
+          this.props.navigation.push('OrdenDetalle', {id: item.id})
+        }
         onLongPress={() => this.eliminar(item)}>
         <ZoomIn animacion={item.animacion}>
           <View

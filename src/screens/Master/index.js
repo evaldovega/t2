@@ -6,10 +6,11 @@ import {initUsuario} from 'redux/actions/Usuario';
 import {connect} from 'react-redux';
 import ModalCapacitarse from 'components/ModalCapacitarse';
 
-import Dashboard from './Dashboard';
+import Dashboard from './Dashboard/';
 import CapacitacionListado from './Capacitacion/Listado';
 import Lead from './Client/Lead';
 import Soporte from './Chat/Soporte';
+import MetaListado from 'screens/Meta/Listado';
 import MenuLateral from './MenuLateral';
 
 import Profile from './Profile';
@@ -82,6 +83,9 @@ class Master extends React.Component {
             <Drawer.Screen name="Dashboard" component={Dashboard} />
           )}
           <Drawer.Screen name="Profile" component={Profile} />
+          {this.props.habilitado && (
+            <Drawer.Screen name="Meta" component={MetaListado} />
+          )}
           <Drawer.Screen
             name="Capacitaciones"
             component={CapacitacionListado}

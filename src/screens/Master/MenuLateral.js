@@ -56,6 +56,20 @@ class MenuLateral extends React.Component {
           />
           {this.props.habilitado ? (
             <Drawer.Item
+              label="Mis metas"
+              active={actual == 'Meta'}
+              icon="flag"
+              onPress={() =>
+                requestAnimationFrame(() => {
+                  this.props.navigation.navigate('Meta');
+                })
+              }
+            />
+          ) : (
+            <></>
+          )}
+          {this.props.habilitado ? (
+            <Drawer.Item
               label="Dashboard"
               active={actual == 'Dashboard'}
               icon="monitor-dashboard"

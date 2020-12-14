@@ -30,6 +30,7 @@ export default function Input(props) {
     <View style={[style.wrapper, props.style, extra_style]}>
       <TextInput
         {...props.input}
+        editable={!props.disabled}
         autoCapitalize="none"
         secureTextEntry={pass}
         placeholder={props.placeholder}

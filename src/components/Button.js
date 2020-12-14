@@ -33,7 +33,9 @@ export default function Button(props) {
       onPress={() => requestAnimationFrame(() => props.onPress())}
       style={[style.wrapper, props.style, extra_style]}>
       <View>{props.right}</View>
-      <Text style={[style.text, extra_style_text]}>{props.title}</Text>
+      <Text style={[style.text, extra_style_text]}>
+        {props.title} {props.disabled ? '...' : ''}
+      </Text>
     </TouchableOpacity>
   );
 }
@@ -45,6 +47,7 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: CURVA,
+    flexDirection: 'row',
   },
   text: {
     color: COLORS.BLANCO,

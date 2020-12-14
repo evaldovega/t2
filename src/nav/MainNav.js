@@ -59,6 +59,7 @@ const Planes = React.lazy(() => {
 import PlanDetale from 'screens/Master/AdquirirPlan/PlanDetalle';
 import AdquirirPlan from '../screens/Master/AdquirirPlan/Completar';
 import VariacionFormulario from '../screens/Master/AdquirirPlan/VariacionFormulario';
+import MetaGuardar from '../screens/Meta/Guardar';
 
 const TaskSave = React.lazy(() => {
   return new Promise((resolve) => {
@@ -71,6 +72,8 @@ const SelecctorArchivo = React.lazy(() => {
     setTimeout(() => resolve(import('../components/SelecctorArchivo')), delay);
   });
 });
+
+import OrdenDetalle from 'screens/Master/Client/OrdenDetalle';
 
 import LoaderModule from '../components/LoaderModules';
 import {Provider} from 'react-redux';
@@ -241,6 +244,16 @@ const MainNavigation = memo(() => {
               <Screen
                 name="VariacionFormulario"
                 component={VariacionFormulario}
+                options={optionNavigator}
+              />
+              <Screen
+                name="OrdenDetalle"
+                component={OrdenDetalle}
+                options={optionNavigator}
+              />
+              <Screen
+                name="MetaGuardar"
+                component={MetaGuardar}
                 options={optionNavigator}
               />
             </Navigator>

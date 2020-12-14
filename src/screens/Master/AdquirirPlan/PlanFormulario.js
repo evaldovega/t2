@@ -160,6 +160,16 @@ class PlanFormulario extends React.Component {
       id: formulario.id,
     });
   }
+  componentDidUpdate(prev) {
+    if (prev.formulario != this.props.formulario) {
+      const {formulario} = this.props;
+      this.setState({
+        preguntas: formulario.preguntas,
+        titulo: formulario.titulo,
+        id: formulario.id,
+      });
+    }
+  }
 
   render() {
     const {titulo, preguntas} = this.state;

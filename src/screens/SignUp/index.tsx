@@ -311,6 +311,7 @@ class SignUp extends React.Component {
             num_documento_identidad: this.state.numDocumento,
             contrato_aprobado: this.state.aceptacionContrato
         })
+        console.log(JSON.stringify(body))
         fetch(SERVER_ADDRESS+"api/usuarios/", {
             method: 'POST',
             headers: {

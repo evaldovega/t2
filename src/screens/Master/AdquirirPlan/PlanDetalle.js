@@ -13,6 +13,7 @@ import NumberFormat from 'react-number-format';
 import WebView from 'react-native-webview';
 import ZoomIn from 'components/ZoomIn';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+import Cover from 'components/Cover';
 
 class PlanDetale extends React.PureComponent {
   componentDidMount() {}
@@ -40,18 +41,7 @@ class PlanDetale extends React.PureComponent {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-        <Image
-          source={{uri: imagen}}
-          style={{width: '100%', height: '25%', position: 'absolute', top: 0}}
-        />
-        <View
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '25%',
-            backgroundColor: 'rgba(0,0,0,.7)',
-          }}
-        />
+        <Cover uri={imagen} style={{height: '25%'}} />
         <Navbar
           style={{marginTop: MARGIN_VERTICAL * 2}}
           back
@@ -75,14 +65,15 @@ class PlanDetale extends React.PureComponent {
                   fontFamily: 'Mont-Bold',
                   color: COLORS.BLANCO,
                   textAlign: 'center',
-                  marginTop: MARGIN_VERTICAL,
+                  marginTop: MARGIN_VERTICAL * 0.5,
+                  marginBottom: MARGIN_VERTICAL * 3,
                 }}>
                 {nf}
               </Text>
             )}
           />
         </ZoomIn>
-        <View style={{flex: 1, marginTop: '25%'}}>
+        <View style={{flex: 1}}>
           <WebView
             originWhitelist={['*']}
             source={{

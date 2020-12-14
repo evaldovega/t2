@@ -49,7 +49,7 @@ const Error = (props) => {
     v.setValue(0);
     Animated.timing(v, {
       toValue: 1,
-      duration: 100,
+      duration: 1000,
       useNativeDriver: true,
     }).start();
   }, [props.children]);
@@ -60,7 +60,7 @@ const Error = (props) => {
           {
             translateY: v.interpolate({
               inputRange: [0, 1],
-              outputRange: [-10, 0],
+              outputRange: [-5, 0],
             }),
           },
         ],
@@ -88,8 +88,26 @@ class Validator extends React.PureComponent {
 
     if (!constraints) {
       if (this.props.required) {
-        _constraints = {...required};
-        _constraints.presence.message = '^' + this.props.required;
+        _constraints.presence = {};
+        _constraints.presence.allowEmpty = false;
+        _constraints.presence.message =
+          '^' +
+          (this.props.required.length > 0
+            ? this.props.required
+            : 'Diligencie éste campo');
+      }
+      if (this.props.email) {
+        _constraints.email = {
+          message:
+            '^' +
+            (this.props.email.length > 0 ? this.props.email : 'Email invalido'),
+        };
+      }
+      if (this.props.url) {
+        _constraints.url = {
+          message:
+            '^' + (this.props.url.length > 0 ? this.props.url : 'URL invalida'),
+        };
       }
     } else {
       _constraints = constraints;
@@ -131,5 +149,24 @@ class Validator extends React.PureComponent {
     );
   }
 }
+
+export const Execute = (Validations) => {
+  return new Promise((resolve, reject) => {
+    let errores = [];
+    Object.keys(Validations).forEach((v) => {
+      if (Validations[v]) {
+        const e = Validations[v].execute();
+        if (e.length > 0) {
+          errores = [...errores, {...e}];
+        }
+      }
+    });
+    if (errores.length == 0) {
+      resolve();
+    } else {
+      reject(errores);
+    }
+  });
+};
 
 export default Validator;

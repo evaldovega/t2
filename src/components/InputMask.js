@@ -18,6 +18,8 @@ export default function InputMask(props) {
   return (
     <View style={[style.wrapper, props.style, extra_style]}>
       <TextInputMask
+        {...props.input}
+        editable={!props.disabled}
         style={[style.input]}
         placeholder={props.placeholder}
         value={props.value}

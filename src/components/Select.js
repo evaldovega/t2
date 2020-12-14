@@ -63,9 +63,11 @@ export default function Select(props) {
   };
   const show = () => {
     console.log('Mostrar select');
-    setVisible(true);
-    if (props.onShow) {
-      props.onShow();
+    if (!props.disabled) {
+      setVisible(true);
+      if (props.onShow) {
+        props.onShow();
+      }
     }
   };
 

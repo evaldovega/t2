@@ -11,21 +11,24 @@ import {
   Dimensions,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
-import {Montserrat} from 'utils/fonts';
-import SvgHover from 'svgs/staticsHealth/SvgHover';
-import SvgGlueco from 'svgs/staticsHealth/SvgGlueco';
+
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 import SvgEdit from 'svgs/staticsHealth/SvgEdit';
-import SvgWeight from 'svgs/staticsHealth/SvgWeight';
 import Chart from 'screens/StaticsHealth/components/Chart';
 
 import {connect} from 'react-redux';
-import {CambiarNombre} from '../../redux/actions/Usuario';
-import {COLORS, MARGIN_VERTICAL} from 'constants';
+import {CambiarNombre} from 'redux/actions/Usuario';
+import {COLORS, CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
 import LottieView from 'lottie-react-native';
 import Navbar from 'components/Navbar';
+import ProgressBar from 'components/ProgressBar';
 import ColorfullContainer from 'components/ColorfullContainer';
+import Balance from './Balance';
 
 const {width, height} = Dimensions.get('screen');
+const width_progress = width * 0.4;
+
 class Dashboard extends React.Component {
   state = {
     progress: new Animated.Value(0),
@@ -58,6 +61,8 @@ class Dashboard extends React.Component {
         </View>*/}
 
         <ScrollView showsVerticalScrollIndicator={false}>
+          <Balance id={this.props.id} token={this.props.token} />
+
           <View style={styles.containerChart}>
             <View style={styles.boxHeader}>
               <Text style={styles.txtTitle}>
@@ -104,6 +109,8 @@ class Dashboard extends React.Component {
 const mapToState = (state) => {
   return {
     usuario: state.Usuario,
+    id: state.Usuario.id,
+    token: state.Usuario.token,
   };
 };
 const mapToActions = (dispatch) => {
@@ -129,7 +136,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontFamily: Montserrat,
+    fontFamily: 'Mont-Bold',
     fontSize: 17,
     color: '#fff',
   },
@@ -156,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   txtTime: {
-    fontFamily: Montserrat,
+    fontFamily: 'Mont-Regular',
     fontSize: 12,
     color: '#1A051D',
   },
@@ -176,13 +183,13 @@ const styles = StyleSheet.create({
   txtGood: {
     fontSize: 20,
     color: '#FFF',
-    fontFamily: Montserrat,
+    fontFamily: 'Mont-Regular',
     fontWeight: '500',
   },
   txtKeep: {
     fontSize: 16,
     color: '#FFF',
-    fontFamily: Montserrat,
+    fontFamily: 'Mont-Regular',
   },
   boxHeader: {
     flexDirection: 'row',
@@ -190,16 +197,16 @@ const styles = StyleSheet.create({
   },
   containerChart: {
     marginTop: MARGIN_VERTICAL * 3,
-    borderRadius: 16,
+    borderRadius: CURVA,
     backgroundColor: '#FFF',
     paddingHorizontal: 16,
-    paddingTop: 16,
-    marginHorizontal: 16,
-    marginBottom: 16,
+    paddingTop: MARGIN_VERTICAL,
+    marginHorizontal: MARGIN_HORIZONTAL,
+    marginBottom: MARGIN_HORIZONTAL,
   },
   txtTitle: {
     marginLeft: 8,
-    fontFamily: Montserrat,
+    fontFamily: 'Mont-Regular',
     fontSize: 14,
     color: '#1A051D',
     flex: 1,
@@ -221,12 +228,12 @@ const styles = StyleSheet.create({
   txtBtnBottom: {
     fontSize: 14,
     color: '#ABA4AC',
-    fontFamily: Montserrat,
+    fontFamily: 'Mont-Regular',
   },
   txtBtnBottomActive: {
     fontSize: 14,
     color: '#0084F4',
-    fontFamily: Montserrat,
+    fontFamily: 'Mont-Regular',
   },
   lineVertical: {
     width: 1,

@@ -21,6 +21,7 @@ import Validator from 'components/Validator';
 
 class VariacionFormulario extends React.Component {
   state = {
+    btn_text: 'Añadir',
     cargando: false,
     values: {},
     error: {},
@@ -180,7 +181,10 @@ class VariacionFormulario extends React.Component {
         respuesta: p.respuesta,
       });
     });
-    this.props.route.params.variacionAgregada(data);
+    this.props.route.params.variacionAgregada(
+      data,
+      this.props.route.params.index_form,
+    );
     this.props.navigation.pop();
     //});
   };
@@ -195,10 +199,20 @@ class VariacionFormulario extends React.Component {
       JSON.stringify(this.props.route.params.variacion.formularios),
     );
 
+    const {preguntas} = this.props.route.params;
+    if (preguntas) {
+      this.setState({btn_text: 'Modificar datos'});
+    }
     variacion.formularios = formularios.map((f) => {
       f.preguntas = f.preguntas.map((p) => {
         p.mostrar_selector = false;
         p.respuesta = '';
+        if (preguntas) {
+          const pregunta_guardada = preguntas.find((pg) => pg.id == p.id);
+          if (pregunta_guardada) {
+            p.respuesta = pregunta_guardada.respuesta;
+          }
+        }
         /*
         if (p.obligatorio) {
           Validaciones['pregunta' + p.id] = {
@@ -251,7 +265,11 @@ class VariacionFormulario extends React.Component {
                 </View>
               ))}
 
-            <Button marginTop={1} title="Añadir" onPress={this.guardar} />
+            <Button
+              marginTop={1}
+              title={this.state.btn_text}
+              onPress={this.guardar}
+            />
           </View>
         </ScrollView>
       </ColorfullContainer>

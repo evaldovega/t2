@@ -49,7 +49,7 @@ import Navbar from 'components/Navbar';
 import ColorfullContainer from 'components/ColorfullContainer';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
-import Validator from 'components/Validator';
+import Validator, {Execute} from 'components/Validator';
 
 const SeguridadSocial = React.lazy(() => import('./SeguridadSocial'));
 
@@ -90,16 +90,9 @@ class Profile extends React.Component {
       });
   };
   validar = () => {
-    let errores = [];
-    Object.keys(this.formulario_datos_personales).forEach((k) => {
-      const e = this.formulario_datos_personales[k].execute();
-      if (e.length > 0) {
-        errores = [...errores, {...e}];
-      }
-    });
-    if (errores.length == 0) {
+    Execute(this.formulario_datos_personales).then(() => {
       this.props.actualizarDatos();
-    }
+    });
   };
   render() {
     return (
@@ -115,11 +108,12 @@ class Profile extends React.Component {
               paddingHorizontal: MARGIN_HORIZONTAL,
               marginTop: MARGIN_VERTICAL,
             }}>
-            <Avatar.Image
-              onPress={this.cambiarFoto}
-              size={96}
-              source={{uri: this.props.usuario.foto_perfil}}
-            />
+            <TouchableOpacity style={{width: 96}} onPress={this.cambiarFoto}>
+              <Avatar.Image
+                size={96}
+                source={{uri: this.props.usuario.foto_perfil}}
+              />
+            </TouchableOpacity>
 
             <View style={{marginLeft: 8}}>
               <Text
@@ -193,14 +187,11 @@ class Profile extends React.Component {
             <Validator
               ref={(r) => (this.formulario_datos_personales['email'] = r)}
               value={this.props.usuario.email}
-              constraints={{
-                presence: {
-                  allowEmpty: false,
-                  message: '^Diligencie éste campo',
-                },
-              }}>
+              required
+              email>
               <InputText
                 marginTop={1}
+                disabled={this.props.actualizando_perfil}
                 input={{keyboardType: 'email-address'}}
                 onChangeText={(t) => this.props.cambiarProp('email', t)}
                 value={this.props.usuario.email}
@@ -210,12 +201,7 @@ class Profile extends React.Component {
             <Validator
               ref={(r) => (this.formulario_datos_personales['tel'] = r)}
               value={this.props.usuario.cel}
-              constraints={{
-                presence: {
-                  allowEmpty: false,
-                  message: '^Diligencie éste campo',
-                },
-              }}>
+              required>
               <Text
                 style={{
                   fontFamily: 'Mont-Regular',
@@ -226,6 +212,7 @@ class Profile extends React.Component {
               </Text>
               <InputText
                 marginTop={1}
+                disabled={this.props.actualizando_perfil}
                 input={{keyboardType: 'phone-pad'}}
                 onChangeText={(t) => this.props.cambiarProp('cel', t)}
                 value={this.props.usuario.cel}
@@ -235,6 +222,7 @@ class Profile extends React.Component {
             <Button
               marginTop={1}
               icon="pencil"
+              disabled={this.props.actualizando_perfil}
               onPress={this.validar}
               loading={this.props.usuario.actualizando_perfil}
               title="Actualizar Datos"
@@ -258,6 +246,7 @@ const mapToState = (state) => {
   return {
     usuario: state.Usuario,
     habilitado: state.Usuario.habilitado,
+    actualizando_perfil: state.Usuario.actualizando_perfil,
     error_actualizando_perfil: state.Usuario.error_actualizando_perfil,
   };
 };

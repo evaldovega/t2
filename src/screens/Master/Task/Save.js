@@ -17,7 +17,6 @@ import {
   Caption,
   Subheading,
   Card,
-  Button,
   Divider,
   TextInput,
 } from 'react-native-paper';
@@ -26,8 +25,14 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
 import {cargar} from '../../../redux/actions/TaskType';
 import {taskSave} from '../../../redux/actions/Clients';
-import GradientContainer from 'components/GradientContainer';
 import Navbar from 'components/Navbar';
+import Button from 'components/Button';
+import InputText from 'components/InputText';
+import Validator, {Execute} from 'components/Validator';
+import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
+import ColorfullContainer from 'components/ColorfullContainer';
+import Select from 'components/Select';
+import InputMask from 'components/InputMask';
 
 class TaskSave extends React.Component {
   state = {
@@ -38,6 +43,8 @@ class TaskSave extends React.Component {
     mostrar_hora: false,
     data: moment().toDate(),
   };
+  Validations = {};
+
   componentDidMount() {
     this.props.cargarTipos();
   }
@@ -54,10 +61,12 @@ class TaskSave extends React.Component {
     this.setState({mostrar_hora: false, fecha_agendamiento: fecha.toDate()});
   };
   guardar = () => {
-    this.props.taskSave(this.props.route.params.cliente_id, {
-      tipo_tarea: this.state.tipo_tarea,
-      motivo_tarea: this.state.motivo_tarea,
-      fecha_agendamiento: this.state.fecha_agendamiento,
+    Execute(this.Validations).then(() => {
+      this.props.taskSave(this.props.route.params.cliente_id, {
+        tipo_tarea: this.state.tipo_tarea,
+        motivo_tarea: this.state.motivo_tarea,
+        fecha_agendamiento: this.state.fecha,
+      });
     });
   };
 
@@ -75,99 +84,65 @@ class TaskSave extends React.Component {
     const fecha = moment(this.state.fecha_agendamiento).format('YYYY-MM-DD');
     const hora = moment(this.state.fecha_agendamiento).format('hh:mm a');
     return (
-      <GradientContainer style={{flex: 1}}>
+      <ColorfullContainer style={{flex: 1}}>
         <Loader loading={this.props.loading} />
-        <Navbar back title="Agendar cita" {...this.props} />
+        <Navbar back transparent title="Agendar cita" {...this.props} />
         <ScrollView style={{flex: 1}}>
-          <View style={{flex: 1}}>
-            <Card
-              style={{borderRadius: 16, margin: 16, paddingVertical: 16}}
-              elevation={2}>
-              <Card.Content>
-                <View style={styleInput.wrapper}>
-                  <Picker
-                    selectedValue={this.state.tipo_tarea}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.setState({tipo_tarea: itemValue})
-                    }
-                    style={styleInput.input}>
-                    {this.props.tipos.map((t) => (
-                      <Picker.Item label={t.descripcion} value={t.id} />
-                    ))}
-                  </Picker>
-                </View>
+          <View
+            style={{
+              flex: 1,
+              marginVertical: MARGIN_VERTICAL,
+              marginHorizontal: MARGIN_HORIZONTAL,
+            }}>
+            <View style={{borderRadius: CURVA}}>
+              <Validator
+                value={this.state.tipo_tarea}
+                ref={(r) => (this.Validations['tipo'] = r)}
+                required>
+                <Select
+                  marginTop={1}
+                  placeholder="Seleccione un tipo de tarea"
+                  value={this.state.tipo_tarea}
+                  onSelect={(v) => this.setState({tipo_tarea: v.key})}
+                  options={this.props.tipos.map((t) => ({
+                    key: t.id,
+                    label: t.descripcion,
+                  }))}
+                />
+              </Validator>
 
-                <View
-                  style={[
-                    styleInput.wrapper,
-                    {justifyContent: 'space-between'},
-                  ]}>
-                  <Text>{fecha}</Text>
-                  <FAB
-                    icon="calendar"
-                    small
-                    onPress={() => this.setState({mostrar_fecha: true})}
-                  />
-                </View>
+              <Validator ref={(r) => (this.Validations['fecha'] = r)} required>
+                <InputMask
+                  marginTop={1}
+                  value={this.state.fecha}
+                  onChangeText={(t) => this.setState({fecha: t})}
+                  placeholder="0000-00-00 00:00"
+                  mask={'[0000]-[00]-[00] [00]:[00]'}
+                />
+              </Validator>
 
-                <View
-                  style={[
-                    styleInput.wrapper,
-                    {justifyContent: 'space-between'},
-                  ]}>
-                  <Text>{hora}</Text>
-                  <FAB
-                    icon="clock"
-                    small
-                    onPress={() => this.setState({mostrar_hora: true})}
-                  />
-                </View>
-                {this.state.mostrar_fecha && (
-                  <DateTimePicker
-                    value={this.state.fecha_agendamiento}
-                    mode="date"
-                    display="default"
-                    onChange={this.cambiarFecha}
-                    style={{flex: 1}}
-                  />
-                )}
+              <Validator
+                value={this.state.motivo_tarea}
+                ref={(r) => (this.Validations['motivo'] = r)}
+                required>
+                <InputText
+                  marginTop={1}
+                  input={{multiline: true, numberOfLines: 4}}
+                  placeholder="Motivo"
+                  value={this.state.motivo_tarea}
+                  onChangeText={(t) => this.setState({motivo_tarea: t})}
+                />
+              </Validator>
 
-                {this.state.mostrar_hora && (
-                  <DateTimePicker
-                    value={this.state.fecha_agendamiento}
-                    is24Hour={false}
-                    mode="time"
-                    display="default"
-                    onChange={this.cambiarHora}
-                    style={{flex: 1}}
-                  />
-                )}
-
-                <View style={styleInput.wrapper}>
-                  <TextInput
-                    style={styleInput.input}
-                    multiline={true}
-                    numberOfLines={4}
-                    underlineColor="white"
-                    placeholder="Motivo"
-                    value={this.state.motivo_tarea}
-                    onChangeText={(t) => this.setState({motivo_tarea: t})}
-                  />
-                </View>
-              </Card.Content>
-              <Card.Actions>
-                <Button
-                  style={styleButton.wrapper}
-                  dark={true}
-                  color="white"
-                  onPress={() => this.guardar()}>
-                  Guardar
-                </Button>
-              </Card.Actions>
-            </Card>
+              <Button
+                marginTop={3}
+                onPress={() => this.guardar()}
+                title="Guardar"
+              />
+            </View>
           </View>
         </ScrollView>
-      </GradientContainer>
+      </ColorfullContainer>
     );
   }
 }

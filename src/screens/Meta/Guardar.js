@@ -1,0 +1,229 @@
+import React from 'react';
+import ColorfullContainer from 'components/ColorfullContainer';
+import {
+  COLORS,
+  MARGIN_HORIZONTAL,
+  MARGIN_VERTICAL,
+  SERVER_ADDRESS,
+} from 'constants';
+import Navbar from 'components/Navbar';
+import InputText from 'components/InputText';
+import InputMask from 'components/InputMask';
+import Select from 'components/Select';
+import Button from 'components/Button';
+import Validator, {Execute} from 'components/Validator';
+import Loader from 'components/Loader';
+import {View, Text, Alert} from 'react-native';
+import {connect} from 'react-redux';
+
+class MetaGuardar extends React.Component {
+  state = {
+    msn: '',
+    loading: false,
+    titulo: '',
+    tipo_meta: '',
+    fecha_inicio_meta: '',
+    fecha_final_meta: '',
+    valor_meta: '',
+  };
+  Validations = {};
+
+  cargar = (id) => {
+    try {
+      this.setState({loading: true, msn: 'Cargando...'});
+      fetch(SERVER_ADDRESS + 'api/metas/' + id, {
+        headers: {
+          Authorization: 'Token ' + this.props.token,
+          Accept: 'application/json',
+          'content-type': 'application/json',
+        },
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          console.log(data);
+          this.setState({
+            loading: false,
+            ...data,
+            valor_meta: data.valor_meta.toString(),
+          });
+        })
+        .catch((error) => {
+          this.setState({loading: false});
+          Alert.alert('No se cargo la meta', error.toString());
+          this.props.navigation.pop();
+        });
+    } catch (error) {
+      this.setState({loading: false});
+      Alert.alert('No se cargo la meta', error.toString());
+      this.props.navigation.pop();
+    }
+  };
+  guardar = () => {
+    Execute(this.Validations).then(() => {
+      this.setState({loading: true});
+      const data = {
+        user: this.props.id,
+        titulo: this.state.titulo,
+        tipo_meta: this.state.tipo_meta,
+        valor_meta: this.state.valor_meta,
+        fecha_inicio_meta: this.state.fecha_inicio_meta,
+        fecha_final_meta: this.state.fecha_final_meta,
+      };
+      let id = '';
+
+      if (this.props.route.params.id) {
+        id = this.props.route.params.id + '/';
+      }
+
+      const method = this.props.route.params.id ? 'PUT' : 'POST';
+      this.setState({loading: true, msn: 'Guardando...'});
+      try {
+        fetch(SERVER_ADDRESS + 'api/metas/' + id, {
+          method: method,
+          body: JSON.stringify(data),
+          headers: {
+            Authorization: 'Token ' + this.props.token,
+            Accept: 'application/json',
+            'content-type': 'application/json',
+          },
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            console.log(data);
+            this.setState({loading: false});
+            this.props.navigation.pop();
+            if (this.props.route.params.callback) {
+              this.props.route.params.callback();
+            }
+          })
+          .catch((error) => {
+            this.setState({loading: false});
+            Alert.alert('No se guardo la meta', error.toString());
+          });
+      } catch (error) {
+        this.setState({loading: false});
+        Alert.alert('No se guardo la meta', error.toString());
+      }
+    });
+  };
+
+  componentDidMount() {
+    if (this.props.route.params.id) {
+      this.cargar(this.props.route.params.id);
+    }
+  }
+
+  render() {
+    const {tipo_meta, loading, msn} = this.state;
+    console.log(this.props.id);
+    return (
+      <ColorfullContainer style={{flex: 1, backgroundColor: COLORS.BLANCO}}>
+        <Navbar {...this.props} transparent back title="Guardar Meta" />
+        <Loader message={msn} loading={loading} />
+        <View style={{flex: 1, paddingHorizontal: MARGIN_HORIZONTAL}}>
+          <Validator
+            ref={(r) => (this.Validations['p1'] = r)}
+            value={this.state.titulo}
+            required="Comó quieres identificar la meta">
+            <InputText
+              value={this.state.titulo}
+              onChangeText={(v) => this.setState({titulo: v})}
+              marginTop={1}
+              placeholder="Titulo"
+            />
+          </Validator>
+
+          <Validator
+            ref={(r) => (this.Validations['p2'] = r)}
+            value={tipo_meta}
+            required="Selecciona un tipo de meta">
+            <Select
+              value={tipo_meta}
+              onSelect={(v) => this.setState({tipo_meta: v.key})}
+              options={[
+                {key: 'ventas', label: 'Ventas'},
+                {key: 'clientes', label: 'Clientes'},
+              ]}
+              marginTop={1}
+              placeholder="Tipo de metas"
+            />
+          </Validator>
+
+          <Text
+            style={{
+              fontFamily: 'Mont.Regular',
+              marginTop: MARGIN_VERTICAL * 2,
+            }}>
+            {tipo_meta == 'ventas'
+              ? 'Número de ventas que quieres alcanzar'
+              : tipo_meta == 'clientes'
+              ? 'Número de clientes que quieres conseguir'
+              : 'Meta'}
+          </Text>
+          <Validator
+            ref={(r) => (this.Validations['p3'] = r)}
+            value={this.state.valor_meta}
+            required="Ingresa una meta">
+            <InputText
+              input={{keyboardType: 'number-pad'}}
+              value={this.state.valor_meta}
+              onChangeText={(v) => this.setState({valor_meta: v})}
+              marginTop={1}
+              placeholder=""
+            />
+          </Validator>
+
+          <Text
+            style={{
+              fontFamily: 'Mont.Regular',
+              marginTop: MARGIN_VERTICAL * 2,
+            }}>
+            Especifica una fecha inicial y final para lograr tu meta
+          </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{flex: 1, marginRight: 4}}>
+              <Validator
+                ref={(r) => (this.Validations['p4'] = r)}
+                required="OOPS"
+                value={this.state.fecha_inicio_meta}>
+                <InputMask
+                  input={{keyboardType: 'number-pad'}}
+                  value={this.state.fecha_inicio_meta}
+                  onChangeText={(v) => this.setState({fecha_inicio_meta: v})}
+                  marginTop={1}
+                  placeholder="YYYY-MM-DD"
+                  mask={'[0000]-[00]-[00]'}
+                />
+              </Validator>
+            </View>
+            <View style={{flex: 1, marginLeft: 4}}>
+              <InputMask
+                input={{keyboardType: 'number-pad'}}
+                value={this.state.fecha_final_meta}
+                onChangeText={(v) => this.setState({fecha_final_meta: v})}
+                marginTop={1}
+                placeholder="YYYY-MM-DD"
+                mask={'[0000]-[00]-[00]'}
+              />
+              <Validator
+                ref={(r) => (this.Validations['p5'] = r)}
+                required="OOPS"
+                value={this.state.fecha_final_meta}></Validator>
+            </View>
+          </View>
+
+          <Button marginTop={3} title="Guardar" onPress={this.guardar} />
+        </View>
+      </ColorfullContainer>
+    );
+  }
+}
+
+const mapToProps = (state) => {
+  return {
+    id: state.Usuario.id,
+    token: state.Usuario.token,
+  };
+};
+
+export default connect(mapToProps)(MetaGuardar);
