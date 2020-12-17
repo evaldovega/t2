@@ -20,7 +20,7 @@ class OrdenDetalle extends React.Component {
   state = {
     doc: {},
   };
-  componentDidMount() {
+  load = () => {
     try {
       fetch(
         SERVER_ADDRESS + 'api/ordenes/' + this.props.route.params.id + '/',
@@ -38,6 +38,9 @@ class OrdenDetalle extends React.Component {
     } catch (error) {
       console.log(error);
     }
+  };
+  componentDidMount() {
+    this.load();
   }
 
   renderFormularioPlan = (doc) => {
@@ -63,8 +66,6 @@ class OrdenDetalle extends React.Component {
                 flex: 1,
                 fontFamily: 'Mont-Rgular',
                 marginLeft: 8,
-                textDecorationLine: 'underline',
-                textDecorationColor: COLORS.VERDE,
               }}>
               {item.respuesta}
             </Text>
@@ -223,17 +224,20 @@ class OrdenDetalle extends React.Component {
             {this.renderFormularioPlan(doc)}
             {this.renderPlanes(doc)}
 
-            <Button
-              marginTop={3}
-              title="Subsanar"
-              onPress={() =>
-                this.props.navigation.push('AdquirirPlan', {
-                  id: doc.plan,
-                  orden_id: doc.id,
-                  cliente: doc.cliente,
-                })
-              }
-            />
+            {doc && doc.estado_orden == 4 ? (
+              <Button
+                marginTop={3}
+                title="Subsanar"
+                onPress={() =>
+                  this.props.navigation.push('AdquirirPlan', {
+                    id: doc.plan,
+                    orden_id: doc.id,
+                    cliente: doc.cliente,
+                    callback: this.load,
+                  })
+                }
+              />
+            ) : null}
           </View>
         </ScrollView>
       </ColorfullContainer>

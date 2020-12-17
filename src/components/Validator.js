@@ -2,39 +2,6 @@ import React, {useEffect} from 'react';
 import validate from 'utils/validate.min.js';
 import {Text, Animated, easing} from 'react-native';
 
-/*
-const Validator = (props) => {
-  const [errores, setError] = useState([]);
-
-  useEffect(() => {
-    if (props.constraints) {
-      let _errores = [];
-      if (props.valueb) {
-        _errores = validate(
-          {e: props.value, e2: props.valueb},
-          {e: props.constraints},
-        );
-      } else {
-        _errores = validate({e: props.value}, {e: props.constraints});
-      }
-      if (_errores) {
-        setError(_errores['e']);
-      } else {
-        setError([]);
-      }
-    }
-  }, [props.value, props.valueb]);
-
-  return (
-    <>
-      {props.children}
-      {errores.map((e) => (
-        <Text>{e}</Text>
-      ))}
-    </>
-  );
-};*/
-
 const required = {
   presence: {
     allowEmpty: false,

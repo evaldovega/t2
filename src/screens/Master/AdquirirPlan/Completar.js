@@ -127,7 +127,11 @@ class AdquirirPlan extends React.Component {
         cargando: true,
         msn: 'Cargando orden...',
       });
-      fetch(SERVER_ADDRESS + 'api/ordenes/' + id + '/')
+      fetch(SERVER_ADDRESS + 'api/ordenes/' + id + '/', {
+        headers: {
+          Authorization: 'Token ' + this.props.token,
+        },
+      })
         .then((r) => r.json())
         .then((data) => {
           //this.state.formularios
@@ -710,22 +714,33 @@ class AdquirirPlan extends React.Component {
                   Alert.alert(r.error, '');
                 } else {
                   if (r.numero_orden) {
-                    this.props.navigation.navigate('ClientProfile');
-                    Alert.alert(
-                      'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
-                      'Instrucciones enviadas a ' +
-                        r.cliente_str +
-                        ' para finalizar el proceso de compra.',
-                      [
-                        {
-                          text: 'Perfecto',
-                          onPress: () => {
-                            this.props.addOrden(r);
+                    if (this.props.route.params.callback) {
+                      this.props.route.params.callback();
+                    }
+                    if (this.props.route.params.orden_id) {
+                      this.props.navigation.pop();
+                      Alert.alert(
+                        'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
+                        'Datos de subsanación enviados correctamente. Se le notificara cuando sean aprobados.',
+                      );
+                    } else {
+                      this.props.navigation.navigate('ClientProfile');
+                      Alert.alert(
+                        'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
+                        'Instrucciones enviadas a ' +
+                          r.cliente_str +
+                          ' para finalizar el proceso de compra.',
+                        [
+                          {
+                            text: 'Perfecto',
+                            onPress: () => {
+                              this.props.addOrden(r);
+                            },
                           },
-                        },
-                      ],
-                      {cancelable: false},
-                    );
+                        ],
+                        {cancelable: false},
+                      );
+                    }
                   } else {
                     console.log(r);
                     this.setState({cargando: false});

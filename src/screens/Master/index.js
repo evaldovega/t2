@@ -11,36 +11,14 @@ import CapacitacionListado from './Capacitacion/Listado';
 import Lead from './Client/Lead';
 import Soporte from './Chat/Soporte';
 import MetaListado from 'screens/Meta/Listado';
+import NotificacionListado from './Notificacion/Listado';
 import MenuLateral from './MenuLateral';
 
 import Profile from './Profile';
+import {SERVER_ADDRESS} from 'constants';
 
 const Drawer = createDrawerNavigator();
 const {width, height} = Dimensions.get('screen');
-
-async function requestUserPermission() {
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-  if (enabled) {
-    console.log('Authorization status:', authStatus);
-    registerAppWithFCM();
-
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log(
-        'Notification caused app to open from background state:',
-        remoteMessage.notification,
-      );
-      //navigation.navigate(remoteMessage.data.type);
-    });
-  }
-}
-
-async function registerAppWithFCM() {
-  await messaging().registerDeviceForRemoteMessages();
-}
 
 class Master extends React.Component {
   state = {
@@ -50,13 +28,54 @@ class Master extends React.Component {
     this.props.navigation.openDrawer();
   };
 
+  requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+      this.registerAppWithFCM();
+    }
+  };
+
+  registerAppWithFCM = async () => {
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
+    console.log('Push ', token);
+    fetch(SERVER_ADDRESS + 'api/usuarios/editar/', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'content-type': 'application/json',
+        Authorization: 'Token ' + this.props.token,
+      },
+      body: JSON.stringify({fcm_token: token}),
+    })
+      .then((r) => r.json())
+      .then((r) => {
+        //console.log(r)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   componentDidMount() {
-    requestUserPermission();
+    this.requestUserPermission();
     messaging().onMessage(async (remoteMessage) => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      //Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
     messaging().setBackgroundMessageHandler(async (remoteMessage) => {
       console.log('Message handled in the background!', remoteMessage);
+    });
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+      //navigation.navigate(remoteMessage.data.type);
     });
     this.props.initUsuario();
     this.setState({mostrar_modal_capacitacion: this.props.habilitado});
@@ -82,6 +101,10 @@ class Master extends React.Component {
           {this.props.habilitado && (
             <Drawer.Screen name="Dashboard" component={Dashboard} />
           )}
+          <Drawer.Screen
+            name="Notificaciones"
+            component={NotificacionListado}
+          />
           <Drawer.Screen name="Profile" component={Profile} />
           {this.props.habilitado && (
             <Drawer.Screen name="Meta" component={MetaListado} />
@@ -107,6 +130,7 @@ const mapearEstado = (state) => {
     ready_validation: state.Usuario.ready_validation,
     habilitado: state.Usuario.habilitado,
     nombre: state.Usuario.nombre,
+    token: state.Usuario.token,
   };
 };
 const mapearAcciones = (dispatch) => {

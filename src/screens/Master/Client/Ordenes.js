@@ -96,7 +96,7 @@ class ClienteOrdenes extends React.PureComponent {
                   fontSize: TITULO_TAM * 0.6,
                   color: COLORS.NEGRO_N1,
                 }}>
-                {item.plan}
+                {item.plan_str}
               </Text>
               <Text
                 style={{

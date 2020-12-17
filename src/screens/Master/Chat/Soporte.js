@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import {Text, FAB, List, Colors, Card, Caption} from 'react-native-paper';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
-import {COLORS, SOCKET_ADDRESS} from '../../../constants';
+import {COLORS, SOCKET_ADDRESS, SERVER_ADDRESS} from 'constants';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 import {connect} from 'react-redux';
 import RNFetchBlob from 'rn-fetch-blob';
+import ColorfullContainer from 'components/ColorfullContainer';
+import NavBar from 'components/Navbar';
 
 const Sound = require('react-native-sound');
 const {fs} = RNFetchBlob;
@@ -50,12 +52,36 @@ const styles = StyleSheet.create({
 const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 class Soporte extends React.Component {
   state = {
+    cargando: false,
     entrando: true,
     usuarios: [],
     msg: '',
     mensajes: [],
     total_mensajes: 0,
   };
+
+  load = () => {
+    this.setState({cargando: true});
+    fetch(SERVER_ADDRESS + 'api/mensajes/?sala=' + this.props.id, {
+      headers: {
+        Authorization: 'Token ' + this.props.token,
+      },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        const user = this.props.id;
+        const mensajes = data.map((d) => ({...d, ...{me: d.user == user}}));
+        this.setState({
+          mensajes: mensajes,
+          total_mensajes: mensajes.length,
+          cargando: false,
+        });
+      })
+      .catch((error) => {
+        this.setState({cargando: false});
+      });
+  };
+
   componentDidMount() {
     console.log('Ruta ', fs.dirs.MainBundleDir);
     this.msn = new Sound(require('../../../sms.mp3'), (error) => {
@@ -67,6 +93,8 @@ class Soporte extends React.Component {
 
     this.socket = SocketIOClient(SOCKET_ADDRESS, {transports: ['websocket']});
     console.log('Room ' + this.props.id);
+
+    this.load();
 
     this.socket.on('disconnect', () => {
       this.setState({entrando: true});
@@ -84,7 +112,7 @@ class Soporte extends React.Component {
           m.mb = null;
           return m;
         });
-        mensajes.push({me: false, msn: data.message, mb: 130});
+        mensajes.push({me: false, mensaje: data.message, mb: 130});
 
         this.setState({mensajes: mensajes, total_mensajes: mensajes.length});
         this.msn.play();
@@ -97,6 +125,7 @@ class Soporte extends React.Component {
       this.msn.release();
     } catch (e) {}
   }
+
   enviar = () => {
     this.socket.emit('onmessage', {
       msg: this.state.msg,
@@ -143,27 +172,19 @@ class Soporte extends React.Component {
           igual && {marginTop: 1},
         ]}>
         {!item.me && !igual && <Caption>Asesor</Caption>}
-        <Text style={styles.text}>{this.transformarMensaje(item.msn)}</Text>
+        <Text style={styles.text}>{this.transformarMensaje(item.mensaje)}</Text>
       </View>
     );
   };
   render() {
     return (
-      <View style={{flex: 1, flexDirection: 'column'}}>
+      <ColorfullContainer style={{flex: 1, flexDirection: 'column'}}>
         <StatusBar
           translucent={true}
           backgroundColor={'transparent'}
-          barStyle={'light-content'}
+          barStyle={'dark-content'}
         />
-        <View style={styleHeader.wrapper}>
-          <FAB
-            icon="menu"
-            onPress={() => this.props.navigation.openDrawer()}
-            style={styleHeader.btnLeft}
-          />
-          <Text style={styleHeader.title}>Soporte</Text>
-          <FAB style={{elevation: 0}} icon="face-agent" />
-        </View>
+        <NavBar {...this.props} menu title="Soporte" transparent />
         <SafeAreaView style={{flex: 1}}>
           <FlatList
             data={this.state.mensajes}
@@ -217,7 +238,7 @@ class Soporte extends React.Component {
             )}
           </Card.Content>
         </Card>
-      </View>
+      </ColorfullContainer>
     );
   }
 }
@@ -225,6 +246,7 @@ const mapearEstado = (state) => {
   return {
     id: state.Usuario.id,
     nombre: state.Usuario.nombre,
+    token: state.Usuario.token,
   };
 };
 export default connect(mapearEstado)(Soporte);
