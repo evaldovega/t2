@@ -61,6 +61,7 @@ class Profile extends React.Component {
 
   componentDidMount() {
     console.log('Pagina perfil montada');
+    console.log(this.props.usuario);
   }
 
   componentDidUpdate(prev) {
@@ -147,7 +148,7 @@ class Profile extends React.Component {
           <View style={styles.containerInfo}>
             <View style={styles.col}>
               <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Bold'}}>
-                3.890
+                {this.props.usuario.no_clientes}
               </Text>
               <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Regular'}}>
                 Clientes
@@ -156,7 +157,7 @@ class Profile extends React.Component {
             <View style={styles.line} />
             <View style={styles.col}>
               <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Bold'}}>
-                257
+                {this.props.usuario.no_ventas}
               </Text>
               <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Regular'}}>
                 Ventas
@@ -165,7 +166,7 @@ class Profile extends React.Component {
             <View style={styles.line} />
             <View style={styles.col}>
               <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Bold'}}>
-                1.000.468
+                {this.props.usuario.ganancias}
               </Text>
               <Text style={{color: COLORS.NEGRO, fontFamily: 'Mont-Regular'}}>
                 Ganancias

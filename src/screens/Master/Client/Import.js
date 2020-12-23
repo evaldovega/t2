@@ -73,12 +73,14 @@ class ContactToClient extends PreventDoubleTap {
           c.emailAddresses && c.emailAddresses.length > 0
             ? c.emailAddresses[0].email
             : '';
+
         return {
           recordID: c.recordID,
           nombre: nombre,
           primer_nombre: c.givenName,
-          primer_apellido: c.middleName,
-          segundo_apellido: c.familyName,
+          segundo_nombre: c.middleName,
+          primer_apellido: c.familyName,
+          segundo_apellido: '',
           foto: c.thumbnailPath,
           telefonos: c.phoneNumbers.map((t) => t.number).join(','),
           empresa: c.company,

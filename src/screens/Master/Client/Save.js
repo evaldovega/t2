@@ -10,6 +10,7 @@ import {
   Picker,
   TextInput,
   StatusBar,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loader from 'components/Loader';
@@ -42,6 +43,7 @@ class ClientSave extends React.Component {
     const item = this.props.route.params?.item;
     if (item) {
       this.props.changeProp('primer_nombre', item.primer_nombre);
+      this.props.changeProp('segundo_nombre', item.segundo_nombre);
       this.props.changeProp('primer_apellido', item.primer_apellido);
       this.props.changeProp('segundo_apellido', item.segundo_apellido);
       this.props.changeProp('numero_telefono', item.telefonos);
@@ -58,7 +60,7 @@ class ClientSave extends React.Component {
 
     if (prev.success != this.props.success && this.props.success != '') {
       Alert.alert('Buen trabajo', this.props.success);
-      this.props.navigation.navigate('ProfileClient');
+      this.props.navigation.pop();
     }
   }
 
@@ -93,7 +95,12 @@ class ClientSave extends React.Component {
                 marginTop={1}
                 value={this.props.primer_nombre}
                 onChangeText={(i) => this.props.changeProp('primer_nombre', i)}
-                input={{keyboardType: 'textPersonName|textCapWords'}}
+                input={{
+                  keyboardType:
+                    Platform.OS === 'ios'
+                      ? 'ascii-capable'
+                      : 'textPersonName|textCapWords',
+                }}
               />
             </Validator>
 
@@ -102,7 +109,12 @@ class ClientSave extends React.Component {
               marginTop={1}
               value={this.props.segundo_nombre}
               onChangeText={(i) => this.props.changeProp('segundo_nombre', i)}
-              input={{keyboardType: 'textPersonName|textCapWords'}}
+              input={{
+                keyboardType:
+                  Platform.OS === 'ios'
+                    ? 'ascii-capable'
+                    : 'textPersonName|textCapWords',
+              }}
             />
 
             <Validator
@@ -116,7 +128,12 @@ class ClientSave extends React.Component {
                 onChangeText={(i) =>
                   this.props.changeProp('primer_apellido', i)
                 }
-                input={{keyboardType: 'textPersonName|textCapWords'}}
+                input={{
+                  keyboardType:
+                    Platform.OS === 'ios'
+                      ? 'ascii-capable'
+                      : 'textPersonName|textCapWords',
+                }}
               />
             </Validator>
 
@@ -125,7 +142,12 @@ class ClientSave extends React.Component {
               marginTop={1}
               value={this.props.segundo_apellido}
               onChangeText={(i) => this.props.changeProp('segundo_apellido', i)}
-              input={{keyboardType: 'textPersonName|textCapWords'}}
+              input={{
+                keyboardType:
+                  Platform.OS === 'ios'
+                    ? 'ascii-capable'
+                    : 'textPersonName|textCapWords',
+              }}
             />
 
             <Validator

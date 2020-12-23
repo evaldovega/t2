@@ -23,13 +23,33 @@ import NumberFormat from 'react-number-format';
 import Navbar from 'components/Navbar';
 import ColorfullContainer from 'components/ColorfullContainer';
 import ZoomIn from 'components/ZoomIn';
+import InputText from 'components/InputText';
 
 class Planes extends React.Component {
   state = {
     cargando: false,
     docs: [],
+    docsOriginal: [],
+    filtrado: [],
     modal_show: false,
     doc: {},
+    valorBusqueda: '',
+  };
+
+  componentDidUpdate = (prev) => {
+    // if(this.state.valorBusqueda != ''){
+    //   let datafiltrada = [];
+    //   for(let i = 0; i < this.state.docs.length; i++){
+    //     if(this.state.docs[i].titulo.includes(this.state.valorBusqueda)){
+    //       datafiltrada.push(this.state.docs[i])
+    //     }
+    //   }
+    //   console.log(datafiltrada)
+    //   this.setState({docs: datafiltrada});
+    // }
+    // if(prev.valorBusqueda != '' && this.state.valorBusqueda == ''){
+    //   this.setState({docs: this.state.docsOriginal});
+    // }
   };
 
   componentDidMount() {
@@ -42,7 +62,7 @@ class Planes extends React.Component {
       .then((r) => r.json())
       .then((r) => {
         console.log(r);
-        this.setState({docs: r});
+        this.setState({docs: r, docsOriginal: r});
         this.setState({cargando: false});
       })
       .catch((error) => {
@@ -51,6 +71,27 @@ class Planes extends React.Component {
         this.props.navigation.pop();
       });
   }
+
+  changeSearchInput = (t) => {
+    this.setState({valorBusqueda: t});
+    let valorBusqueda = this.state.valorBusqueda;
+    if (valorBusqueda != '') {
+      let datafiltrada = [];
+      for (let i = 0; i < this.state.docs.length; i++) {
+        if (
+          this.state.docs[i].titulo
+            .toUpperCase()
+            .includes(valorBusqueda.toUpperCase())
+        ) {
+          datafiltrada.push(this.state.docs[i]);
+        }
+      }
+      this.setState({docs: datafiltrada});
+      console.log('Filtrada', datafiltrada);
+    } else if (this.state.valorBusqueda == '') {
+      this.setState({docs: this.state.docsOriginal});
+    }
+  };
 
   seleccionar = (i) => {
     console.log(i);
@@ -71,6 +112,14 @@ class Planes extends React.Component {
           barStyle={'dark-content'}
         />
         <Navbar transparent back title="Seleccione un Plan" {...this.props} />
+        <View style={{marginHorizontal: MARGIN_HORIZONTAL}}>
+          <InputText
+            marginTop={1}
+            placeholder={'Buscar'}
+            onChangeText={(t) => this.changeSearchInput(t)}
+            value={this.state.valorBusqueda}
+          />
+        </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={{paddingHorizontal: MARGIN_HORIZONTAL}}>
@@ -121,7 +170,7 @@ class Planes extends React.Component {
                           marginVertical: MARGIN_VERTICAL,
                         }}>
                         {i.descripcion ||
-                          'Este plan no tiene una descripció por favor comunicarle al administrador.'}
+                          'Este plan no tiene una descripción por favor comunicarle al administrador.'}
                       </Text>
                       <NumberFormat
                         value={i.precio}

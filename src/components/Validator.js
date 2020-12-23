@@ -34,11 +34,12 @@ const Error = (props) => {
       }}>
       <Text
         style={{
-          backgroundColor: '#CD6155',
-          color: '#ffff',
+          color: '#CD6155',
+          fontSize: 12,
           borderRadius: 4,
           padding: 4,
           marginTop: 2,
+          marginLeft: 10,
         }}>
         {props.children}
       </Text>

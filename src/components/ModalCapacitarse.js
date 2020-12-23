@@ -54,13 +54,14 @@ class ModalCapacitarse extends React.Component {
             <View style={{padding: 64}}>
               <Image
                 elevation={2}
-                source={require('utils/images/ISO.png')}
+                source={require('utils/images/icon.png')}
                 style={{
                   backgroundColor: '#ffff',
                   alignSelf: 'center',
                   width: 32,
                   height: 32,
                   marginBottom: 16,
+                  resizeMode: 'contain',
                 }}
               />
               <Title>Hola {this.props.nombre}</Title>

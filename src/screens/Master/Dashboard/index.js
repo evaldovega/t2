@@ -69,11 +69,10 @@ class Dashboard extends React.Component {
                 Meta del mes{' '}
                 <Text style={{color: '#ABA4AC'}}>(ventas/semana)</Text>
               </Text>
-              <SvgEdit />
             </View>
             <Chart />
             <View style={styles.line} />
-            <View style={styles.boxBottom}>
+            {/* <View style={styles.boxBottom}>
               <TouchableOpacity style={styles.btnBottom}>
                 <Text style={styles.txtBtnBottom}>See Details</Text>
               </TouchableOpacity>
@@ -81,16 +80,15 @@ class Dashboard extends React.Component {
               <TouchableOpacity style={styles.btnBottom}>
                 <Text style={styles.txtBtnBottomActive}>Set Goals</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
           <View style={styles.containerChart}>
             <View style={styles.boxHeader}>
               <Text style={styles.txtTitle}>Clientes adquiridos</Text>
-              <SvgEdit />
             </View>
             <Chart />
             <View style={styles.line} />
-            <View style={styles.boxBottom}>
+            {/* <View style={styles.boxBottom}>
               <TouchableOpacity style={styles.btnBottom}>
                 <Text style={styles.txtBtnBottom}>See Details</Text>
               </TouchableOpacity>
@@ -98,7 +96,7 @@ class Dashboard extends React.Component {
               <TouchableOpacity style={styles.btnBottom}>
                 <Text style={styles.txtBtnBottomActive}>Set Goals</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
         </ScrollView>
       </ColorfullContainer>

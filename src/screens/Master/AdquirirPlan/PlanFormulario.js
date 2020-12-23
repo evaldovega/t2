@@ -1,7 +1,13 @@
 import module from '@react-native-firebase/app';
-import {COLORS, CURVA, MARGIN_HORIZONTAL, TITULO_TAM} from 'constants';
+import {
+  COLORS,
+  CURVA,
+  MARGIN_HORIZONTAL,
+  TITULO_TAM,
+  MARGIN_VERTICAL,
+} from 'constants';
 import React, {useEffect, useState} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, Platform} from 'react-native';
 import produce from 'immer';
 
 import Button from 'components/Button';

@@ -39,6 +39,9 @@ const initialState = {
   error_subiendo_ide: '',
   actualizando_perfil: false,
   error_actualizando_perfil: '',
+  no_clientes: 0,
+  no_ventas: 0,
+  ganancias: 0,
 };
 
 export default Usuario = (state = initialState, action) => {
@@ -95,6 +98,9 @@ export default Usuario = (state = initialState, action) => {
         draft.ide_foto_respaldo = action.ide_foto_respaldo;
         draft.ide_foto_frente = action.ide_foto_frente;
         draft.habilitado = action.habilitado;
+        draft.no_clientes = action.no_clientes;
+        draft.no_ventas = action.no_ventas;
+        draft.ganancias = action.ganancias;
         draft.ready_validation = true;
         if (action.token) {
           console.log('Esta logeado');

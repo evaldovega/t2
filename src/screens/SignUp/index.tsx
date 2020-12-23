@@ -312,6 +312,7 @@ class SignUp extends React.Component {
             contrato_aprobado: this.state.aceptacionContrato
         })
         console.log(JSON.stringify(body))
+        let statusCode = 0;
         fetch(SERVER_ADDRESS+"api/usuarios/", {
             method: 'POST',
             headers: {
@@ -319,20 +320,45 @@ class SignUp extends React.Component {
                 'content-type': 'application/json'
             },
             body: body
-        }).then(r => r.json()).then(response => {
-            this.setState({msgAlert: "Usuario registrado"})
+        }).then(r => {
+            statusCode = r.status
+            return r
+        }).then(r => r.json()).then(r => {
+            if (statusCode == 200 || statusCode == 201){
+                this.setState({loading:false})
+                setTimeout(() => {
+                    Alert.alert("Listo", "Usuario registrado exitosamente")
+                    this.props.navigation.pop()
+                }, 400)
+            }else if(statusCode == 400){
+                let mensaje = ""
+                for (const key in r) {
+                    if (key == "user") {
+                        // mensaje += `- ${key}\n`
+                        for (const key2 in r[key]) {
+                            mensaje += `${key2}: ${r[key][key2]}\n`
+                        }
+                    } else if (key == "non_field_errors") {
+                        mensaje += `${r[key][0]}`
+                    } else {
+                        mensaje += `${key}: ${r[key][0]}\n`
+                    }
+                }
+                this.setState({loading:false})
+                setTimeout(() => {
+                    Alert.alert("Error", mensaje)
+                }, 400)
+            }else{
+                this.setState({loading:false})
+                setTimeout(() => {
+                    Alert.alert("Error", "Ha ocurrido un evento inesperado")
+                }, 400)
+            }
         }).catch((err) => {
-            this.setState({msgAlert: err.toString()})
-        }).finally(() => {
             this.setState({loading:false})
             setTimeout(() => {
-                Alert.alert(this.state.msgAlert,"")
-            }, 100)
-            if(this.state.msgAlert == "Usuario registrado"){
-                setTimeout(() => {
-                    this.props.navigation.pop();    
-                }, 1500);
-            }
+                Alert.alert("Error", err.toString())
+            }, 400)
         })
     }
 

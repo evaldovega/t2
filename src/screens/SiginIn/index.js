@@ -15,6 +15,7 @@ import Input from 'screens/SiginIn/components/Input';
 import ColorfullContianer from 'components/ColorfullContainer';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
+import Validator, {Execute} from 'components/Validator';
 
 import {ROUTERS} from 'utils/navigation';
 import {SERVER_ADDRESS, COLORS} from 'constants';
@@ -27,8 +28,8 @@ class SignIn extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      u: 'admin',
-      k: 'administrador',
+      u: '',
+      k: '',
       msg: '',
       userborderColor: '#EAE8EA',
       passborderColor: '#EAE8EA',
@@ -36,32 +37,26 @@ class SignIn extends React.Component {
       errorMsgPass: '',
       progress: new Animated.Value(0),
     };
+    this.Validations = {};
   }
 
   componentDidUpdate(prev) {
     if (prev != this.props.logeado && this.props.logeado) {
       this.props.initUsuario();
     }
+    if (prev.error == '' && this.props.error != '') {
+      setTimeout(() => {
+        Alert.alert('Error', this.props.error);
+      }, 400);
+    }
   }
 
   onPressSignIn = () => {
-    this.setState({
-      errorMsgUser: '',
-      errorMsgPass: '',
-      userborderColor: '#EAE8EA',
-      passborderColor: '#EAE8EA',
-    });
-    if (this.state.u == '') {
-      this.setState({userborderColor: 'red', errorMsgUser: 'ERROR'});
-      return;
-    }
-    if (this.state.k == '') {
-      this.setState({passborderColor: 'red', errorMsgPass: 'ERROR'});
-      return;
-    }
-    this.props.acceder({
-      username: this.state.u,
-      password: this.state.k,
+    Execute(this.Validations).then(() => {
+      this.props.acceder({
+        username: this.state.u,
+        password: this.state.k,
+      });
     });
   };
 
@@ -113,6 +108,10 @@ class SignIn extends React.Component {
             onChangeText={(t) => this.setState({u: t})}
             value={this.state.u}
           />
+          <Validator
+            ref={(r) => (this.Validations['a'] = r)}
+            required
+            value={this.state.u}></Validator>
 
           <InputText
             marginTop={1}
@@ -121,7 +120,10 @@ class SignIn extends React.Component {
             value={this.state.k}
             onChangeText={(p) => this.setState({k: p})}
           />
-
+          <Validator
+            ref={(r) => (this.Validations['b'] = r)}
+            required
+            value={this.state.k}></Validator>
           <Button
             onPress={this.onPressSignIn}
             marginTop={1}
@@ -155,6 +157,7 @@ const mapToState = (state) => {
   return {
     logeado: state.Usuario.logeado,
     accediendo: state.Usuario.accediendo,
+    error: state.Usuario.error,
   };
 };
 const mapToActions = (dispatch) => {

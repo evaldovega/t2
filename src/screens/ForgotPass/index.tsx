@@ -71,6 +71,7 @@ class ForgotPass extends React.Component {
         }
 
         this.setState({loading:true})
+        let statusCode = 0;
         fetch(SERVER_ADDRESS+"recovery/", {
             method: 'POST',
             headers: {
@@ -80,18 +81,47 @@ class ForgotPass extends React.Component {
             body: JSON.stringify({
                 'email': this.state.email,
             })
+        }).then(r => {
+            statusCode = r.status
+            return r
         }).then(r => r.json()).then(response => {
-            console.log(response)
-            if(response.status == "OK"){
-                this.setState({codeSent:true, msg: "Se ha enviado un código a tu correo electrónico"})
-            }else if(response.non_field_errors){
-                try{
-                    this.setState({codeSent:false, msg: response.non_field_errors[0]})
-                }catch(err){
-                    console.log(err)
+            if(statusCode == 200 || statusCode == 201){
+                console.log(response)
+                if(response.status == "OK"){
+                    this.setState({codeSent:true, msg: "Se ha enviado un código a tu correo electrónico"})
+                }else if(response.non_field_errors){
+                    try{
+                        this.setState({codeSent:false, msg: response.non_field_errors[0]})
+                    }catch(err){
+                        console.log(err)
+                    }
+                }else if(response.email){
+                    Alert.alert('Hay algunos problemas',response.email.join('\n'))
                 }
-            }else if(response.email){
-                Alert.alert('Hay algunos problemas',response.email.join('\n'))
+            }else if(statusCode == 400){
+                let mensaje = ""
+                let r = response
+                let cantidadCampos = 0;
+                
+                for (const key in r) {
+                    if (key == "user") {
+                        mensaje += `- ${key}\n`
+                        for (const key2 in r[key]) {
+                            mensaje += `-- ${key2}: ${r[key][key2]}\n`
+                        }
+                    } else if (key == "non_field_errors") {
+                        mensaje += `${r[key][0]}`
+                    } else {
+                        mensaje += `- ${key}: ${r[key][0]}\n`
+                    }
+                }
+                setTimeout(function(){
+                    Alert.alert("Error", mensaje)
+                },400);
+            }else{
+                setTimeout(function(){
+                    Alert.alert("Error", "Se ha presentado un inconveniente")
+                },400);
             }
         }).catch((err) => {
             this.setState({msg: err.toString()})
@@ -148,6 +178,7 @@ class ForgotPass extends React.Component {
         
 
         this.setState({loading:true})
+        let statusCode = 0;
         fetch(SERVER_ADDRESS+"recovery/confirm/", {
             method: 'POST',
             headers: {
@@ -158,14 +189,40 @@ class ForgotPass extends React.Component {
                 'token': this.state.codeInput,
                 'password': this.state.password1
             })
-        }).then(r => r.json()).then(response => {
-            if(response.status == "OK"){
-                this.setState({msgPassword: "Contraseña cambiada con éxito"})
-                this.props.navigation.pop()
+        }).then(r => {
+            statusCode = r.status
+            return r
+        }).then(r => r.json()).then(r => {
+            if (statusCode == 200 || statusCode == 201){
+                if(r.status == "OK"){
+                    setTimeout(() => {
+                        Alert.alert("Listo", "Contraseña cambiada con éxito")
+                    }, 400)
+                    this.props.navigation.pop()
+                }else{
+                    //this.setState({msgPassword: "Algo anda mal"})
+                    console.log(r)
+                    Alert.alert("Algo anda mal",r.password.join(','))
+                }
+            }else if(statusCode == 400){
+                let mensaje = ""
+                for (const key in r) {
+                    if (key == "user") {
+                        // mensaje += `- ${key}\n`
+                        for (const key2 in r[key]) {
+                            mensaje += `${key2}: ${r[key][key2]}\n`
+                        }
+                    } else if (key == "non_field_errors") {
+                        mensaje += `${r[key][0]}`
+                    } else {
+                        mensaje += `${key}: ${r[key][0]}\n`
+                    }
+                }
+                setTimeout(() => {
+                    Alert.alert("Error", mensaje)
+                }, 400)
             }else{
-                //this.setState({msgPassword: "Algo anda mal"})
-                console.log(response)
-                Alert.alert("Algo anda mal",response.password.join(','))
+
             }
         }).catch((err) => {
             console.log(err)
@@ -215,7 +272,7 @@ class ForgotPass extends React.Component {
                         <View>
                             <InputText marginTop={3} password  placeholder={'Contraseña'} value={this.state.password1} onChangeText={pass1 => this.setState({password1:pass1})} onBlur={() =>validar(this,this.state.password1,'password1', validations.password1,false)}/>
                             <View>{renderErrores(this, 'password1')}</View>
-                            <InputText marginTop={1} pssword pass={true}  placeholder={'Confirma la contraseña'} value={this.state.password2} onChangeText={pass2 => this.setState({password2:pass2})} onBlur={() =>validar(this,{password1:this.state.password1,password2:this.state.password2},'password2', validations.password2,false)}/>
+                            <InputText marginTop={1} password  placeholder={'Confirma la contraseña'} value={this.state.password2} onChangeText={pass2 => this.setState({password2:pass2})} onBlur={() =>validar(this,{password1:this.state.password1,password2:this.state.password2},'password2', validations.password2,false)}/>
                             <View>{renderErrores(this, 'password2')}</View>
                             <Button marginTop={1} onPress={this.onChangePassword} title='Cambiar contraseña' />
 

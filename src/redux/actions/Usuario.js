@@ -17,6 +17,7 @@ import {
   ACTION_ERROR_ACTUALIZANDO_PERFIL,
   ACTION_USUARIO_ACTUALIZAR_PROP,
 } from '../Constantes';
+import {Alert} from 'react-native';
 import {SERVER_ADDRESS} from '../../constants';
 import {
   setSharedPreference,
@@ -29,6 +30,7 @@ export const acceder = (data) => {
   return async (dispatch) => {
     console.log('Accediendo...');
     try {
+      let statusCode = 0;
       dispatch({type: ACTION_USUARIO_ACCEDER});
       fetch(SERVER_ADDRESS + 'api/login/', {
         method: 'POST',
@@ -38,18 +40,43 @@ export const acceder = (data) => {
         },
         body: JSON.stringify(data),
       })
+        .then((r) => {
+          statusCode = r.status;
+          return r;
+        })
         .then((r) => r.json())
         .then(async (r) => {
-          if (r.token) {
-            console.log(JSON.stringify(r.data));
-            await setSharedPreference('auth-token', r.token);
-            await setSharedPreference('data-user', JSON.stringify(r.data));
-            dispatch({type: ACTION_USUARIO_ACCESO_CORRECTO, token: r.token});
-            navigationRef?.current?.navigate('Master');
-          } else if (r.non_field_errors) {
+          console.log('Login', statusCode);
+          if (statusCode == 200 || statusCode == 201) {
+            if (r.token) {
+              console.log(JSON.stringify(r.data));
+              await setSharedPreference('auth-token', r.token);
+              await setSharedPreference('data-user', JSON.stringify(r.data));
+              dispatch({type: ACTION_USUARIO_ACCESO_CORRECTO, token: r.token});
+              navigationRef?.current?.navigate('Master');
+            } else {
+              dispatch({
+                type: ACTION_USUARIO_ERROR_ACCEDIENDO,
+                error: 'Usted no cuenta con permisos para ingresar',
+              });
+            }
+          } else if (statusCode == 400) {
+            let mensaje = '';
+            for (const key in r) {
+              if (key == 'user') {
+                mensaje += `- ${key}\n`;
+                for (const key2 in r[key]) {
+                  mensaje += `-- ${key2}: ${r[key][key2]}\n`;
+                }
+              } else if (key == 'non_field_errors') {
+                mensaje += `${r[key][0]}`;
+              } else {
+                mensaje += `- ${key}: ${r[key][0]}\n`;
+              }
+            }
             dispatch({
               type: ACTION_USUARIO_ERROR_ACCEDIENDO,
-              error: r.non_field_errors[0],
+              error: mensaje,
             });
           } else {
             dispatch({
@@ -103,6 +130,9 @@ export const initUsuario = () => {
       d.ide_foto_frente = SERVER_ADDRESS + data_user.foto_documento_cara1;
       d.ide_foto_respaldo = SERVER_ADDRESS + data_user.foto_documento_cara2;
       d.habilitado = data_user.habilitado;
+      d.no_clientes = data_user.no_clientes;
+      d.no_ventas = data_user.no_ventas;
+      d.ganancias = data_user.ganancias;
     }
     let token = await getSharedPreference('auth-token');
     if (token) {
@@ -171,7 +201,7 @@ export const cambiarFotoPerfil = (data) => {
           console.log('SERVER ERROR');
           dispatch({
             type: ACTION_USUARIO_ERROR_CAMBIANDO_FOTO_PERFIL,
-            error: 'Server Error',
+            error: 'Se ha presentado un inconveniente al subir',
           });
         }
       })

@@ -373,8 +373,8 @@ class Actividad extends React.Component {
                     alignItems: 'center',
                     alignSelf: 'center',
                   }}>
-                  <Text style={{fontFamily: 'Roboto-Light'}}>
-                    Marcar como leido
+                  <Text style={{fontFamily: 'Roboto-Light', marginRight: 8}}>
+                    Marcar como leído
                   </Text>
                   <Switch
                     value={data.visualizado}

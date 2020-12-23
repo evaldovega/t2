@@ -65,7 +65,7 @@ class PlanDetale extends React.PureComponent {
                   fontFamily: 'Mont-Bold',
                   color: COLORS.BLANCO,
                   textAlign: 'center',
-                  marginTop: MARGIN_VERTICAL * 0.5,
+                  marginTop: MARGIN_VERTICAL * 1,
                   marginBottom: MARGIN_VERTICAL * 3,
                 }}>
                 {nf}
@@ -73,7 +73,11 @@ class PlanDetale extends React.PureComponent {
             )}
           />
         </ZoomIn>
-        <View style={{flex: 1}}>
+        <View
+          style={{
+            flex: 1,
+            marginTop: Platform.OS === 'ios' ? MARGIN_VERTICAL * 5 : 0,
+          }}>
           <WebView
             originWhitelist={['*']}
             source={{

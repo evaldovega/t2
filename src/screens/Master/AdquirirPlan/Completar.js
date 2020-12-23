@@ -78,7 +78,7 @@ class AdquirirPlan extends React.Component {
               ...v,
               ...{
                 _formularios: [],
-                cantidad: 0,
+                cantidad: v.cantidad_minima,
                 cantidad_min: v.cantidad_minima.toString(),
               },
             };
@@ -302,9 +302,19 @@ class AdquirirPlan extends React.Component {
   removeVariation = (variacion) => {
     this.setState(
       produce((draft) => {
-        draft.productos
+        let cantidadMin = draft.productos
           .find((p) => p.id == variacion.plan)
-          .variaciones.find((v) => v.id == variacion.id).cantidad -= 1;
+          .variaciones.find((v) => v.id == variacion.id).cantidad_min;
+        if (
+          draft.productos
+            .find((p) => p.id == variacion.plan)
+            .variaciones.find((v) => v.id == variacion.id).cantidad >
+          cantidadMin
+        ) {
+          draft.productos
+            .find((p) => p.id == variacion.plan)
+            .variaciones.find((v) => v.id == variacion.id).cantidad -= 1;
+        }
       }),
     );
   };
@@ -336,6 +346,7 @@ class AdquirirPlan extends React.Component {
     return producto.variaciones.map((v, i) => {
       const show_minus =
         v.formularios && v.formularios.length > 0 ? false : true;
+      console.log(v.cantidad_min);
       return (
         <View style={{}}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -354,7 +365,7 @@ class AdquirirPlan extends React.Component {
                   fontFamily: 'Mont-Regular',
                   fontSize: TEXTO_TAM * 0.5,
                 }}>
-                Gratis {v.cantidad_min}
+                Incluído {v.cantidad_min}
               </Text>
             )}
           </View>
@@ -395,7 +406,7 @@ class AdquirirPlan extends React.Component {
                       fontFamily: 'Mont-Regular',
                       color: COLORS.NEGRO,
                     }}>
-                    {v.cantidad}
+                    {v.cantidad == 0 ? v.cantidad_min : v.cantidad}
                   </Text>
                   <TouchableOpacity
                     style={{
@@ -532,8 +543,9 @@ class AdquirirPlan extends React.Component {
       .forEach((p) => {
         p.variaciones.forEach((v, i) => {
           if (v.cantidad_min) {
-            if (v.cantidad > parseInt(v.cantidad_min)) {
-              total += v.cantidad * v.valor;
+            let diferencia = v.cantidad - v.cantidad_min;
+            if (diferencia >= 0) {
+              total += diferencia * v.valor;
             }
           } else {
             total += v.cantidad * v.valor;
@@ -639,10 +651,12 @@ class AdquirirPlan extends React.Component {
             let total_errores = this['ref-form-' + formulario.id].validar();
             if (total_errores.length > 0) {
               hubo_errores = true;
-              Alert.alert(
-                formulario.titulo,
-                'Diligencie la información faltante para continuar el proceso.',
-              );
+              setTimeout(function () {
+                Alert.alert(
+                  formulario.titulo,
+                  'Diligencie la información faltante para continuar el proceso.',
+                );
+              }, 400);
               this.setState({cargando: false});
               return;
             } else {
@@ -658,8 +672,10 @@ class AdquirirPlan extends React.Component {
             (p) => p.seleccionado,
           );
           if (!productsSelected) {
-            Alert.alert('Selecciona algunos productos', '');
             this.setState({cargando: false});
+            setTimeout(function () {
+              Alert.alert('', 'Selecciona algunos productos');
+            }, 400);
             return;
           }
           this.state.productos
@@ -698,6 +714,7 @@ class AdquirirPlan extends React.Component {
             data.orden = this.props.route.params.orden_id;
           }
           try {
+            let statusCode = 0;
             fetch(SERVER_ADDRESS + 'api/ordenes/registrar/', {
               method: 'POST',
               body: JSON.stringify(data),
@@ -707,54 +724,83 @@ class AdquirirPlan extends React.Component {
                 'content-type': 'application/json',
               },
             })
+              .then((r) => {
+                statusCode = r.status;
+                return r;
+              })
               .then((r) => r.json())
               .then((r) => {
-                this.setState({cargando: false});
-                if (r.error) {
-                  Alert.alert(r.error, '');
-                } else {
-                  if (r.numero_orden) {
-                    if (this.props.route.params.callback) {
-                      this.props.route.params.callback();
-                    }
-                    if (this.props.route.params.orden_id) {
-                      this.props.navigation.pop();
-                      Alert.alert(
-                        'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
-                        'Datos de subsanación enviados correctamente. Se le notificara cuando sean aprobados.',
-                      );
-                    } else {
-                      this.props.navigation.navigate('ClientProfile');
-                      Alert.alert(
-                        'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
-                        'Instrucciones enviadas a ' +
-                          r.cliente_str +
-                          ' para finalizar el proceso de compra.',
-                        [
-                          {
-                            text: 'Perfecto',
-                            onPress: () => {
-                              this.props.addOrden(r);
-                            },
-                          },
-                        ],
-                        {cancelable: false},
-                      );
-                    }
+                if (statusCode == 200 || statusCode == 201) {
+                  this.setState({cargando: false});
+                  if (r.error) {
+                    Alert.alert(r.error, '');
                   } else {
-                    console.log(r);
-                    this.setState({cargando: false});
+                    if (r.numero_orden) {
+                      if (this.props.route.params.callback) {
+                        this.props.route.params.callback();
+                      }
+                      if (this.props.route.params.orden_id) {
+                        this.props.navigation.pop();
+                        Alert.alert(
+                          'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
+                          'Datos de subsanación enviados correctamente. Se le notificará cuando sean aprobados.',
+                        );
+                      } else {
+                        this.props.navigation.navigate('ClientProfile');
+                        setTimeout(function () {
+                          Alert.alert(
+                            'Orden ' +
+                              r.numero_orden +
+                              ' ' +
+                              r.estado_orden_str,
+                            'Instrucciones enviadas a ' +
+                              r.cliente_str +
+                              ' para finalizar el proceso de compra.',
+                            [
+                              {
+                                text: 'Listo',
+                                onPress: () => {
+                                  this.props.addOrden(r);
+                                },
+                              },
+                            ],
+                            {cancelable: false},
+                          );
+                        }, 400);
+                      }
+                    } else {
+                      console.log(r);
+                      this.setState({cargando: false});
+                    }
                   }
+                } else if (statusCode == 400) {
+                  setTimeout(function () {
+                    Alert.alert(
+                      '',
+                      'Ha ocurrido un error inesperado. Intente nuevamente o contáctenos',
+                    );
+                  }, 400);
+                } else {
+                  setTimeout(function () {
+                    Alert.alert(
+                      '',
+                      'Ha ocurrido un error inesperado. Intente nuevamente o contáctenos',
+                    );
+                  }, 400);
                 }
               })
               .catch((error) => {
                 console.log(error);
                 this.setState({cargando: false});
-                Alert.alert('Orden no guardada', error.toString());
+                setTimeout(function () {
+                  Alert.alert('Orden no guardada', error.toString());
+                }, 400);
               });
           } catch (error) {
             this.setState({cargando: false});
-            Alert.alert('Error al guardar', error.toString());
+            setTimeout(function () {
+              Alert.alert('Error al guardar', error.toString());
+            }, 400);
           }
         })
         .catch((error) => {
@@ -846,7 +892,12 @@ class AdquirirPlan extends React.Component {
 
           {this.total()}
 
-          <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={{
+              flex: 1,
+              marginTop: Platform.OS === 'ios' ? MARGIN_VERTICAL * 8 : 0,
+            }}
+            showsVerticalScrollIndicator={false}>
             <View
               style={{
                 flex: 1,
