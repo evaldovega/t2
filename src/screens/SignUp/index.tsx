@@ -469,7 +469,7 @@ class SignUp extends React.Component {
         <InputText marginTop={1} placeholder={'Dirección'} value={this.state.direccion} onChangeText={v=>this.onChangeValue('direccion',v)} onBlur={()=>validar(this,this.state.direccion,'direccion',validations.direccion,false)} />
         <View>{renderErrores(this,'direccion')}</View>
         
-        <InputMask marginTop={1} value={this.state.fechaNac} mask={'[0000]-[00]-[00]'} placeholder='0000-00-00' onChangeText={(date) => {this.setState({fechaNac: date})}} />
+        <InputMask marginTop={1} value={this.state.fechaNac} mask={'[0000]-[00]-[00]'} placeholder='Fecha de nacimiento' onChangeText={(date) => {this.setState({fechaNac: date})}} />
 
         <Select marginTop={1} value={this.state.tipo_doc} options={this.state.optsTiposDocs}  placeholder={'Seleccione un tipo doc.'} onSelect={(item)=>this.setState({tipo_doc:item.key})}/>
 

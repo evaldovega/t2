@@ -8,6 +8,7 @@ import {
   Image,
   Animated,
   Dimensions,
+  KeyboardAvoidingView,
   Easing,
   ScrollView,
 } from 'react-native';
@@ -71,84 +72,94 @@ class SignIn extends React.Component {
 
   render() {
     return (
-      <ColorfullContianer style={{flex: 1, justifyContent: 'center'}}>
-        <Loader loading={this.props.accediendo}></Loader>
+      <KeyboardAvoidingView style={{flex: 1}}>
+        <ColorfullContianer style={{flex: 1, justifyContent: 'center'}}>
+          <Loader loading={this.props.accediendo}></Loader>
 
-        <View style={{flex: 1, paddingHorizontal: 16, marginTop: 24}}>
-          <Image
-            style={{
-              width: 150,
-              height: 150,
-              alignSelf: 'center',
-            }}
-            resizeMode="contain"
-            source={require('utils/images/logo_black.png')}
-          />
-          <View style={{marginBottom: '16%'}}>
-            <Text
+          <ScrollView>
+            <View
               style={{
-                fontSize: 30,
-                color: COLORS.VERDE,
-                fontFamily: 'Mont-Bold',
+                flex: 1,
+                paddingHorizontal: 16,
+                marginTop: 24,
+                marginBottom: 24,
               }}>
-              Hola
-            </Text>
-            <Text
-              style={{
-                fontSize: 30,
-                color: COLORS.NEGRO,
-                fontFamily: 'Mont-Bold',
-              }}>
-              Bienvenido a Servi
-            </Text>
-          </View>
+              <Image
+                style={{
+                  width: 150,
+                  height: 150,
+                  alignSelf: 'center',
+                }}
+                resizeMode="contain"
+                source={require('utils/images/logo_black.png')}
+              />
+              <View style={{marginBottom: '16%'}}>
+                <Text
+                  style={{
+                    fontSize: 30,
+                    color: COLORS.VERDE,
+                    fontFamily: 'Mont-Bold',
+                  }}>
+                  Hola
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 30,
+                    color: COLORS.NEGRO,
+                    fontFamily: 'Mont-Bold',
+                  }}>
+                  Bienvenido a Servi
+                </Text>
+              </View>
 
-          <InputText
-            placeholder="Nombre de usuario"
-            onChangeText={(t) => this.setState({u: t})}
-            value={this.state.u}
-          />
-          <Validator
-            ref={(r) => (this.Validations['a'] = r)}
-            required
-            value={this.state.u}></Validator>
+              <InputText
+                placeholder="Nombre de usuario"
+                onChangeText={(t) => this.setState({u: t})}
+                value={this.state.u}
+              />
+              <Validator
+                ref={(r) => (this.Validations['a'] = r)}
+                required
+                value={this.state.u}></Validator>
 
-          <InputText
-            marginTop={1}
-            password
-            placeholder={'Contraseña'}
-            value={this.state.k}
-            onChangeText={(p) => this.setState({k: p})}
-          />
-          <Validator
-            ref={(r) => (this.Validations['b'] = r)}
-            required
-            value={this.state.k}></Validator>
-          <Button
-            onPress={this.onPressSignIn}
-            marginTop={1}
-            title="Iniciar sesión"
-          />
+              <InputText
+                marginTop={1}
+                password
+                placeholder={'Contraseña'}
+                value={this.state.k}
+                onChangeText={(p) => this.setState({k: p})}
+              />
+              <Validator
+                ref={(r) => (this.Validations['b'] = r)}
+                required
+                value={this.state.k}></Validator>
+              <Button
+                onPress={this.onPressSignIn}
+                marginTop={1}
+                title="Iniciar sesión"
+              />
 
-          <TouchableOpacity
-            style={styles.btnForgot}
-            onPress={this.onPressForgot}>
-            <Text style={styles.txtForgot}>¿Olvidaste tu contraseña?</Text>
-          </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.btnForgot}
+                onPress={this.onPressForgot}>
+                <Text style={styles.txtForgot}>¿Olvidaste tu contraseña?</Text>
+              </TouchableOpacity>
 
-          <View style={styles.containerOr}>
-            <View style={styles.line} />
-            <Text style={styles.txtOr}>o</Text>
-            <View style={styles.line} />
-          </View>
+              <View style={styles.containerOr}>
+                <View style={styles.line} />
+                <Text style={styles.txtOr}>o</Text>
+                <View style={styles.line} />
+              </View>
 
-          <Button
-            title="Regístrate"
-            color="morado"
-            onPress={this.onPressRegister}
-          />
-        </View>
-      </ColorfullContianer>
+              <Button
+                title="Regístrate"
+                color="morado"
+                onPress={this.onPressRegister}
+              />
+            </View>
+          </ScrollView>
+        </ColorfullContianer>
+      </KeyboardAvoidingView>
     );
   }
 }
