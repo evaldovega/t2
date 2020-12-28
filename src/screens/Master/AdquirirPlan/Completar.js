@@ -747,7 +747,7 @@ class AdquirirPlan extends React.Component {
                         );
                       } else {
                         this.props.navigation.navigate('ClientProfile');
-                        setTimeout(function () {
+                        setTimeout(() => {
                           Alert.alert(
                             'Orden ' +
                               r.numero_orden +
@@ -895,7 +895,10 @@ class AdquirirPlan extends React.Component {
           <ScrollView
             style={{
               flex: 1,
-              marginTop: Platform.OS === 'ios' ? MARGIN_VERTICAL * 8 : 0,
+              marginTop:
+                Platform.OS === 'ios'
+                  ? MARGIN_VERTICAL * 8
+                  : MARGIN_VERTICAL * 4,
             }}
             showsVerticalScrollIndicator={false}>
             <View

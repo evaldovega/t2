@@ -111,7 +111,10 @@ class TaskSave extends React.Component {
                 />
               </Validator>
 
-              <Validator ref={(r) => (this.Validations['fecha'] = r)} required>
+              <Validator
+                value={this.state.fecha}
+                ref={(r) => (this.Validations['fecha'] = r)}
+                required>
                 <InputMask
                   marginTop={1}
                   value={this.state.fecha}
