@@ -130,7 +130,7 @@ class TaskSave extends React.Component {
                   onChange={(d) => {
                     this.setState({
                       selectorHora: false,
-                      hora: moment(d.nativeEvent.timestamp).format('HH:MM'),
+                      hora: moment(d.nativeEvent.timestamp).format('HH:mm'),
                     });
                   }}
                 />
