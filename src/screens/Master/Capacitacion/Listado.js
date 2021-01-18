@@ -76,6 +76,19 @@ class CapacitacionListado extends React.Component {
           borderWidth: 0.3,
         }}>
         <Card.Cover source={{uri: l.imagen_portada}} />
+        {l.en_curso == 1 && (
+          <View
+            style={{
+              position: 'absolute',
+              top: 16,
+              left: 16,
+              backgroundColor: COLORS.PRIMARY_COLOR,
+              borderRadius: 4,
+              padding: 8,
+            }}>
+            <Text style={{color: '#ffff'}}>En curso</Text>
+          </View>
+        )}
         <View style={{padding: MARGIN_VERTICAL}}>
           <Card.Content>
             <View style={{flex: 1, justifyContent: 'center'}}>
@@ -90,6 +103,7 @@ class CapacitacionListado extends React.Component {
                 }}>
                 {l.titulo}
               </Text>
+              <Text>Tiempo estimado {l.tiempo_estimado || '...'}</Text>
               {parseFloat(l.progreso) >= 100 && (
                 <Text style={{marginVertical: 8, color: Colors.green400}}>
                   Capacitación completada <Icon name="check" />
