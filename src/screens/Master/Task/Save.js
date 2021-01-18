@@ -33,11 +33,12 @@ import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
 import ColorfullContainer from 'components/ColorfullContainer';
 import Select from 'components/Select';
 import InputMask from 'components/InputMask';
+import InputDateTimerPicker from 'components/DatetimePicker';
 
 class TaskSave extends React.Component {
   state = {
     tipo_tarea: '',
-    fecha_agendamiento: moment().toDate(),
+    fecha_agendamiento: '',
     motivo_tarea: '',
     selectorDate: false,
     selectorHora: false,
@@ -48,25 +49,13 @@ class TaskSave extends React.Component {
   componentDidMount() {
     this.props.cargarTipos();
   }
-  cambiarFecha = (e) => {
-    this.setState({
-      mostrar_fecha: false,
-      fecha_agendamiento: moment(e.nativeEvent.timestamp).toDate(),
-    });
-  };
-  cambiarHora = (e) => {
-    let hora = moment(e.nativeEvent.timestamp);
-    let fecha = moment(this.state.fecha_agendamiento);
-    fecha.set({hour: hora.get('hour'), minute: hora.get('minute')});
-    this.setState({mostrar_hora: false, fecha_agendamiento: fecha.toDate()});
-  };
+
   guardar = () => {
     Execute(this.Validations).then(() => {
-      const fecha = moment(this.state.dia + ' ' + this.state.hora).toDate();
       this.props.taskSave(this.props.route.params.cliente_id, {
         tipo_tarea: this.state.tipo_tarea,
         motivo_tarea: this.state.motivo_tarea,
-        fecha_agendamiento: fecha,
+        fecha_agendamiento: this.state.fecha_agendamiento,
       });
     });
   };
@@ -80,14 +69,6 @@ class TaskSave extends React.Component {
       this.props.navigation.pop();
     }
   }
-
-  getFecha = () => {
-    const {dia, hora} = this.state;
-    if (dia != '' && hora) {
-      return `${dia} ${hora}`;
-    }
-    return '';
-  };
 
   render() {
     const {selectorDate, selectorHora} = this.state;
@@ -121,59 +102,13 @@ class TaskSave extends React.Component {
                 />
               </Validator>
 
-              {selectorHora && (
-                <DateTimePicker
-                  display="default"
-                  value={this.state.fecha_agendamiento}
-                  mode="time"
-                  is24Hour={true}
-                  onChange={(d) => {
-                    this.setState({
-                      selectorHora: false,
-                      hora: moment(d.nativeEvent.timestamp).format('HH:mm'),
-                    });
-                  }}
-                />
-              )}
-              {selectorDate && (
-                <DateTimePicker
-                  display="default"
-                  value={this.state.fecha_agendamiento}
-                  mode="date"
-                  onChange={(d) =>
-                    this.setState({
-                      selectorDate: false,
-                      dia: moment(d.nativeEvent.timestamp).format('YYYY-MM-DD'),
-                    })
-                  }
-                  is24Hour={true}
-                />
-              )}
-
               <Validator
-                value={this.getFecha()}
+                value={this.state.fecha_agendamiento}
                 ref={(r) => (this.Validations['fecha'] = r)}
                 required>
-                <View style={{flexDirection: 'row'}}>
-                  <InputMask
-                    style={{flex: 1}}
-                    marginTop={1}
-                    value={this.state.dia}
-                    onFocus={() => this.setState({selectorDate: true})}
-                    onChangeText={(t) => this.setState({fecha: t})}
-                    placeholder="0000-00-00"
-                    mask={'[0000]-[00]-[00]'}
-                  />
-                  <InputMask
-                    style={{flex: 1}}
-                    marginTop={1}
-                    value={this.state.hora}
-                    onFocus={() => this.setState({selectorHora: true})}
-                    onChangeText={(t) => this.setState({fecha: t})}
-                    placeholder="00:00"
-                    mask={'[00]:[00]'}
-                  />
-                </View>
+                <InputDateTimerPicker
+                  onChange={(v) => this.setState({fecha_agendamiento: v})}
+                />
               </Validator>
 
               <Validator
