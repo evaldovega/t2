@@ -87,6 +87,8 @@ export default function Select(props) {
           fontSize: TEXTO_TAM,
           fontFamily: 'Mont-Regular',
         }}
+        cancelButtonText="Cancelar"
+        placeholderText="Buscar..."
         cancelButtonStyle={{
           backgroundColor: COLORS.MORADO,
           flex: 0,
