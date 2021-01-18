@@ -24,6 +24,8 @@ export default function InputMask(props) {
         placeholder={props.placeholder}
         value={props.value}
         onChangeText={props.onChangeText}
+        onFocus={props.onFocus}
+        onBlur={props.onBlur}
         onBlur={props.onBlur}
         mask={props.mask}
       />

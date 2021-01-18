@@ -39,8 +39,8 @@ class TaskSave extends React.Component {
     tipo_tarea: '',
     fecha_agendamiento: moment().toDate(),
     motivo_tarea: '',
-    mostrar_fecha: false,
-    mostrar_hora: false,
+    selectorDate: false,
+    selectorHora: false,
     data: moment().toDate(),
   };
   Validations = {};
@@ -62,10 +62,11 @@ class TaskSave extends React.Component {
   };
   guardar = () => {
     Execute(this.Validations).then(() => {
+      const fecha = moment(this.state.dia + ' ' + this.state.hora).toDate();
       this.props.taskSave(this.props.route.params.cliente_id, {
         tipo_tarea: this.state.tipo_tarea,
         motivo_tarea: this.state.motivo_tarea,
-        fecha_agendamiento: this.state.fecha,
+        fecha_agendamiento: fecha,
       });
     });
   };
@@ -80,7 +81,16 @@ class TaskSave extends React.Component {
     }
   }
 
+  getFecha = () => {
+    const {dia, hora} = this.state;
+    if (dia != '' && hora) {
+      return `${dia} ${hora}`;
+    }
+    return '';
+  };
+
   render() {
+    const {selectorDate, selectorHora} = this.state;
     const fecha = moment(this.state.fecha_agendamiento).format('YYYY-MM-DD');
     const hora = moment(this.state.fecha_agendamiento).format('hh:mm a');
     return (
@@ -111,17 +121,59 @@ class TaskSave extends React.Component {
                 />
               </Validator>
 
+              {selectorHora && (
+                <DateTimePicker
+                  display="default"
+                  value={this.state.fecha_agendamiento}
+                  mode="time"
+                  is24Hour={true}
+                  onChange={(d) => {
+                    this.setState({
+                      selectorHora: false,
+                      hora: moment(d.nativeEvent.timestamp).format('HH:MM'),
+                    });
+                  }}
+                />
+              )}
+              {selectorDate && (
+                <DateTimePicker
+                  display="default"
+                  value={this.state.fecha_agendamiento}
+                  mode="date"
+                  onChange={(d) =>
+                    this.setState({
+                      selectorDate: false,
+                      dia: moment(d.nativeEvent.timestamp).format('YYYY-MM-DD'),
+                    })
+                  }
+                  is24Hour={true}
+                />
+              )}
+
               <Validator
-                value={this.state.fecha}
+                value={this.getFecha()}
                 ref={(r) => (this.Validations['fecha'] = r)}
                 required>
-                <InputMask
-                  marginTop={1}
-                  value={this.state.fecha}
-                  onChangeText={(t) => this.setState({fecha: t})}
-                  placeholder="0000-00-00 00:00"
-                  mask={'[0000]-[00]-[00] [00]:[00]'}
-                />
+                <View style={{flexDirection: 'row'}}>
+                  <InputMask
+                    style={{flex: 1}}
+                    marginTop={1}
+                    value={this.state.dia}
+                    onFocus={() => this.setState({selectorDate: true})}
+                    onChangeText={(t) => this.setState({fecha: t})}
+                    placeholder="0000-00-00"
+                    mask={'[0000]-[00]-[00]'}
+                  />
+                  <InputMask
+                    style={{flex: 1}}
+                    marginTop={1}
+                    value={this.state.hora}
+                    onFocus={() => this.setState({selectorHora: true})}
+                    onChangeText={(t) => this.setState({fecha: t})}
+                    placeholder="00:00"
+                    mask={'[00]:[00]'}
+                  />
+                </View>
               </Validator>
 
               <Validator
