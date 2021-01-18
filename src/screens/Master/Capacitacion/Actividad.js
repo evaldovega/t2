@@ -26,6 +26,7 @@ import {
   actividadMarcarLeida,
   actividadSeleccionarOpcion,
   actividadEnviarCuestionario,
+  capacitacionesCargar,
 } from '../../../redux/actions';
 import {habilitar} from 'redux/actions/Usuario';
 
@@ -111,6 +112,7 @@ class Actividad extends React.Component {
 
     if (prev.habilitado != this.props.habilitado) {
       this.props.habilitar(this.props.habilitado);
+      this.props.recargarCapacitaciones();
     }
 
     console.log('ERRROR ', this.props.error);
@@ -405,6 +407,9 @@ const mapToActions = (dispatch) => {
   return {
     habilitar: (state) => {
       dispatch(habilitar(state));
+    },
+    recargarCapacitaciones: () => {
+      dispatch(capacitacionesCargar());
     },
     cargar: (seccion, actividad) => {
       dispatch(capacitacionDetalleObtenerActividad(seccion, actividad));

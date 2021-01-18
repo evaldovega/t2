@@ -12,7 +12,7 @@ class TaskList extends React.Component {
 
   eliminar = (item) => {
     Alert.alert(
-      'Se borar la tarea ',
+      '¿Desea eliminar la tarea?',
       '',
       [
         {
@@ -20,7 +20,7 @@ class TaskList extends React.Component {
           onPress: () => console.log('Conservar'),
           style: 'cancel',
         },
-        {text: 'Borrar', onPress: () => this.props.taskRemove(item.id)},
+        {text: 'Eliminar', onPress: () => this.props.taskRemove(item.id)},
       ],
       {cancelable: false},
     );

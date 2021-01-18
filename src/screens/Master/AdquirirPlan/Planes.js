@@ -74,7 +74,7 @@ class Planes extends React.Component {
 
   changeSearchInput = (t) => {
     this.setState({valorBusqueda: t});
-    let valorBusqueda = this.state.valorBusqueda;
+    let valorBusqueda = t;
     if (valorBusqueda != '') {
       let datafiltrada = [];
       for (let i = 0; i < this.state.docs.length; i++) {
@@ -87,8 +87,7 @@ class Planes extends React.Component {
         }
       }
       this.setState({docs: datafiltrada});
-      console.log('Filtrada', datafiltrada);
-    } else if (this.state.valorBusqueda == '') {
+    } else if (t == '') {
       this.setState({docs: this.state.docsOriginal});
     }
   };
