@@ -7,7 +7,7 @@ import moment from 'moment';
 import 'moment/locale/es';
 
 const InputDateTimerPicker = (props) => {
-  const {onChange, showTime = true, value} = props;
+  const {onChange, showDate = true, showTime = true, value, label = ''} = props;
 
   const [date, setDate] = useState(new Date());
 
@@ -90,20 +90,35 @@ const InputDateTimerPicker = (props) => {
         />
       )}
 
+      {label != '' && (
+        <Text
+          style={{
+            fontFamily: 'Mont-Regular',
+            marginTop: MARGIN_VERTICAL,
+            marginBottom: MARGIN_VERTICAL * 0.8,
+            color: COLORS.NEGRO_N1,
+          }}>
+          {label}
+        </Text>
+      )}
       <View style={[style.wrapper, props.style, extra_style]}>
-        <SimpleLineIcons
-          size={24}
-          name="calendar"
-          color="#787778"
-          onPress={() => setShowSelectDate(true)}
-        />
-        <TouchableOpacity
-          style={{flex: 1}}
-          onPress={() => setShowSelectDate(true)}>
-          <Text style={{textAlign: 'center'}}>
-            {moment(date).format('YYYY-MM-DD')}
-          </Text>
-        </TouchableOpacity>
+        {showDate && (
+          <React.Fragment>
+            <SimpleLineIcons
+              size={24}
+              name="calendar"
+              color="#787778"
+              onPress={() => setShowSelectDate(true)}
+            />
+            <TouchableOpacity
+              style={{flex: 1}}
+              onPress={() => setShowSelectDate(true)}>
+              <Text style={{textAlign: 'center'}}>
+                {moment(date).format('YYYY-MM-DD')}
+              </Text>
+            </TouchableOpacity>
+          </React.Fragment>
+        )}
         {showTime && (
           <React.Fragment>
             <SimpleLineIcons

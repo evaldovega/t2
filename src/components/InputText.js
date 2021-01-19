@@ -37,7 +37,7 @@ export default function Input(props) {
         value={props.value}
         onChangeText={props.onChangeText}
         onBlur={props.onBlur}
-        style={[style.input]}
+        style={[style.input, props.styleInput]}
       />
       {isPass ? (
         <SimpleLineIcons

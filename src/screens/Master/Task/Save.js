@@ -9,17 +9,6 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import moment from 'moment';
-import {
-  FAB,
-  Avatar,
-  Title,
-  Colors,
-  Caption,
-  Subheading,
-  Card,
-  Divider,
-  TextInput,
-} from 'react-native-paper';
 import Loader from 'components/Loader';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
@@ -29,16 +18,18 @@ import Navbar from 'components/Navbar';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
 import Validator, {Execute} from 'components/Validator';
-import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
+import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL, COLORS} from 'constants';
 import ColorfullContainer from 'components/ColorfullContainer';
 import Select from 'components/Select';
-import InputMask from 'components/InputMask';
-import InputDateTimerPicker from 'components/DatetimePicker';
 
+import InputDateTimerPicker from 'components/DatetimePicker';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 class TaskSave extends React.Component {
   state = {
     tipo_tarea: '',
     fecha_agendamiento: '',
+    fecha_vencimiento: '',
+    recordatorio_minutos: '30',
     motivo_tarea: '',
     selectorDate: false,
     selectorHora: false,
@@ -48,14 +39,31 @@ class TaskSave extends React.Component {
 
   componentDidMount() {
     this.props.cargarTipos();
+    this.setState({
+      fecha_agendamiento: moment().format(),
+      fecha_vencimiento: moment().add(3, 'day').format(),
+    });
   }
 
   guardar = () => {
     Execute(this.Validations).then(() => {
+      if (
+        moment(this.state.fecha_agendamiento).isAfter(
+          moment(this.state.fecha_vencimiento),
+        )
+      ) {
+        Alert.alert(
+          'Algo anda mal',
+          'La fecha de vencimiento debe ser mayor a la del agendamiento',
+        );
+        return;
+      }
       this.props.taskSave(this.props.route.params.cliente_id, {
         tipo_tarea: this.state.tipo_tarea,
         motivo_tarea: this.state.motivo_tarea,
         fecha_agendamiento: this.state.fecha_agendamiento,
+        fecha_vencimiento: this.state.fecha_vencimiento,
+        recordatorio_minutos: this.state.recordatorio_minutos,
       });
     });
   };
@@ -71,9 +79,8 @@ class TaskSave extends React.Component {
   }
 
   render() {
-    const {selectorDate, selectorHora} = this.state;
-    const fecha = moment(this.state.fecha_agendamiento).format('YYYY-MM-DD');
-    const hora = moment(this.state.fecha_agendamiento).format('hh:mm a');
+    const agov = moment(this.state.fecha_vencimiento).fromNow();
+
     return (
       <ColorfullContainer style={{flex: 1}}>
         <Loader loading={this.props.loading} />
@@ -103,26 +110,84 @@ class TaskSave extends React.Component {
               </Validator>
 
               <Validator
-                value={this.state.fecha_agendamiento}
-                ref={(r) => (this.Validations['fecha'] = r)}
-                required>
-                <InputDateTimerPicker
-                  value={this.state.fecha_agendamiento}
-                  onChange={(v) => this.setState({fecha_agendamiento: v})}
-                />
-              </Validator>
-
-              <Validator
                 value={this.state.motivo_tarea}
                 ref={(r) => (this.Validations['motivo'] = r)}
                 required>
                 <InputText
                   marginTop={1}
                   input={{multiline: true, numberOfLines: 4}}
-                  placeholder="Motivo"
+                  placeholder="Observaciones"
                   value={this.state.motivo_tarea}
                   onChangeText={(t) => this.setState({motivo_tarea: t})}
                 />
+              </Validator>
+
+              <Validator
+                value={this.state.fecha_agendamiento}
+                ref={(r) => (this.Validations['fecha'] = r)}
+                required>
+                <InputDateTimerPicker
+                  marginTop={1}
+                  label="Fecha de agendamiento"
+                  value={this.state.fecha_agendamiento}
+                  onChange={(v) => this.setState({fecha_agendamiento: v})}
+                />
+              </Validator>
+
+              <Validator
+                value={this.state.fecha_vencimiento}
+                ref={(r) => (this.Validations['fecha_vencimiento'] = r)}
+                required>
+                <InputDateTimerPicker
+                  label={`Fecha de vencimiento ${agov}`}
+                  value={this.state.fecha_vencimiento}
+                  onChange={(v) => this.setState({fecha_vencimiento: v})}
+                />
+              </Validator>
+
+              <Validator
+                value={this.state.recordatorio_minutos}
+                ref={(r) => (this.Validations['recordatorio_minutos'] = r)}
+                required>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 16,
+                  }}>
+                  <SimpleLineIcons name="clock" size={18} />
+                  <Text
+                    style={{
+                      flex: 1,
+                      marginLeft: 4,
+                      fontFamily: 'Mont-Regular',
+                      marginTop: MARGIN_VERTICAL,
+                      marginBottom: MARGIN_VERTICAL * 0.8,
+                      color: COLORS.NEGRO_N1,
+                    }}>
+                    Recordatorio
+                  </Text>
+                  <InputText
+                    placeholder=""
+                    styleInput={{textAlign: 'center'}}
+                    input={{keyboardType: 'number-pad'}}
+                    value={this.state.recordatorio_minutos}
+                    onChangeText={(t) =>
+                      this.setState({recordatorio_minutos: t})
+                    }
+                    style={{flex: 1, marginHorizontal: 4}}
+                  />
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontFamily: 'Mont-Regular',
+                      marginTop: MARGIN_VERTICAL,
+                      marginBottom: MARGIN_VERTICAL * 0.8,
+                      color: COLORS.NEGRO_N1,
+                    }}>
+                    Min. antes
+                  </Text>
+                </View>
               </Validator>
 
               <Button

@@ -6,7 +6,7 @@ export const TITULO_TAM = 24;
 export const TEXTO_TAM = 21;
 export const MARGIN_VERTICAL = 10.6;
 export const ALTURA = 52;
-export const CURVA = 10.5;
+export const CURVA = 8;
 
 export const COLORS = {
   VERDE: '#72D4C2',

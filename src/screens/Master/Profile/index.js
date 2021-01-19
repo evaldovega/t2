@@ -227,7 +227,7 @@ class Profile extends React.Component {
                 marginTop: MARGIN_VERTICAL,
                 color: COLORS.NEGRO_N1,
               }}>
-              Fecha de nacimiento
+              Fecha de cumpleaños
             </Text>
             <Validator
               value={this.props.usuario.fecha_nacimiento}
