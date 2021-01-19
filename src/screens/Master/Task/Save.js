@@ -107,6 +107,7 @@ class TaskSave extends React.Component {
                 ref={(r) => (this.Validations['fecha'] = r)}
                 required>
                 <InputDateTimerPicker
+                  value={this.state.fecha_agendamiento}
                   onChange={(v) => this.setState({fecha_agendamiento: v})}
                 />
               </Validator>

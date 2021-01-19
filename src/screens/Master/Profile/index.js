@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import moment from 'moment';
 // import {Neomorph} from 'react-native-neomorph-shadows';
 import {connect} from 'react-redux';
 import {
@@ -49,6 +49,7 @@ import Navbar from 'components/Navbar';
 import ColorfullContainer from 'components/ColorfullContainer';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
+import InputDateTimerPicker from 'components/DatetimePicker';
 import Validator, {Execute} from 'components/Validator';
 
 const SeguridadSocial = React.lazy(() => import('./SeguridadSocial'));
@@ -217,6 +218,29 @@ class Profile extends React.Component {
                 input={{keyboardType: 'phone-pad'}}
                 onChangeText={(t) => this.props.cambiarProp('cel', t)}
                 value={this.props.usuario.cel}
+              />
+            </Validator>
+
+            <Text
+              style={{
+                fontFamily: 'Mont-Regular',
+                marginTop: MARGIN_VERTICAL,
+                color: COLORS.NEGRO_N1,
+              }}>
+              Fecha de nacimiento
+            </Text>
+            <Validator
+              value={this.props.usuario.fecha_nacimiento}
+              ref={(r) => (this.formulario_datos_personales['nacimiento'] = r)}
+              required>
+              <InputDateTimerPicker
+                marginTop={1}
+                showTime={false}
+                disabled={this.props.actualizando_perfil}
+                value={moment(this.props.usuario.fecha_nacimiento).startOf(
+                  'day',
+                )}
+                onChange={(v) => this.props.cambiarProp('fecha_nacimiento', v)}
               />
             </Validator>
 

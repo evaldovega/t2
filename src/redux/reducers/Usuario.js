@@ -28,6 +28,7 @@ const initialState = {
   estado: 'Activo',
   logeado: false,
   foto_perfil: '',
+  fecha_nacimiento: '',
   token: '',
   entrenamiento_completado: false,
   accediendo: false,
@@ -102,6 +103,7 @@ export default Usuario = (state = initialState, action) => {
         draft.no_ventas = action.no_ventas;
         draft.ganancias = action.ganancias;
         draft.ready_validation = true;
+        draft.fecha_nacimiento = action.fecha_nacimiento;
         if (action.token) {
           console.log('Esta logeado');
           draft.logeado = true;

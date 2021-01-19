@@ -7,11 +7,9 @@ import moment from 'moment';
 import 'moment/locale/es';
 
 const InputDateTimerPicker = (props) => {
-  const {onChange} = props;
+  const {onChange, showTime = true, value} = props;
 
-  const [value, setValue] = useState('');
-  const [date, setDate] = useState(moment().toDate());
-  const [hour, setHour] = useState(moment().toDate());
+  const [date, setDate] = useState(new Date());
 
   const [showSelectDate, setShowSelectDate] = useState(false);
   const [showSelectHour, setShowSelectHour] = useState(false);
@@ -27,13 +25,24 @@ const InputDateTimerPicker = (props) => {
   if (props.marginTop) {
     extra_style.marginTop = props.marginTop * MARGIN_VERTICAL;
   }
-  useEffect(() => {
+
+  const triggerOnChange = (_date) => {
     if (onChange) {
-      onChange(
-        moment(date).format('YYYY-MM-DD') + ' ' + moment(hour).format('HH:mm'),
-      );
+      console.log('Change to ', _date);
+      onChange(_date);
     }
-  }, [date, hour]);
+  };
+
+  useEffect(() => {
+    if (value && value != '') {
+      const defaultValue =
+        value != '' && moment(value).isValid()
+          ? moment(value).toDate()
+          : moment().toDate();
+
+      setDate(defaultValue);
+    }
+  }, [value]);
 
   return (
     <React.Fragment>
@@ -44,7 +53,18 @@ const InputDateTimerPicker = (props) => {
           mode="date"
           onChange={(d) => {
             setShowSelectDate(false);
-            setDate(moment(d.nativeEvent.timestamp).toDate());
+
+            if (d.nativeEvent && d.nativeEvent.timestamp) {
+              const newDate = moment(d.nativeEvent.timestamp);
+              const valueDate = moment(date);
+
+              valueDate
+                .date(newDate.format('D'))
+                .month(newDate.format('M') - 1)
+                .year(newDate.format('YYYY'));
+
+              triggerOnChange(valueDate.format('YYYY-MM-DD HH:mm'));
+            }
           }}
           is24Hour={true}
         />
@@ -52,26 +72,55 @@ const InputDateTimerPicker = (props) => {
       {showSelectHour && (
         <DateTimePicker
           display="default"
-          value={hour}
+          value={date}
           mode="time"
           onChange={(d) => {
+            console.log('Hour ', d);
             setShowSelectHour(false);
-            setHour(moment(d.nativeEvent.timestamp).toDate());
+            if (d.nativeEvent && d.nativeEvent.timestamp) {
+              const newDate = moment(d.nativeEvent.timestamp);
+              const valueDate = moment(date);
+              valueDate
+                .minutes(newDate.format('mm'))
+                .hour(newDate.format('HH'));
+              triggerOnChange(valueDate.format('YYYY-MM-DD HH:mm'));
+            }
           }}
           is24Hour={true}
         />
       )}
 
       <View style={[style.wrapper, props.style, extra_style]}>
-        <SimpleLineIcons size={24} name="calendar" color="#787778" />
-        <TouchableOpacity onPress={() => setShowSelectDate(true)}>
-          <Text>{moment(date).format('YYYY-MM-DD')}</Text>
+        <SimpleLineIcons
+          size={24}
+          name="calendar"
+          color="#787778"
+          onPress={() => setShowSelectDate(true)}
+        />
+        <TouchableOpacity
+          style={{flex: 1}}
+          onPress={() => setShowSelectDate(true)}>
+          <Text style={{textAlign: 'center'}}>
+            {moment(date).format('YYYY-MM-DD')}
+          </Text>
         </TouchableOpacity>
-        <View
-          style={{width: 1, backgroundColor: '#EAE8EA', height: ALTURA}}></View>
-        <TouchableOpacity onPress={() => setShowSelectHour(true)}>
-          <Text>{moment(hour).format('HH:mm')}</Text>
-        </TouchableOpacity>
+        {showTime && (
+          <React.Fragment>
+            <SimpleLineIcons
+              size={24}
+              name="clock"
+              color="#787778"
+              onPress={() => setShowSelectHour(true)}
+            />
+            <TouchableOpacity
+              style={{flex: 1}}
+              onPress={() => setShowSelectHour(true)}>
+              <Text style={{textAlign: 'center'}}>
+                {moment(date).format('HH:mm')}
+              </Text>
+            </TouchableOpacity>
+          </React.Fragment>
+        )}
       </View>
     </React.Fragment>
   );

@@ -15,7 +15,8 @@ import Button from 'components/Button'
 import InputMask from 'components/InputMask'
 import InputText from 'components/InputText'
 import Select from 'components/Select'
-
+import InputDateTimerPicker from 'components/DatetimePicker'
+import moment from 'moment'
 const validations = {
     firstname:{
         presence: {allowEmpty: false, message: '^Este campo es requerido'},
@@ -120,6 +121,7 @@ class SignUp extends React.Component {
     }
 
     componentDidMount() {
+       
         fetch(SERVER_ADDRESS+"api/config/departamentos/").then(r=>r.json()).then(response=>{
             let deptos = []
             response.forEach((item) => {
@@ -469,8 +471,14 @@ class SignUp extends React.Component {
         <InputText marginTop={1} placeholder={'Dirección'} value={this.state.direccion} onChangeText={v=>this.onChangeValue('direccion',v)} onBlur={()=>validar(this,this.state.direccion,'direccion',validations.direccion,false)} />
         <View>{renderErrores(this,'direccion')}</View>
         
-        <InputMask marginTop={1} value={this.state.fechaNac} mask={'[0000]-[00]-[00]'} placeholder='Fecha de nacimiento' onChangeText={(date) => {this.setState({fechaNac: date})}} />
+        <InputDateTimerPicker
+            marginTop={1}
+            showTime={false}
+            value={this.state.fechaNac}
+            onChange={(v) => this.setState({'fechaNac':v})}
+            />
 
+        
         <Select marginTop={1} value={this.state.tipo_doc} options={this.state.optsTiposDocs}  placeholder={'Seleccione un tipo doc.'} onSelect={(item)=>this.setState({tipo_doc:item.key})}/>
 
         

@@ -133,6 +133,7 @@ export const initUsuario = () => {
       d.no_clientes = data_user.no_clientes;
       d.no_ventas = data_user.no_ventas;
       d.ganancias = data_user.ganancias;
+      d.fecha_nacimiento = data_user.fecha_nacimiento;
     }
     let token = await getSharedPreference('auth-token');
     if (token) {
@@ -321,6 +322,7 @@ export const actualizarDatos = () => {
         num_documento_identidad: getState().Usuario.num_documento_identidad,
         email: getState().Usuario.email,
         numero_whatsapp: getState().Usuario.cel,
+        fecha_nacimiento: getState().Usuario.fecha_nacimiento,
       };
       console.log(cambios);
       dispatch({type: ACTION_ACTUALIZANDO_PERFIL});
