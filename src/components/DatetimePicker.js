@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {ALTURA, COLORS, CURVA, MARGIN_VERTICAL, TEXTO_TAM} from 'constants';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity, Platform} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import moment from 'moment';
@@ -48,7 +48,7 @@ const InputDateTimerPicker = (props) => {
     <React.Fragment>
       {showSelectDate && (
         <DateTimePicker
-          display="default"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           value={date}
           mode="date"
           onChange={(d) => {
@@ -71,7 +71,7 @@ const InputDateTimerPicker = (props) => {
       )}
       {showSelectHour && (
         <DateTimePicker
-          display="default"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           value={date}
           mode="time"
           onChange={(d) => {
