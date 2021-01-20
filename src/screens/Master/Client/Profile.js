@@ -178,13 +178,17 @@ class ClientProfile extends React.Component {
             style={{
               borderRadius: CURVA,
               marginTop: MARGIN_VERTICAL,
+              marginBottom: MARGIN_VERTICAL,
               elevation: 0,
               borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
               borderWidth: 0.2,
             }}
             elevation={2}>
             <Card.Content>
-              <ClientAgenda {...this.props} />
+              <ClientAgenda
+                {...this.props}
+                cliente={this.props.route.params.id}
+              />
             </Card.Content>
           </Card>
         </React.Fragment>

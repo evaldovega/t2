@@ -28,7 +28,7 @@ import {navigationRef} from 'utils/navigation';
 
 export const acceder = (data) => {
   return async (dispatch) => {
-    console.log('Accediendo...');
+    console.log('Accediendo... ', SERVER_ADDRESS + 'api/login/');
     try {
       let statusCode = 0;
       dispatch({type: ACTION_USUARIO_ACCEDER});

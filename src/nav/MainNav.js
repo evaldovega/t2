@@ -23,7 +23,7 @@ import Master from '../screens/Master';
 
 import CapacitacionDetalle from '../screens/Master/Capacitacion/Detalle';
 import Actividad from '../screens/Master/Capacitacion/Actividad';
-
+import ClienteSelector from '../screens/Master/Client/Selector';
 const delay = 300;
 
 const ClientSave = React.lazy(() => import('../screens/Master/Client/Save'));
@@ -130,6 +130,11 @@ const MainNavigation = memo(() => {
               <Screen
                 name="Presentation"
                 component={Presentation}
+                options={optionNavigator}
+              />
+              <Screen
+                name="ClienteSelector"
+                component={ClienteSelector}
                 options={optionNavigator}
               />
               <Screen name="FQA" component={FQA} options={optionNavigator} />

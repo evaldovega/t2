@@ -96,7 +96,8 @@ class Navbar extends React.Component {
               </Text>
             </View>
             <View style={style.btnRight}>
-              <React.Fragment>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('Home')}>
                 {this.props.right ? (
                   this.props.right
                 ) : (
@@ -106,7 +107,7 @@ class Navbar extends React.Component {
                     resizeMode="contain"
                   />
                 )}
-              </React.Fragment>
+              </TouchableOpacity>
             </View>
           </View>
         </Animated.View>

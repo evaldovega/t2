@@ -36,21 +36,7 @@ class Planes extends React.Component {
     valorBusqueda: '',
   };
 
-  componentDidUpdate = (prev) => {
-    // if(this.state.valorBusqueda != ''){
-    //   let datafiltrada = [];
-    //   for(let i = 0; i < this.state.docs.length; i++){
-    //     if(this.state.docs[i].titulo.includes(this.state.valorBusqueda)){
-    //       datafiltrada.push(this.state.docs[i])
-    //     }
-    //   }
-    //   console.log(datafiltrada)
-    //   this.setState({docs: datafiltrada});
-    // }
-    // if(prev.valorBusqueda != '' && this.state.valorBusqueda == ''){
-    //   this.setState({docs: this.state.docsOriginal});
-    // }
-  };
+  componentDidUpdate = (prev) => {};
 
   componentDidMount() {
     this.setState({cargando: true});

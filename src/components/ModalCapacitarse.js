@@ -31,6 +31,8 @@ class ModalCapacitarse extends React.Component {
   }
 
   render() {
+    let nombre = this.props.nombre.split(' ')[0];
+
     return (
       <Modal
         transparent={true}
@@ -64,7 +66,7 @@ class ModalCapacitarse extends React.Component {
                   resizeMode: 'contain',
                 }}
               />
-              <Title>Hola {this.props.nombre}</Title>
+              <Title>Hola {nombre}</Title>
               <Paragraph>
                 Completa el entrenamiento para empezar a generar ingresos con
                 Servi

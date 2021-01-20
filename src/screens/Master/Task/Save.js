@@ -24,8 +24,10 @@ import Select from 'components/Select';
 
 import InputDateTimerPicker from 'components/DatetimePicker';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import API from 'utils/Axios';
 class TaskSave extends React.Component {
   state = {
+    tareaId: '',
     tipo_tarea: '',
     fecha_agendamiento: '',
     fecha_vencimiento: '',
@@ -37,12 +39,33 @@ class TaskSave extends React.Component {
   };
   Validations = {};
 
+  load = () => {
+    const {id} = this.props.route.params;
+    if (id) {
+      API('tareas/' + id).then((response) => {
+        const {data} = response;
+        this.setState({
+          tareaId: data.id,
+          fecha_agendamiento: moment(data.fecha_agendamiento).format(),
+          fecha_vencimiento: data.fecha_vencimiento
+            ? moment(data.fecha_vencimiento).format()
+            : this.state.fecha_vencimiento,
+          recordatorio_minutos: data.recordatorio_minutos,
+          motivo_tarea: data.motivo_tarea,
+          tipo_tarea: data.tipo_tarea,
+          cliente: data.cliente,
+        });
+      });
+    }
+  };
+
   componentDidMount() {
     this.props.cargarTipos();
     this.setState({
       fecha_agendamiento: moment().format(),
       fecha_vencimiento: moment().add(3, 'day').format(),
     });
+    this.load();
   }
 
   guardar = () => {
@@ -193,7 +216,7 @@ class TaskSave extends React.Component {
               <Button
                 marginTop={3}
                 onPress={() => this.guardar()}
-                title="Guardar"
+                title={this.state.tareaId != '' ? 'Modificar' : 'Guardar'}
               />
             </View>
           </View>
@@ -205,6 +228,7 @@ class TaskSave extends React.Component {
 
 const mapearEstado = (state) => {
   return {
+    token: state.Usuario.token,
     loading: state.Client.loading,
     error: state.Client.error,
     success: state.Client.success,

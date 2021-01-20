@@ -12,6 +12,7 @@ import Lead from './Client/Lead';
 import Soporte from './Chat/Soporte';
 import MetaListado from 'screens/Meta/Listado';
 import NotificacionListado from './Notificacion/Listado';
+import Home from './Home';
 import MenuLateral from './MenuLateral';
 
 import Profile from './Profile';
@@ -99,7 +100,10 @@ class Master extends React.Component {
           drawerContent={(props) => <MenuLateral {...props} />}
           drawerType={width >= 768 ? 'permanent' : 'back'}>
           {this.props.habilitado && (
-            <Drawer.Screen name="Dashboard" component={Dashboard} />
+            <>
+              <Drawer.Screen name="Home" component={Home} />
+              <Drawer.Screen name="Dashboard" component={Dashboard} />
+            </>
           )}
           <Drawer.Screen
             name="Notificaciones"

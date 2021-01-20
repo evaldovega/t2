@@ -44,6 +44,18 @@ class MenuLateral extends React.Component {
           </Title>
         </View>
         <Drawer.Section>
+          {this.props.habilitado ? (
+            <Drawer.Item
+              label="Inicio"
+              active={actual == 'Home'}
+              icon="home"
+              onPress={() =>
+                requestAnimationFrame(() => {
+                  this.props.navigation.navigate('Home');
+                })
+              }
+            />
+          ) : null}
           <Drawer.Item
             label="Perfil"
             active={actual == 'Profile'}
@@ -55,16 +67,18 @@ class MenuLateral extends React.Component {
             }
           />
           {this.props.habilitado ? (
-            <Drawer.Item
-              label="Mis metas"
-              active={actual == 'Meta'}
-              icon="flag"
-              onPress={() =>
-                requestAnimationFrame(() => {
-                  this.props.navigation.navigate('Meta');
-                })
-              }
-            />
+            <>
+              <Drawer.Item
+                label="Mis metas"
+                active={actual == 'Meta'}
+                icon="flag"
+                onPress={() =>
+                  requestAnimationFrame(() => {
+                    this.props.navigation.navigate('Meta');
+                  })
+                }
+              />
+            </>
           ) : (
             <></>
           )}

@@ -128,6 +128,7 @@ class Lead extends React.Component {
       Platform.OS === 'android' ? `tel:${tel}` : `telprompt:${tel}`,
     );
   };
+
   detail = (item) => {
     requestAnimationFrame(() => {
       this.props.navigation.push('ClientProfile', {id: item.id});

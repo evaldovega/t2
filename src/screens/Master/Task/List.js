@@ -4,6 +4,7 @@ import {View, FlatList, TouchableNativeFeedback, Alert} from 'react-native';
 import {COLORS} from 'constants';
 import moment from 'moment';
 import {Subheading, Title, Caption, Colors, Avatar} from 'react-native-paper';
+import Detail from '../Product/Detail';
 
 class TaskList extends React.Component {
   constructor(props) {
@@ -27,7 +28,11 @@ class TaskList extends React.Component {
   };
 
   renderVisit = ({item}) => (
-    <TouchableNativeFeedback onLongPress={() => this.eliminar(item)}>
+    <TouchableNativeFeedback
+      onLongPress={() => this.eliminar(item)}
+      onPress={() =>
+        this.props.navigation.push('TaskSave', {id: item.id, cliente_id: ''})
+      }>
       <View style={{flexDirection: 'row', marginTop: 8, alignItems: 'center'}}>
         <View
           style={{

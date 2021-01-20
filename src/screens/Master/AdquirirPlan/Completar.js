@@ -1,4 +1,5 @@
 import React from 'react';
+const Realm = require('realm');
 import {
   View,
   Alert,
@@ -39,6 +40,7 @@ import ZoomIn from 'components/ZoomIn';
 import Validator, {Execute} from 'components/Validator';
 import {chunkArray} from 'utils';
 import Cover from 'components/Cover';
+import {VentaSchema} from './Schemas';
 const {width, height} = Dimensions.get('screen');
 
 class AdquirirPlan extends React.Component {
@@ -52,7 +54,9 @@ class AdquirirPlan extends React.Component {
     formularios: [],
     productos: [],
     mostrar_selector: false,
+    clienteSeleccionado: '',
     data: {},
+    realm: null,
   };
   Validations = {};
 
@@ -102,6 +106,8 @@ class AdquirirPlan extends React.Component {
 
           return {...producto, ...{seleccionado: false}};
         });
+
+        //console.log(JSON.stringify(productos));
 
         this.setState({
           titulo: r.titulo,
@@ -220,20 +226,36 @@ class AdquirirPlan extends React.Component {
 
   componentDidMount() {
     const {id, orden_id} = this.props.route.params;
+
     this.loadPlan(id).then(() => {
       if (orden_id) {
         this.loadOrder(orden_id);
       }
     });
-    /*
-      setTimeout(()=>{
-        this.setState(function(prev,current){
-          console.log("Update state")
-          let state=scour(prev).set('saludo.msn','chao')
-            return state.get('saludo.msn').value
+    Realm.open({schema: [VentaSchema], schemaVersion: 1}).then((realm) => {
+      this.setState({realm: realm});
+    });
+  }
+
+  componentWillUnmount() {
+    // Close the realm if there is one open.
+    const {realm} = this.state;
+    if (realm !== null && !realm.isClosed) {
+      realm.close();
+    }
+  }
+  componentDidUpdate(prev) {
+    if (!prev.realm && this.state.realm) {
+      const {realm} = this.state;
+      /*
+      const {id: planId, orden_id} = this.props.route.params;
+      const data = realm.objects('Venta').filtered(`planId=${planId}`);
+      if(data.length){
+        realm.write(()=>{
+
         })
-        
-      },5000)*/
+      }*/
+    }
   }
 
   seleccionarProducto = (estado, id) => {
@@ -274,6 +296,7 @@ class AdquirirPlan extends React.Component {
       });
     });
   };
+
   variacionEditada = (data, index_form) => {
     const {plan, variacion, formulario} = data;
     this.setState(
@@ -612,7 +635,28 @@ class AdquirirPlan extends React.Component {
     );
   };
 
+  seleccionarCliente = (item) => {
+    console.log('Cliente seleccionado ', item.id);
+    this.setState({clienteSeleccionado: item.id});
+    this.props.navigation.pop();
+    setTimeout(() => {
+      this.guardar();
+    }, 500);
+  };
+
   guardar = () => {
+    const {id, cliente} = this.props.route.params;
+
+    let clienteId =
+      cliente && cliente != '' ? cliente : this.state.clienteSeleccionado;
+
+    if (clienteId == '') {
+      this.props.navigation.push('ClienteSelector', {
+        seleccionar: this.seleccionarCliente,
+      });
+      return;
+    }
+
     this.setState({cargando: true, msn: 'Guardando Orden'});
     requestAnimationFrame(async () => {
       let total = parseFloat(this.state.precio);
@@ -630,11 +674,9 @@ class AdquirirPlan extends React.Component {
           });
         });
 
-      const {id, cliente} = this.props.route.params;
-
       let data = {
         plan: id,
-        cliente: cliente,
+        cliente: clienteId,
         total_pagado: total,
         metodo_pago: '',
         planes: [],

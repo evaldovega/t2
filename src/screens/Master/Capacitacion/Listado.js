@@ -41,6 +41,10 @@ import Button from 'components/Button';
 const {width, height} = Dimensions.get('screen');
 const width_progress = width * 0.4;
 class CapacitacionListado extends React.Component {
+  state = {
+    filter: '2',
+  };
+
   componentDidMount() {
     this.props.cargar();
   }
@@ -64,7 +68,37 @@ class CapacitacionListado extends React.Component {
       return <Text>No hay capacitaciones</Text>;
     }
 
-    return this.props.listado.map((l, k) => (
+    const {filter} = this.state;
+    let listado = [],
+      t = '';
+
+    switch (filter) {
+      case '1':
+        t = 'en curso';
+        listado = this.props.listado.filter(
+          (l) => parseFloat(l.progreso) > 0 && parseFloat(l.progreso) < 100,
+        );
+        break;
+      case '2':
+        t = 'pendientes';
+        listado = this.props.listado.filter((l) => parseFloat(l.progreso) == 0);
+        break;
+      case '3':
+        t = 'terminadas';
+        listado = this.props.listado.filter(
+          (l) => parseFloat(l.progreso) == 100,
+        );
+        break;
+    }
+    if (listado.length == 0) {
+      return (
+        <Text style={{textAlign: 'center', fontWeight: 'bold', marginTop: 16}}>
+          No hay capacitaciones {t}
+        </Text>
+      );
+    }
+
+    return listado.map((l, k) => (
       <Card
         style={{
           marginTop: MARGIN_VERTICAL,
@@ -76,7 +110,7 @@ class CapacitacionListado extends React.Component {
           borderWidth: 0.3,
         }}>
         <Card.Cover source={{uri: l.imagen_portada}} />
-        {l.en_curso == 1 && (
+        {parseFloat(l.progreso) > 0 && parseFloat(l.progreso) < 100 && (
           <View
             style={{
               position: 'absolute',
@@ -156,7 +190,9 @@ class CapacitacionListado extends React.Component {
       </Card>
     ));
   }
+
   render() {
+    const {filter} = this.state;
     return (
       <ColorfullContainer style={styles.container}>
         <Navbar menu title="Capacitaciones" transparent {...this.props} />
@@ -175,6 +211,45 @@ class CapacitacionListado extends React.Component {
               paddingHorizontal: MARGIN_HORIZONTAL,
               paddingVertical: MARGIN_VERTICAL,
             }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                onPress={() => this.setState({filter: '1'})}
+                style={{
+                  backgroundColor:
+                    filter == '1' ? COLORS.PRIMARY_COLOR : 'transparent',
+                  padding: 8,
+                  borderRadius: CURVA,
+                }}>
+                <Text>En curso</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  backgroundColor:
+                    filter == '2' ? COLORS.PRIMARY_COLOR : 'transparent',
+                  padding: 8,
+                  borderRadius: CURVA,
+                }}
+                onPress={() => this.setState({filter: '2'})}>
+                <Text>Pendientes</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  backgroundColor:
+                    filter == '3' ? COLORS.PRIMARY_COLOR : 'transparent',
+                  padding: 8,
+                  borderRadius: CURVA,
+                }}
+                onPress={() => this.setState({filter: '3'})}>
+                <Text>Terminados</Text>
+              </TouchableOpacity>
+            </View>
             {this.renderCapacitaciones()}
           </View>
         </ScrollView>

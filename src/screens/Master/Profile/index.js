@@ -5,35 +5,21 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  StatusBar,
   Alert,
-  SafeAreaView,
-  Modal,
-  TextInput,
-  Image,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
 import moment from 'moment';
-// import {Neomorph} from 'react-native-neomorph-shadows';
 import {connect} from 'react-redux';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {
   CambiarNombre,
   cambiarFotoPerfil,
   initUsuario,
 } from 'redux/actions/Usuario';
 
-import {
-  Avatar,
-  FAB,
-  Subheading,
-  // TextInput,
-  Title,
-  Caption,
-  Colors,
-  Paragraph,
-} from 'react-native-paper';
-import {TouchableNativeFeedback} from 'react-native-gesture-handler';
+import {Avatar} from 'react-native-paper';
+
 import ImagePicker from 'react-native-image-crop-picker';
 import {
   COLORS,
@@ -115,6 +101,19 @@ class Profile extends React.Component {
                 size={96}
                 source={{uri: this.props.usuario.foto_perfil}}
               />
+              <SimpleLineIcons
+                name="camera"
+                size={16}
+                color="#ffff"
+                style={{
+                  position: 'absolute',
+                  bottom: 1,
+                  right: -1,
+                  backgroundColor: COLORS.PRIMARY_COLOR,
+                  padding: 4,
+                  borderRadius: 16,
+                }}
+              />
             </TouchableOpacity>
 
             <View style={{marginLeft: 8}}>
@@ -122,7 +121,7 @@ class Profile extends React.Component {
                 style={{
                   textAlign: 'left',
                   color: COLORS.NEGRO,
-                  fontFamily: 'Mont-Bold',
+                  fontFamily: 'Mont',
                   fontSize: TITULO_TAM,
                 }}>
                 {this.props.usuario.nombre || 'Nombre del usuario'}
