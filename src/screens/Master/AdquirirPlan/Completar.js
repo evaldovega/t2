@@ -40,9 +40,15 @@ import ZoomIn from 'components/ZoomIn';
 import Validator, {Execute} from 'components/Validator';
 import {chunkArray} from 'utils';
 import Cover from 'components/Cover';
-import {VentaSchema} from './Schemas';
-const {width, height} = Dimensions.get('screen');
+import PasarelaPago from './PasarelaPago';
 
+const FRECUENCIAS = [
+  {key: 1, label: 'Mensual'},
+  {key: 2, label: 'Bimestral'},
+  {key: 3, label: 'Trimestral'},
+  {key: 6, label: 'Semestral'},
+  {key: 12, label: 'Anual'},
+];
 class AdquirirPlan extends React.Component {
   state = {
     btn_txt: 'Vender',
@@ -55,6 +61,8 @@ class AdquirirPlan extends React.Component {
     productos: [],
     mostrar_selector: false,
     clienteSeleccionado: '',
+    pasarela: null,
+    frecuencia: null,
     data: {},
   };
   Validations = {};
@@ -634,6 +642,14 @@ class AdquirirPlan extends React.Component {
       });
       return;
     }
+    if (this.state.metodo_pago == 'financiacion' && !this.state.pasarela) {
+      Alert.alert('Selecciona una pasarela de pagos', '');
+      return;
+    }
+    if (this.state.metodo_pago == 'financiacion' && !this.state.frecuencia) {
+      Alert.alert('Selecciona una frecuencia', 'Duración de la orden');
+      return;
+    }
 
     this.setState({cargando: true, msn: 'Guardando Orden'});
     requestAnimationFrame(async () => {
@@ -660,6 +676,12 @@ class AdquirirPlan extends React.Component {
         planes: [],
         formularios: [],
       };
+
+      if (this.state.metodo_pago == 'financiacion') {
+        data.pasarela_financiacion = this.state.pasarela;
+        data.frecuencia_pago - this.state.frecuencia;
+        data.total_pagado = data.total_pagado * data.frecuencia_pago;
+      }
 
       Execute(this.Validations)
         .then(async () => {
@@ -967,6 +989,25 @@ class AdquirirPlan extends React.Component {
                 {this.state.metodo_pago == 'financiacion'
                   ? this.renderFinanciacion()
                   : null}
+
+                {this.state.metodo_pago == 'financiacion' ? (
+                  <PasarelaPago
+                    value={this.state.pasarela}
+                    selected={(p) => this.setState({pasarela: p})}
+                  />
+                ) : null}
+
+                {this.state.metodo_pago == 'financiacion' ? (
+                  <Select
+                    marginTop={1}
+                    placeholder="Seleccione una frecuencia"
+                    value={this.state.frecuencia}
+                    options={FRECUENCIAS}
+                    onSelect={(opcion) =>
+                      this.setState({frecuencia: opcion.key})
+                    }
+                  />
+                ) : null}
 
                 {!this.state.cargando && (
                   <Button
