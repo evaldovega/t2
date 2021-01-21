@@ -38,7 +38,7 @@ const ClientAgenda = ({cliente, navigation, taskRemove}) => {
     });
   }
 
-  useEffect(() => {
+  const loadTasks = () => {
     API('clientes/' + cliente + '/')
       .then((response) => {
         const {tareas} = response.data;
@@ -47,6 +47,14 @@ const ClientAgenda = ({cliente, navigation, taskRemove}) => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const reload = () => {
+    loadTasks();
+  };
+
+  useEffect(() => {
+    loadTasks();
   }, []);
 
   return (
@@ -65,6 +73,7 @@ const ClientAgenda = ({cliente, navigation, taskRemove}) => {
       />
 
       <TaskList
+        reload={reload}
         navigation={navigation}
         tareas={tasksInDay}
         taskRemove={taskRemove}

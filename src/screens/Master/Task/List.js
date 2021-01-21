@@ -31,7 +31,11 @@ class TaskList extends React.Component {
     <TouchableNativeFeedback
       onLongPress={() => this.eliminar(item)}
       onPress={() =>
-        this.props.navigation.push('TaskSave', {id: item.id, cliente_id: ''})
+        this.props.navigation.push('TaskSave', {
+          id: item.id,
+          cliente_id: '',
+          reload: this.props.reload,
+        })
       }>
       <View style={{flexDirection: 'row', marginTop: 8, alignItems: 'center'}}>
         <View

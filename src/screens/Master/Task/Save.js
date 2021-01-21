@@ -13,7 +13,7 @@ import Loader from 'components/Loader';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {styleHeader, styleInput, styleButton, styleText} from 'styles';
 import {cargar} from '../../../redux/actions/TaskType';
-import {taskSave} from '../../../redux/actions/Clients';
+
 import Navbar from 'components/Navbar';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
@@ -36,26 +36,35 @@ class TaskSave extends React.Component {
     selectorDate: false,
     selectorHora: false,
     data: moment().toDate(),
+    cargando: false,
   };
   Validations = {};
 
   load = () => {
     const {id} = this.props.route.params;
+    this.setState({cargando: true});
     if (id) {
-      API('tareas/' + id).then((response) => {
-        const {data} = response;
-        this.setState({
-          tareaId: data.id,
-          fecha_agendamiento: moment(data.fecha_agendamiento).format(),
-          fecha_vencimiento: data.fecha_vencimiento
-            ? moment(data.fecha_vencimiento).format()
-            : this.state.fecha_vencimiento,
-          recordatorio_minutos: data.recordatorio_minutos,
-          motivo_tarea: data.motivo_tarea,
-          tipo_tarea: data.tipo_tarea,
-          cliente: data.cliente,
+      API('tareas/' + id)
+        .then((response) => {
+          const {data} = response;
+          this.setState({
+            tareaId: data.id,
+            fecha_agendamiento: moment(data.fecha_agendamiento).format(),
+            fecha_vencimiento: data.fecha_vencimiento
+              ? moment(data.fecha_vencimiento).format()
+              : this.state.fecha_vencimiento,
+            recordatorio_minutos: '' + data.recordatorio_minutos,
+            motivo_tarea: data.motivo_tarea,
+            tipo_tarea: data.tipo_tarea,
+            cliente: data.cliente,
+            cargando: false,
+          });
+        })
+        .catch((error) => {
+          this.setState({cargando: false});
+          Alert.alert('Algo anda mal', 'No se pudo cargar la cita');
+          this.props.navigation.pop();
         });
-      });
     }
   };
 
@@ -81,13 +90,35 @@ class TaskSave extends React.Component {
         );
         return;
       }
-      this.props.taskSave(this.props.route.params.cliente_id, {
-        tipo_tarea: this.state.tipo_tarea,
-        motivo_tarea: this.state.motivo_tarea,
-        fecha_agendamiento: this.state.fecha_agendamiento,
-        fecha_vencimiento: this.state.fecha_vencimiento,
-        recordatorio_minutos: this.state.recordatorio_minutos,
-      });
+      this.setState({cargando: true});
+      let method = this.state.tareaId == '' ? 'POST' : 'PATCH';
+      let url =
+        this.state.tareaId == ''
+          ? `clientes/${this.props.route.params.cliente_id}/asignar/`
+          : `tareas/${this.state.tareaId}/`;
+
+      API({
+        method: method,
+        url: url,
+        data: {
+          tipo_tarea: this.state.tipo_tarea,
+          motivo_tarea: this.state.motivo_tarea,
+          fecha_agendamiento: this.state.fecha_agendamiento,
+          fecha_vencimiento: this.state.fecha_vencimiento,
+          recordatorio_minutos: this.state.recordatorio_minutos,
+        },
+      })
+        .then((response) => {
+          console.log(response.data);
+          this.setState({cargando: false});
+          this.props.route.params.reload();
+          this.props.navigation.pop();
+        })
+        .catch((error) => {
+          console.log(response);
+          this.setState({cargando: false});
+          Alert.alert('Algo anda mal', 'No se pudó guardar la cita');
+        });
     });
   };
 
@@ -103,10 +134,10 @@ class TaskSave extends React.Component {
 
   render() {
     const agov = moment(this.state.fecha_vencimiento).fromNow();
-
+    const {cargando} = this.state;
     return (
       <ColorfullContainer style={{flex: 1}}>
-        <Loader loading={this.props.loading} />
+        <Loader loading={cargando} />
         <Navbar back transparent title="Agendar cita" {...this.props} />
         <ScrollView style={{flex: 1}}>
           <View

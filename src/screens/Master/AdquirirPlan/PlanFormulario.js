@@ -14,6 +14,7 @@ import Button from 'components/Button';
 import InputText from 'components/InputText';
 import InputMask from 'components/InputMask';
 import Select from 'components/Select';
+import InputDateTimerPicker from 'components/DatetimePicker';
 import Validator from 'components/Validator';
 
 class PlanFormulario extends React.Component {
@@ -50,6 +51,7 @@ class PlanFormulario extends React.Component {
       }),
     );
   };
+
   renderChoices = (pregunta) => {
     const {tipo_pregunta, opciones, mostrar_selector, respuesta} = pregunta;
     if (tipo_pregunta == 'choice') {
@@ -93,14 +95,13 @@ class PlanFormulario extends React.Component {
     const {tipo_pregunta, respuesta} = pregunta;
     if (tipo_pregunta == 'date') {
       return (
-        <InputMask
+        <InputDateTimerPicker
           marginTop={1}
-          placeholder="0000-00-00"
+          showTime={false}
           value={pregunta.respuesta}
-          onChangeText={(formatted, extracted) => {
-            this.responder(pregunta, formatted);
+          onChange={(fecha) => {
+            this.responder(pregunta, fecha);
           }}
-          mask={'[0000]-[00]-[00]'}
         />
       );
     }
