@@ -17,6 +17,7 @@ import {
   TextInput,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
+import InputText from 'components/InputText';
 
 import {
   Avatar,
@@ -48,6 +49,9 @@ class Lead extends React.Component {
     open_fab: false,
     progress: new Animated.Value(0),
     mostrar_ayuda: false,
+    items: [],
+    itemsOriginal: [],
+    valorBusqueda: '',
   };
 
   getItem = (data, index) => {
@@ -137,6 +141,7 @@ class Lead extends React.Component {
 
   componentDidMount() {
     this.props.load();
+    this.setState({items: this.props.items, itemsOriginal: this.props.items});
   }
 
   componentDidUpdate(prev) {
@@ -167,14 +172,53 @@ class Lead extends React.Component {
     }
   }
 
+  changeSearchInput = (t) => {
+    this.setState({valorBusqueda: t});
+    let valorBusqueda = t;
+    if (valorBusqueda != '') {
+      let datafiltrada = [];
+      for (let i = 0; i < this.state.items.length; i++) {
+        if (
+          this.state.items[i].primer_nombre
+            .toUpperCase()
+            .includes(valorBusqueda.toUpperCase()) ||
+          this.state.items[i].segundo_nombre
+            .toUpperCase()
+            .includes(valorBusqueda.toUpperCase()) ||
+          this.state.items[i].primer_apellido
+            .toUpperCase()
+            .includes(valorBusqueda.toUpperCase()) ||
+          this.state.items[i].segundo_apellido
+            .toUpperCase()
+            .includes(valorBusqueda.toUpperCase())
+        ) {
+          datafiltrada.push(this.state.items[i]);
+        }
+      }
+      this.setState({items: datafiltrada});
+      console.log('filtrada: ', datafiltrada);
+    } else if (t == '') {
+      this.setState({items: this.state.itemsOriginal});
+    }
+  };
+
   render() {
     return (
       <ColorfullContainer style={styles.container}>
         <Navbar transparent menu title="Clientes" {...this.props} />
 
+        <View style={{marginHorizontal: MARGIN_HORIZONTAL}}>
+          <InputText
+            marginTop={1}
+            placeholder={'Buscar'}
+            onChangeText={(t) => this.changeSearchInput(t)}
+            value={this.state.valorBusqueda}
+          />
+        </View>
+
         <VirtualizedList
-          style={{flex: 1, overflow: 'visible'}}
-          data={this.props.items}
+          style={{flex: 1, marginTop: MARGIN_HORIZONTAL, overflow: 'visible'}}
+          data={this.state.items}
           initialNumToRender={10}
           renderItem={({item}) => this.Item(item)}
           keyExtractor={(item) => item.id}
