@@ -18,25 +18,34 @@ import {
 } from 'constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ColorfullContainer from 'components/ColorfullContainer';
-import API from 'utils/Axios';
+import {SERVER_ADDRESS} from 'constants';
+import {getSharedPreference} from 'utils/SharedPreference';
 
 const Negocios = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [orders, setorders] = useState([]);
 
-  const load = () => {
+  const load = async () => {
     setLoading(true);
-    API('ordenes').then((response) => {
-      const {data} = response;
-      console.log(data);
-      setLoading(false);
-      setorders(data);
-    });
+    const token = await getSharedPreference('auth-token');
+    console.log(token);
+    fetch(SERVER_ADDRESS + 'api/ordenes', {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setLoading(false);
+        setorders(data);
+      });
   };
 
   const getItem = (data, index) => {
     return orders[index];
   };
+
   const getItemCount = () => {
     return orders.length;
   };
