@@ -27,13 +27,10 @@ const Negocios = ({navigation}) => {
 
   const load = async () => {
     setLoading(true);
-    const token = await getSharedPreference('auth-token');
-    console.log(token);
-    fetch(SERVER_ADDRESS + 'api/ordenes', {
-      headers: {
-        Authorization: 'Token ' + token,
-      },
-    })
+    let data = await getSharedPreference('data-user');
+    data = JSON.parse(data);
+    const {id} = data.user;
+    fetch(SERVER_ADDRESS + `api/ordenes?v=${id}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
