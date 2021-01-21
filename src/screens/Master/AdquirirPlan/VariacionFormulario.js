@@ -18,6 +18,7 @@ import InputText from 'components/InputText';
 import InputMask from 'components/InputMask';
 import Select from 'components/Select';
 import Validator from 'components/Validator';
+import InputDateTimerPicker from 'components/DatetimePicker';
 
 class VariacionFormulario extends React.Component {
   state = {
@@ -107,13 +108,11 @@ class VariacionFormulario extends React.Component {
     const {tipo_pregunta, respuesta} = pregunta;
     if (tipo_pregunta == 'date') {
       return (
-        <InputMask
+        <InputDateTimerPicker
           marginTop={1}
-          placeholder="0000-00-00"
           value={pregunta.respuesta}
-          mask={'[0000]-[00]-[00]'}
-          onChangeText={(formatted, extracted) => {
-            this.ingresarRespuesta(pregunta, formatted);
+          onChange={(fecha) => {
+            this.ingresarRespuesta(pregunta, fecha);
           }}
         />
       );

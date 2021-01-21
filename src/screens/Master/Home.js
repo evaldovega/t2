@@ -96,7 +96,13 @@ const Home = ({navigation}) => {
             <Icon name="apps" size={32} color="white" />
             <Text style={styles.text}>Productos</Text>
           </TouchableOpacity>
-          <View style={{flex: 1}}></View>
+
+          <TouchableOpacity
+            style={[styles.module]}
+            onPress={() => navigation.navigate('Negocios')}>
+            <Icon name="folder" size={32} color="white" />
+            <Text style={styles.text}>Negocios</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ColorfullContainer>
