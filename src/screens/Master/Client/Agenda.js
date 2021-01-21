@@ -5,7 +5,8 @@ import moment from 'moment';
 import {COLORS} from 'constants';
 import {Title} from 'react-native-paper';
 import TaskList from '../Task/List';
-import API from 'utils/Axios';
+//import API from 'utils/Axios';
+import {fetchConfig} from 'utils/Fetch';
 
 const ClientAgenda = ({cliente, navigation, taskRemove}) => {
   const [tasks, setTasks] = useState([]);
@@ -46,14 +47,21 @@ const ClientAgenda = ({cliente, navigation, taskRemove}) => {
   };
 
   const loadTasks = () => {
-    API('clientes/' + cliente + '/')
-      .then((response) => {
-        const {tareas} = response.data;
-        setTasks(tareas.map((t) => ({...t, ...{r: Date.now()}})));
+    fetchConfig().then((config) => {
+      const {url, headers} = config;
+
+      fetch(`${url}clientes/${cliente}/`, {
+        headers: headers,
       })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then((response) => response.json())
+        .then((response) => {
+          const {tareas} = response;
+          setTasks(tareas);
+        })
+        .catch((error) => {
+          console.log('Error obteniendo tareas ', error);
+        });
+    });
   };
 
   const reload = () => {

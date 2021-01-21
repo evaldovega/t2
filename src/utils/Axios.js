@@ -1,4 +1,4 @@
-import axios from 'axios';
+/*import axios from 'axios';
 import {SERVER_ADDRESS} from 'constants';
 import {getSharedPreference} from 'utils/SharedPreference';
 
@@ -32,4 +32,4 @@ API.interceptors.request.use(
   },
 );
 
-export default API;
+export default API;*/
