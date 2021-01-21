@@ -1,5 +1,5 @@
 import React from 'react';
-const Realm = require('realm');
+
 import {
   View,
   Alert,
@@ -56,7 +56,6 @@ class AdquirirPlan extends React.Component {
     mostrar_selector: false,
     clienteSeleccionado: '',
     data: {},
-    realm: null,
   };
   Validations = {};
 
@@ -232,31 +231,10 @@ class AdquirirPlan extends React.Component {
         this.loadOrder(orden_id);
       }
     });
-    Realm.open({schema: [VentaSchema], schemaVersion: 1}).then((realm) => {
-      this.setState({realm: realm});
-    });
   }
 
-  componentWillUnmount() {
-    // Close the realm if there is one open.
-    const {realm} = this.state;
-    if (realm !== null && !realm.isClosed) {
-      realm.close();
-    }
-  }
-  componentDidUpdate(prev) {
-    if (!prev.realm && this.state.realm) {
-      const {realm} = this.state;
-      /*
-      const {id: planId, orden_id} = this.props.route.params;
-      const data = realm.objects('Venta').filtered(`planId=${planId}`);
-      if(data.length){
-        realm.write(()=>{
-
-        })
-      }*/
-    }
-  }
+  componentWillUnmount() {}
+  componentDidUpdate(prev) {}
 
   seleccionarProducto = (estado, id) => {
     this.setState(

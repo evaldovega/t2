@@ -33,6 +33,79 @@ const InputDateTimerPicker = (props) => {
     }
   };
 
+  const selectorTime = () => {
+    if (showSelectHour === true) {
+      return (
+        <View style={{flexDirection: 'row', marginTop: 8}}>
+          <DateTimePicker
+            style={{flex: 1}}
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            value={date}
+            mode="time"
+            onChange={(d) => {
+              console.log('Hour ', d);
+              if (Platform.OS !== 'ios') {
+                setShowSelectHour(false);
+              }
+              if (d.nativeEvent && d.nativeEvent.timestamp) {
+                const newDate = moment(d.nativeEvent.timestamp);
+                const valueDate = moment(date);
+                valueDate
+                  .minutes(newDate.format('mm'))
+                  .hour(newDate.format('HH'));
+                triggerOnChange(valueDate.format('YYYY-MM-DD HH:mm'));
+              }
+            }}
+            is24Hour={true}
+          />
+          <SimpleLineIcons
+            name="close"
+            size={24}
+            onPress={() => setShowSelectHour(false)}
+          />
+        </View>
+      );
+    }
+  };
+
+  const selectorDate = () => {
+    if (showSelectDate) {
+      return (
+        <View style={{flexDirection: 'row', marginTop: 8}}>
+          <DateTimePicker
+            style={{flex: 1}}
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            value={date}
+            mode="date"
+            onChange={(d) => {
+              if (Platform.OS !== 'ios') {
+                setShowSelectDate(false);
+              }
+
+              if (d.nativeEvent && d.nativeEvent.timestamp) {
+                const newDate = moment(d.nativeEvent.timestamp);
+                const valueDate = moment(date);
+
+                valueDate
+                  .date(newDate.format('D'))
+                  .month(newDate.format('M') - 1)
+                  .year(newDate.format('YYYY'));
+
+                triggerOnChange(valueDate.format('YYYY-MM-DD HH:mm'));
+              }
+            }}
+            is24Hour={true}
+          />
+          <SimpleLineIcons
+            name="close"
+            size={24}
+            onPress={() => setShowSelectDate(false)}
+          />
+        </View>
+      );
+    }
+  };
+
   useEffect(() => {
     if (value && value != '') {
       const defaultValue =
@@ -46,50 +119,6 @@ const InputDateTimerPicker = (props) => {
 
   return (
     <React.Fragment>
-      {showSelectDate && (
-        <DateTimePicker
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          value={date}
-          mode="date"
-          onChange={(d) => {
-            setShowSelectDate(false);
-
-            if (d.nativeEvent && d.nativeEvent.timestamp) {
-              const newDate = moment(d.nativeEvent.timestamp);
-              const valueDate = moment(date);
-
-              valueDate
-                .date(newDate.format('D'))
-                .month(newDate.format('M') - 1)
-                .year(newDate.format('YYYY'));
-
-              triggerOnChange(valueDate.format('YYYY-MM-DD HH:mm'));
-            }
-          }}
-          is24Hour={true}
-        />
-      )}
-      {showSelectHour && (
-        <DateTimePicker
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          value={date}
-          mode="time"
-          onChange={(d) => {
-            console.log('Hour ', d);
-            setShowSelectHour(false);
-            if (d.nativeEvent && d.nativeEvent.timestamp) {
-              const newDate = moment(d.nativeEvent.timestamp);
-              const valueDate = moment(date);
-              valueDate
-                .minutes(newDate.format('mm'))
-                .hour(newDate.format('HH'));
-              triggerOnChange(valueDate.format('YYYY-MM-DD HH:mm'));
-            }
-          }}
-          is24Hour={true}
-        />
-      )}
-
       {label != '' && (
         <Text
           style={{
@@ -108,11 +137,17 @@ const InputDateTimerPicker = (props) => {
               size={24}
               name="calendar"
               color="#787778"
-              onPress={() => setShowSelectDate(true)}
+              onPress={() => {
+                setShowSelectDate(!showSelectDate);
+                setShowSelectHour(false);
+              }}
             />
             <TouchableOpacity
               style={{flex: 1}}
-              onPress={() => setShowSelectDate(true)}>
+              onPress={() => {
+                setShowSelectDate(!showSelectDate);
+                setShowSelectHour(false);
+              }}>
               <Text style={{textAlign: 'center'}}>
                 {moment(date).format('YYYY-MM-DD')}
               </Text>
@@ -125,11 +160,17 @@ const InputDateTimerPicker = (props) => {
               size={24}
               name="clock"
               color="#787778"
-              onPress={() => setShowSelectHour(true)}
+              onPress={() => {
+                setShowSelectHour(!showSelectHour);
+                setShowSelectDate(false);
+              }}
             />
             <TouchableOpacity
               style={{flex: 1}}
-              onPress={() => setShowSelectHour(true)}>
+              onPress={() => {
+                setShowSelectHour(!showSelectHour);
+                setShowSelectDate(false);
+              }}>
               <Text style={{textAlign: 'center'}}>
                 {moment(date).format('HH:mm')}
               </Text>
@@ -137,6 +178,8 @@ const InputDateTimerPicker = (props) => {
           </React.Fragment>
         )}
       </View>
+      {selectorDate()}
+      {selectorTime()}
     </React.Fragment>
   );
 };

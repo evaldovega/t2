@@ -8,11 +8,11 @@ import {
   MARGIN_VERTICAL,
   MARGIN_HORIZONTAL,
 } from 'constants';
-import {Image, Text, View, StatusBar, Platform} from 'react-native';
+import {Text, View, StatusBar, Platform} from 'react-native';
 import NumberFormat from 'react-number-format';
 import WebView from 'react-native-webview';
 import ZoomIn from 'components/ZoomIn';
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+
 import Cover from 'components/Cover';
 
 class PlanDetale extends React.PureComponent {
@@ -28,10 +28,6 @@ class PlanDetale extends React.PureComponent {
   };
 
   render() {
-    const fileName = Platform.select({
-      ios: `file:///assets/fonts/Mont-Bold.otf`,
-      android: `file:///android_asset/fonts/Mont-Bold.otf`,
-    });
     const {titulo, imagen, precio, informacion} = this.props.route.params.doc;
 
     return (

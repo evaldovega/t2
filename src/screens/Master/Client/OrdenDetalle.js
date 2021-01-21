@@ -64,7 +64,7 @@ class OrdenDetalle extends React.Component {
             <Text
               style={{
                 flex: 1,
-                fontFamily: 'Mont-Rgular',
+                fontFamily: 'Mont-regular',
                 marginLeft: 8,
               }}>
               {item.respuesta}
@@ -94,7 +94,7 @@ class OrdenDetalle extends React.Component {
               }}>
               {p.pregunta_str}
             </Text>
-            <Text style={{flex: 1, fontFamily: 'Mont-Regular', marginLeft: 8}}>
+            <Text style={{flex: 1, fontFamily: 'Mont-regular', marginLeft: 8}}>
               {p.respuesta}
             </Text>
           </View>
@@ -115,7 +115,7 @@ class OrdenDetalle extends React.Component {
             <Text
               style={{
                 color: COLORS.NEGRO_n1,
-                fontFamily: 'Mont-Regular',
+                fontFamily: 'Mont-regular',
                 fontSize: TEXTO_TAM * 0.5,
               }}>
               {v.variacion_str}
@@ -160,7 +160,7 @@ class OrdenDetalle extends React.Component {
             <Text
               style={{
                 color: COLORS.NEGRO,
-                fontFamily: 'Mont-Regular',
+                fontFamily: 'Mont-regular',
                 fontSize: TEXTO_TAM * 0.7,
               }}>
               {plan.plan_str}
@@ -183,7 +183,6 @@ class OrdenDetalle extends React.Component {
             <Text
               style={{
                 textAlign: 'center',
-                fontSize: 'Mont-Regular',
                 fontSize: TITULO_TAM * 0.9,
               }}>
               {this.state.doc.plan_str || '...'}
@@ -191,7 +190,6 @@ class OrdenDetalle extends React.Component {
             <Text
               style={{
                 textAlign: 'center',
-                fontSize: 'Mont-Regular',
                 fontSize: TITULO_TAM * 0.8,
               }}>
               {this.state.doc.numero_orden || '...'}
@@ -213,7 +211,6 @@ class OrdenDetalle extends React.Component {
                 <Text
                   style={{
                     textAlign: 'center',
-                    fontSize: 'Mont-Regular',
                     fontSize: TITULO_TAM * 0.7,
                     color: COLORS.VERDE,
                   }}>
