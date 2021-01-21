@@ -18,15 +18,11 @@ const API = axios.create({
 
 API.interceptors.request.use(
   async (config) => {
-    console.log('Headers ', config);
     const token = await getToken();
-    /*
     config.headers.common = {
       ...config.headers.common,
-      ...{Authorization: token},
-    };*/
-    config.headers.Authorization = token;
-
+      Authorization: token,
+    };
     return config;
   },
   function (error) {
