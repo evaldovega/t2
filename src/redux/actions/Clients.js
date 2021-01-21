@@ -223,3 +223,29 @@ export const taskSave = (cliente, data) => {
       });
   };
 };
+
+export const taskUpdate = (id, data) => {
+  return async (dispatch, getState) => {
+    console.log('Modificar Tarea');
+    dispatch({type: ACTION_CLIENT_SAVING_TASK});
+
+    fetch(SERVER_ADDRESS + 'api/clientes/' + cliente + '/asignar/', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        Authorization: 'Token ' + getState().Usuario.token,
+        Accept: 'application/json',
+        'content-type': 'application/json',
+      },
+    })
+      .then((r) => r.json())
+      .then((r) => {
+        console.log(r);
+        dispatch({type: ACTION_CLIENT_SAVED_TASK, task: r});
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({type: ACTION_CLIENT_ERROR_TASK, error: error.toString()});
+      });
+  };
+};

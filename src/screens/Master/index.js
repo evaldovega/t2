@@ -13,6 +13,7 @@ import Soporte from './Chat/Soporte';
 import MetaListado from 'screens/Meta/Listado';
 import NotificacionListado from './Notificacion/Listado';
 import Home from './Home';
+import Negocios from './Negocios';
 import MenuLateral from './MenuLateral';
 
 import Profile from './Profile';
@@ -123,6 +124,7 @@ class Master extends React.Component {
           {this.props.habilitado && (
             <Drawer.Screen name="Soporte" component={Soporte} />
           )}
+          <Drawer.Screen name="Negocios" component={Negocios} />
         </Drawer.Navigator>
         <ModalCapacitarse {...this.props} />
       </>
