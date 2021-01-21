@@ -55,11 +55,11 @@ class Lead extends React.Component {
   };
 
   getItem = (data, index) => {
-    return this.props.items[index];
+    return this.state.items[index];
   };
 
   getItemCount = () => {
-    return this.props.items.length;
+    return this.state.items.length;
   };
 
   Item = (item) => {
@@ -141,7 +141,7 @@ class Lead extends React.Component {
 
   componentDidMount() {
     this.props.load();
-    this.setState({items: this.props.items, itemsOriginal: this.props.items});
+    this.setState({items: this.props.items});
   }
 
   componentDidUpdate(prev) {
@@ -174,35 +174,26 @@ class Lead extends React.Component {
 
   changeSearchInput = (t) => {
     this.setState({valorBusqueda: t});
-    let valorBusqueda = t;
-    if (valorBusqueda != '') {
-      let datafiltrada = [];
-      for (let i = 0; i < this.state.items.length; i++) {
-        if (
-          this.state.items[i].primer_nombre
-            .toUpperCase()
-            .includes(valorBusqueda.toUpperCase()) ||
-          this.state.items[i].segundo_nombre
-            .toUpperCase()
-            .includes(valorBusqueda.toUpperCase()) ||
-          this.state.items[i].primer_apellido
-            .toUpperCase()
-            .includes(valorBusqueda.toUpperCase()) ||
-          this.state.items[i].segundo_apellido
-            .toUpperCase()
-            .includes(valorBusqueda.toUpperCase())
-        ) {
-          datafiltrada.push(this.state.items[i]);
-        }
-      }
+
+    if (t != '') {
+      const valorBusqueda = t.toUpperCase();
+      let datafiltrada = this.props.items.filter(
+        (item) =>
+          item.primer_nombre.toUpperCase().includes(valorBusqueda) ||
+          item.segundo_nombre.toUpperCase().includes(valorBusqueda) ||
+          item.primer_apellido.toUpperCase().includes(valorBusqueda) ||
+          item.segundo_apellido.toUpperCase().includes(valorBusqueda),
+      );
+
       this.setState({items: datafiltrada});
-      console.log('filtrada: ', datafiltrada);
     } else if (t == '') {
-      this.setState({items: this.state.itemsOriginal});
+      this.setState({items: this.props.items});
     }
   };
 
   render() {
+    const {items} = this.state;
+
     return (
       <ColorfullContainer style={styles.container}>
         <Navbar transparent menu title="Clientes" {...this.props} />
@@ -218,7 +209,7 @@ class Lead extends React.Component {
 
         <VirtualizedList
           style={{flex: 1, marginTop: MARGIN_HORIZONTAL, overflow: 'visible'}}
-          data={this.state.items}
+          data={items}
           initialNumToRender={10}
           renderItem={({item}) => this.Item(item)}
           keyExtractor={(item) => item.id}
