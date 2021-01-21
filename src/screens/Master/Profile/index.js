@@ -121,7 +121,7 @@ class Profile extends React.Component {
                 style={{
                   textAlign: 'left',
                   color: COLORS.NEGRO,
-                  fontFamily: 'Mont',
+                  fontFamily: 'Mont-Regular',
                   fontSize: TITULO_TAM,
                 }}>
                 {this.props.usuario.nombre || 'Nombre del usuario'}
