@@ -64,7 +64,7 @@ class TaskList extends React.Component {
           <Title>{moment(item.fecha_agendamiento).format('DD')}</Title>
         </View>
         <View>
-          <Subheading>{item.tipo_tarea}</Subheading>
+          <Subheading>{item.tipo_tarea_str}</Subheading>
           <Caption>{item.motivo_tarea}</Caption>
           <Caption>
             🕒 {moment(item.fecha_agendamiento).format('hh:mm a')}

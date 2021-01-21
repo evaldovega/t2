@@ -42,8 +42,9 @@ class TaskSave extends React.Component {
 
   load = () => {
     const {id} = this.props.route.params;
-    this.setState({cargando: true});
+
     if (id) {
+      this.setState({cargando: true});
       API('tareas/' + id)
         .then((response) => {
           const {data} = response;
@@ -115,7 +116,7 @@ class TaskSave extends React.Component {
           this.props.navigation.pop();
         })
         .catch((error) => {
-          console.log(response);
+          console.log(error);
           this.setState({cargando: false});
           Alert.alert('Algo anda mal', 'No se pudó guardar la cita');
         });

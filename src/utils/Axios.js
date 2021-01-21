@@ -8,7 +8,7 @@ export const Axios = axios.create({
 
 const getToken = async () => {
   let token = await getSharedPreference('auth-token');
-  return `Bearer ${token}`;
+  return `Token ${token}`;
 };
 
 const API = axios.create({
@@ -16,14 +16,17 @@ const API = axios.create({
 });
 
 API.interceptors.request.use(
-  function (config) {
+  async (config) => {
+    const token = await getToken();
     config.headers.common = {
       ...config.headers.common,
-      Authorization: getToken(),
+      Authorization: token,
     };
     return config;
   },
   function (error) {
+    // Do something with request error
+
     return Promise.reject(error);
   },
 );

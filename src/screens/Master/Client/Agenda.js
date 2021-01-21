@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
-import {View, ScrollView, Text} from 'react-native';
+import {View, ScrollView, Text, Alert} from 'react-native';
 import moment from 'moment';
 import {COLORS} from 'constants';
 import {Title} from 'react-native-paper';
@@ -10,6 +10,7 @@ import API from 'utils/Axios';
 const ClientAgenda = ({cliente, navigation, taskRemove}) => {
   const [tasks, setTasks] = useState([]);
   const [tasksInDay, setTasksInDay] = useState([]);
+  const [markers, setMarkers] = useState({});
 
   const slots = [];
   let start = moment().startOf('day').set({hour: 6, minute: 0});
@@ -18,31 +19,37 @@ const ClientAgenda = ({cliente, navigation, taskRemove}) => {
     slots.push(start.clone());
     start.add(15, 'minutes');
   }
-  const markers = {};
-  if (tasks.length > 0) {
-    tasks.forEach((task) => {
-      const date = moment(task.fecha_agendamiento).format('YYYY-MM-DD');
-      if (!markers[date]) {
-        markers[date] = {
-          dots: [],
-          selectedColor: COLORS.PRIMARY_COLOR,
-          marked: true,
-          selected: true,
-        };
-      }
-      markers[date].dots.push({
-        selectedDotColor: 'red',
-        key: task.id,
-        color: 'red',
+
+  const initMarkers = () => {
+    let _markers = {};
+    if (tasks.length > 0) {
+      tasks.forEach((task) => {
+        const date = moment(task.fecha_agendamiento).format('YYYY-MM-DD');
+        if (!_markers[date]) {
+          _markers[date] = {
+            dots: [],
+            selectedColor: COLORS.PRIMARY_COLOR,
+            marked: true,
+            selected: true,
+            reload: Date.now(),
+          };
+        }
+        _markers[date].dots.push({
+          selectedDotColor: 'red',
+          key: task.id,
+          color: 'red',
+          reload: Date.now(),
+        });
       });
-    });
-  }
+    }
+    setMarkers(_markers);
+  };
 
   const loadTasks = () => {
     API('clientes/' + cliente + '/')
       .then((response) => {
         const {tareas} = response.data;
-        setTasks(tareas);
+        setTasks(tareas.map((t) => ({...t, ...{r: Date.now()}})));
       })
       .catch((error) => {
         console.log(error);
@@ -50,12 +57,18 @@ const ClientAgenda = ({cliente, navigation, taskRemove}) => {
   };
 
   const reload = () => {
+    setTasksInDay([]);
     loadTasks();
   };
 
   useEffect(() => {
     loadTasks();
   }, []);
+
+  useEffect(() => {
+    console.log('INIT');
+    initMarkers();
+  }, [tasks]);
 
   return (
     <View style={{marginBottom: 16}}>
