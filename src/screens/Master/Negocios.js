@@ -69,7 +69,7 @@ const Negocios = ({navigation}) => {
 
   return (
     <ColorfullContainer style={{flex: 1, background: '#fff'}}>
-      <Navbar transparent menu title="Negocios" />
+      <Navbar transparent menu title="Negocios" navigation={navigation} />
       <VirtualizedList
         style={{flex: 1, overflow: 'visible'}}
         data={orders}
