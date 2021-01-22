@@ -31,7 +31,7 @@ class ModalCapacitarse extends React.Component {
   }
 
   render() {
-    let nombre = this.props.nombre.split(' ')[0];
+    let nombre = this.props.nombre;
 
     return (
       <Modal

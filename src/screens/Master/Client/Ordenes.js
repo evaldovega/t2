@@ -72,9 +72,8 @@ class ClienteOrdenes extends React.PureComponent {
       <TouchableOpacity
         style={{
           backgroundColor: 'rgba(255,255,255,.5)',
-          borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-          borderWidth: 0.4,
-          borderRadius: CURVA,
+          borderColor: COLORS.GRIS,
+          borderTopWidth: 1,
           padding: MARGIN_VERTICAL,
           marginBottom: MARGIN_VERTICAL,
         }}
@@ -89,6 +88,7 @@ class ClienteOrdenes extends React.PureComponent {
               marginVertical: MARGIN_VERTICAL * 2,
               marginHorizontal: MARGIN_HORIZONTAL,
             }}>
+            <AntDesign name="file1" size={20} />
             <View style={{}}>
               <Text
                 style={{
@@ -168,6 +168,7 @@ class ClienteOrdenes extends React.PureComponent {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
+          <AntDesign name="folder1" size={24} />
           <Text
             style={{
               color: COLORS.NEGRO,
@@ -176,7 +177,7 @@ class ClienteOrdenes extends React.PureComponent {
               fontSize: TITULO_TAM * 0.7,
               marginVertical: MARGIN_VERTICAL,
             }}>
-            Planes Adquiridos
+            Negocios
           </Text>
           <TouchableOpacity
             style={{
@@ -184,12 +185,13 @@ class ClienteOrdenes extends React.PureComponent {
               justifyContent: 'center',
               alignItems: 'center',
               backgroundColor: COLORS.MORADO,
-              width: 32,
-              height: 32,
+              paddingHorizontal: 16,
+              paddingVertical: 8,
               borderRadius: CURVA,
             }}
             onPress={this.planes}>
             <AntDesign name="plus" color={COLORS.BLANCO} />
+            <Text style={{color: COLORS.BLANCO}}>Crear negocio</Text>
           </TouchableOpacity>
         </View>
 

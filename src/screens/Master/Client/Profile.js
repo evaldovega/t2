@@ -13,19 +13,7 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from 'react-native';
-import {
-  FAB,
-  Avatar,
-  Title,
-  Colors,
-  Caption,
-  Subheading,
-  Card,
-  Button,
-  Divider,
-} from 'react-native-paper';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {styleHeader, styleInput, styleButton, styleText} from 'styles';
+import {Card} from 'react-native-paper';
 import {loadClient, taskRemove, removeOrden} from 'redux/actions/Clients';
 import ClientAgenda from './Agenda';
 import {
@@ -41,6 +29,7 @@ import ColorfullContainer from 'components/ColorfullContainer';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import ClienteOrdenes from './Ordenes';
@@ -82,59 +71,92 @@ class ClientProfile extends React.Component {
     this.props.navigation.push('ClientSave', {id: this.props.id});
   };
 
-  renderInfoClient = () => (
-    <View
-      style={{
-        marginTop: MARGIN_VERTICAL,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-      <TouchableOpacity
-        style={{flex: 1, paddingHorizontal: 4}}
-        onPress={this.edit}>
-        <Text
-          style={[
-            {
-              color: COLORS.NEGRO,
-              fontFamily: 'Mont-Bold',
-              fontSize: TITULO_TAM * 0.7,
-            },
-          ]}>
-          {!this.props.loading &&
-            this.props.primer_nombre +
-              ' ' +
-              this.props.segundo_nombre +
-              ' ' +
-              this.props.primer_apellido +
-              ' ' +
-              this.props.segundo_apellido}
-        </Text>
-        <Text style={{color: COLORS.NEGRO}}>
-          {this.props.numero_cedula || '...'}
-        </Text>
-        <Text style={{color: COLORS.NEGRO}}>
-          {this.props.correo_electronico || '...'}
-        </Text>
-        <Text style={{color: COLORS.NEGRO}}>
-          {this.props.numero_telefono || '...'}
-        </Text>
-      </TouchableOpacity>
+  wp = (tel) => {
+    Linking.openURL(`whatsapp://send?text=Servi&phone=${tel}`);
+  };
 
-      <TouchableOpacity
-        onPress={this.call}
+  renderInfoClient = () => {
+    const {numero_telefono} = this.props;
+    const telefonos =
+      numero_telefono && numero_telefono != ''
+        ? numero_telefono.split(',')
+        : [];
+    return (
+      <View
         style={{
-          backgroundColor: COLORS.PRIMARY_COLOR,
-          width: 64,
-          height: 64,
-          borderRadius: CURVA,
-          justifyContent: 'center',
+          marginTop: MARGIN_VERTICAL,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           alignItems: 'center',
         }}>
-        <MaterialCommunityIcons name="phone" size={32} color={COLORS.BLANCO} />
-      </TouchableOpacity>
-    </View>
-  );
+        <View style={{paddingRight: 24, flex: 1}}>
+          <TouchableOpacity
+            style={{flex: 1, paddingHorizontal: 4}}
+            onPress={this.edit}>
+            <Text
+              style={[
+                {
+                  color: COLORS.NEGRO,
+                  fontFamily: 'Mont-Bold',
+                  fontSize: TITULO_TAM * 0.7,
+                },
+              ]}>
+              {!this.props.loading &&
+                this.props.primer_nombre +
+                  ' ' +
+                  this.props.segundo_nombre +
+                  ' ' +
+                  this.props.primer_apellido +
+                  ' ' +
+                  this.props.segundo_apellido}
+            </Text>
+            <Text style={{color: COLORS.NEGRO}}>
+              {this.props.numero_cedula || '...'}
+            </Text>
+            <Text style={{color: COLORS.NEGRO}}>
+              {this.props.correo_electronico || '...'}
+            </Text>
+          </TouchableOpacity>
+
+          <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+            {telefonos.map((tel, i) => (
+              <TouchableOpacity
+                onPress={() => this.wp(tel)}
+                key={{i}}
+                style={{
+                  backgroundColor: COLORS.PRIMARY_COLOR,
+                  borderRadius: CURVA,
+                  padding: 4,
+                  margin: 2,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <FontAwesome name="whatsapp" color={COLORS.BLANCO} />
+                <Text style={{color: COLORS.BLANCO, marginLeft: 8}}>{tel}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        <TouchableOpacity
+          onPress={this.call}
+          style={{
+            backgroundColor: COLORS.PRIMARY_COLOR,
+            width: 64,
+            height: 64,
+            borderRadius: CURVA,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <MaterialCommunityIcons
+            name="phone"
+            size={32}
+            color={COLORS.BLANCO}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   renderAgenda = () => {
     if (!this.props.loading) {
@@ -162,9 +184,9 @@ class ClientProfile extends React.Component {
                 justifyContent: 'center',
                 alignItems: 'center',
                 backgroundColor: COLORS.MORADO,
-                width: 32,
-                height: 32,
                 borderRadius: CURVA,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
               }}
               onPress={() =>
                 this.props.navigation.push('TaskSave', {
@@ -172,6 +194,7 @@ class ClientProfile extends React.Component {
                 })
               }>
               <AntDesign name="plus" color={COLORS.BLANCO} />
+              <Text style={{color: COLORS.BLANCO}}>Agendar cita</Text>
             </TouchableOpacity>
           </View>
           <Card

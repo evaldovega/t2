@@ -21,9 +21,12 @@ import Validator, {Execute} from 'components/Validator';
 import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL, COLORS} from 'constants';
 import ColorfullContainer from 'components/ColorfullContainer';
 import Select from 'components/Select';
-
+import {SERVER_ADDRESS} from 'constants';
 import InputDateTimerPicker from 'components/DatetimePicker';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import {fetchConfig} from 'utils/Fetch';
+import {getSharedPreference} from 'utils/SharedPreference';
+import {config} from 'react-native-firebase';
 
 class TaskSave extends React.Component {
   state = {
@@ -43,30 +46,35 @@ class TaskSave extends React.Component {
   load = () => {
     const {id} = this.props.route.params;
 
-    // if (id) {
-    //   this.setState({cargando: true});
-    //   API('tareas/' + id)
-    //     .then((response) => {
-    //       const {data} = response;
-    //       this.setState({
-    //         tareaId: data.id,
-    //         fecha_agendamiento: moment(data.fecha_agendamiento).format(),
-    //         fecha_vencimiento: data.fecha_vencimiento
-    //           ? moment(data.fecha_vencimiento).format()
-    //           : this.state.fecha_vencimiento,
-    //         recordatorio_minutos: '' + data.recordatorio_minutos,
-    //         motivo_tarea: data.motivo_tarea,
-    //         tipo_tarea: data.tipo_tarea,
-    //         cliente: data.cliente,
-    //         cargando: false,
-    //       });
-    //     })
-    //     .catch((error) => {
-    //       this.setState({cargando: false});
-    //       Alert.alert('Algo anda mal', 'No se pudo cargar la cita');
-    //       this.props.navigation.pop();
-    //     });
-    // }
+    if (id) {
+      this.setState({cargando: true});
+      fetchConfig().then((config) => {
+        const {url, headers} = config;
+        fetch(`${url}tareas/${id}/`, {
+          headers: headers,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            this.setState({
+              tareaId: data.id,
+              fecha_agendamiento: moment(data.fecha_agendamiento).format(),
+              fecha_vencimiento: data.fecha_vencimiento
+                ? moment(data.fecha_vencimiento).format()
+                : this.state.fecha_vencimiento,
+              recordatorio_minutos: '' + data.recordatorio_minutos,
+              motivo_tarea: data.motivo_tarea,
+              tipo_tarea: data.tipo_tarea,
+              cliente: data.cliente,
+              cargando: false,
+            });
+          })
+          .catch((error) => {
+            this.setState({cargando: false});
+            Alert.alert('Algo anda mal', 'No se pudo cargar la cita');
+            this.props.navigation.pop();
+          });
+      });
+    }
   };
 
   componentDidMount() {
@@ -79,7 +87,7 @@ class TaskSave extends React.Component {
   }
 
   guardar = () => {
-    Execute(this.Validations).then(() => {
+    Execute(this.Validations).then(async () => {
       if (
         moment(this.state.fecha_agendamiento).isAfter(
           moment(this.state.fecha_vencimiento),
@@ -92,34 +100,44 @@ class TaskSave extends React.Component {
         return;
       }
       this.setState({cargando: true});
+      let token = await getSharedPreference('auth-token');
+
+      console.log('Token ', token);
+
       let method = this.state.tareaId == '' ? 'POST' : 'PATCH';
       let url =
         this.state.tareaId == ''
           ? `clientes/${this.props.route.params.cliente_id}/asignar/`
           : `tareas/${this.state.tareaId}/`;
+      const body = JSON.stringify({
+        tipo_tarea: this.state.tipo_tarea,
+        motivo_tarea: this.state.motivo_tarea,
+        fecha_agendamiento: this.state.fecha_agendamiento,
+        fecha_vencimiento: this.state.fecha_vencimiento,
+        recordatorio_minutos: this.state.recordatorio_minutos,
+      });
 
-      API({
-        method: method,
-        url: url,
-        data: {
-          tipo_tarea: this.state.tipo_tarea,
-          motivo_tarea: this.state.motivo_tarea,
-          fecha_agendamiento: this.state.fecha_agendamiento,
-          fecha_vencimiento: this.state.fecha_vencimiento,
-          recordatorio_minutos: this.state.recordatorio_minutos,
-        },
-      })
-        .then((response) => {
-          console.log(response.data);
-          this.setState({cargando: false});
+      try {
+        const response = await fetch(SERVER_ADDRESS + 'api/' + url, {
+          method: method,
+          body: body,
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            authorization: 'Token ' + token,
+          },
+        }).then((response) => response.json());
+
+        this.setState({cargando: false});
+        if (this.props.route.params.reload) {
           this.props.route.params.reload();
-          this.props.navigation.pop();
-        })
-        .catch((error) => {
-          console.log(error);
-          this.setState({cargando: false});
-          Alert.alert('Algo anda mal', 'No se pudó guardar la cita');
-        });
+        }
+        this.props.navigation.pop();
+      } catch (error) {
+        console.log(error);
+        this.setState({cargando: false});
+        Alert.alert('Algo anda mal', 'No se pudó guardar la cita');
+      }
     });
   };
 

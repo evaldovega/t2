@@ -114,7 +114,6 @@ target 'serviproteccion' do
 
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 
-  pod 'RealmJS', :path => '../node_modules/realm'
 
   target 'serviproteccionTests' do
     inherit! :complete
