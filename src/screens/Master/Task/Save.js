@@ -24,7 +24,7 @@ import Select from 'components/Select';
 
 import InputDateTimerPicker from 'components/DatetimePicker';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import API from 'utils/Axios';
+
 class TaskSave extends React.Component {
   state = {
     tareaId: '',
@@ -43,30 +43,30 @@ class TaskSave extends React.Component {
   load = () => {
     const {id} = this.props.route.params;
 
-    if (id) {
-      this.setState({cargando: true});
-      API('tareas/' + id)
-        .then((response) => {
-          const {data} = response;
-          this.setState({
-            tareaId: data.id,
-            fecha_agendamiento: moment(data.fecha_agendamiento).format(),
-            fecha_vencimiento: data.fecha_vencimiento
-              ? moment(data.fecha_vencimiento).format()
-              : this.state.fecha_vencimiento,
-            recordatorio_minutos: '' + data.recordatorio_minutos,
-            motivo_tarea: data.motivo_tarea,
-            tipo_tarea: data.tipo_tarea,
-            cliente: data.cliente,
-            cargando: false,
-          });
-        })
-        .catch((error) => {
-          this.setState({cargando: false});
-          Alert.alert('Algo anda mal', 'No se pudo cargar la cita');
-          this.props.navigation.pop();
-        });
-    }
+    // if (id) {
+    //   this.setState({cargando: true});
+    //   API('tareas/' + id)
+    //     .then((response) => {
+    //       const {data} = response;
+    //       this.setState({
+    //         tareaId: data.id,
+    //         fecha_agendamiento: moment(data.fecha_agendamiento).format(),
+    //         fecha_vencimiento: data.fecha_vencimiento
+    //           ? moment(data.fecha_vencimiento).format()
+    //           : this.state.fecha_vencimiento,
+    //         recordatorio_minutos: '' + data.recordatorio_minutos,
+    //         motivo_tarea: data.motivo_tarea,
+    //         tipo_tarea: data.tipo_tarea,
+    //         cliente: data.cliente,
+    //         cargando: false,
+    //       });
+    //     })
+    //     .catch((error) => {
+    //       this.setState({cargando: false});
+    //       Alert.alert('Algo anda mal', 'No se pudo cargar la cita');
+    //       this.props.navigation.pop();
+    //     });
+    // }
   };
 
   componentDidMount() {

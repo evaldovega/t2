@@ -14,6 +14,7 @@ import Button from 'components/Button';
 import Validator, {Execute} from 'components/Validator';
 import Loader from 'components/Loader';
 import {View, Text, Alert} from 'react-native';
+import InputDateTimerPicker from 'components/DatetimePicker';
 import {connect} from 'react-redux';
 
 class MetaGuardar extends React.Component {
@@ -151,7 +152,7 @@ class MetaGuardar extends React.Component {
 
           <Text
             style={{
-              fontFamily: 'Mont.Regular',
+              fontFamily: 'Mont-Regular',
               marginTop: MARGIN_VERTICAL * 2,
             }}>
             {tipo_meta == 'ventas'
@@ -175,36 +176,53 @@ class MetaGuardar extends React.Component {
 
           <Text
             style={{
-              fontFamily: 'Mont.Regular',
+              fontFamily: 'Mont-Regular',
               marginTop: MARGIN_VERTICAL * 2,
             }}>
             Especifica una fecha inicial y final para lograr tu meta
           </Text>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{flexDirection: 'row'}}>
             <View style={{flex: 1, marginRight: 4}}>
               <Validator
                 ref={(r) => (this.Validations['p4'] = r)}
                 required="OOPS"
                 value={this.state.fecha_inicio_meta}>
-                <InputMask
+                <InputDateTimerPicker
+                  marginTop={1}
+                  label="Fecha inicio de meta"
+                  showTime={false}
+                  value={this.state.fecha_inicio_meta}
+                  onChange={(v) => this.setState({fecha_inicio_meta: v})}
+                />
+
+                {/* <InputMask
                   input={{keyboardType: 'number-pad'}}
                   value={this.state.fecha_inicio_meta}
                   onChangeText={(v) => this.setState({fecha_inicio_meta: v})}
                   marginTop={1}
                   placeholder="YYYY-MM-DD"
                   mask={'[0000]-[00]-[00]'}
-                />
+                /> */}
               </Validator>
             </View>
             <View style={{flex: 1, marginLeft: 4}}>
-              <InputMask
+              {/* <InputMask
                 input={{keyboardType: 'number-pad'}}
                 value={this.state.fecha_final_meta}
                 onChangeText={(v) => this.setState({fecha_final_meta: v})}
                 marginTop={1}
                 placeholder="YYYY-MM-DD"
                 mask={'[0000]-[00]-[00]'}
+              /> */}
+
+              <InputDateTimerPicker
+                marginTop={1}
+                label="Fecha final de meta"
+                showTime={false}
+                value={this.state.fecha_final_meta}
+                onChange={(v) => this.setState({fecha_final_meta: v})}
               />
+
               <Validator
                 ref={(r) => (this.Validations['p5'] = r)}
                 required="OOPS"

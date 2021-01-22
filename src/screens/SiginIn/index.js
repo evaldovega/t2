@@ -113,7 +113,7 @@ class SignIn extends React.Component {
               </View>
 
               <InputText
-                placeholder="Nombre de usuario"
+                placeholder="Correo electrónico"
                 onChangeText={(t) => this.setState({u: t})}
                 value={this.state.u}
               />

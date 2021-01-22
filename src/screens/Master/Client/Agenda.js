@@ -5,7 +5,7 @@ import moment from 'moment';
 import {COLORS} from 'constants';
 import {Title} from 'react-native-paper';
 import TaskList from '../Task/List';
-import API from 'utils/Axios';
+// import API from 'utils/Axios';
 
 const ClientAgenda = ({cliente, navigation, taskRemove}) => {
   const [tasks, setTasks] = useState([]);
@@ -46,14 +46,14 @@ const ClientAgenda = ({cliente, navigation, taskRemove}) => {
   };
 
   const loadTasks = () => {
-    API('clientes/' + cliente + '/')
-      .then((response) => {
-        const {tareas} = response.data;
-        setTasks(tareas.map((t) => ({...t, ...{r: Date.now()}})));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // API('clientes/' + cliente + '/')
+    //   .then((response) => {
+    //     const {tareas} = response.data;
+    //     setTasks(tareas.map((t) => ({...t, ...{r: Date.now()}})));
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   const reload = () => {

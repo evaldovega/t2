@@ -82,7 +82,7 @@ class MenuLateral extends React.Component {
           ) : (
             <></>
           )}
-          {this.props.habilitado ? (
+          {/* {this.props.habilitado ? (
             <Drawer.Item
               label="Dashboard"
               active={actual == 'Dashboard'}
@@ -95,7 +95,7 @@ class MenuLateral extends React.Component {
             />
           ) : (
             <></>
-          )}
+          )} */}
           <Drawer.Item
             label="Capacitaciones"
             active={actual == 'Capacitaciones'}
@@ -115,6 +115,36 @@ class MenuLateral extends React.Component {
                 requestAnimationFrame(() =>
                   this.props.navigation.navigate('Clientes'),
                 )
+              }
+            />
+          ) : (
+            <></>
+          )}
+
+          {this.props.habilitado ? (
+            <Drawer.Item
+              label="Productos"
+              active={actual == 'Productos'}
+              icon="apps"
+              onPress={() =>
+                requestAnimationFrame(() => {
+                  this.props.navigation.navigate('Planes');
+                })
+              }
+            />
+          ) : (
+            <></>
+          )}
+
+          {this.props.habilitado ? (
+            <Drawer.Item
+              label="Negocios"
+              active={actual == 'Negocios'}
+              icon="folder"
+              onPress={() =>
+                requestAnimationFrame(() => {
+                  this.props.navigation.navigate('Negocios');
+                })
               }
             />
           ) : (
