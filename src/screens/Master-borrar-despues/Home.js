@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Navbar from 'components/Navbar';
+import Chart from 'screens/StaticsHealth/components/Chart';
 import {
   COLORS,
   CURVA,
@@ -16,6 +17,7 @@ import {
 } from 'constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ColorfullContainer from 'components/ColorfullContainer';
+import Balance from './Dashboard/Balance';
 
 const Home = ({navigation}) => {
   return (
@@ -104,6 +106,56 @@ const Home = ({navigation}) => {
             <Text style={styles.text}>Negocios</Text>
           </TouchableOpacity>
         </View>
+
+        <View style={{flex: 1}}>
+          <Text
+            style={{
+              alignSelf: 'center',
+              fontFamily: 'Mont-Bold',
+              marginTop: 40,
+              fontSize: 20,
+            }}>
+            Mis logros
+          </Text>
+        </View>
+
+        {/* <Balance id={this.props.id} token={this.props.token} /> */}
+
+        <View style={styles.containerChart}>
+          <View style={styles.boxHeader}>
+            <Text style={styles.txtTitle}>
+              Meta del mes{' '}
+              <Text style={{color: '#ABA4AC'}}>(ventas/semana)</Text>
+            </Text>
+          </View>
+          <Chart />
+          <View style={styles.line} />
+          {/* <View style={styles.boxBottom}>
+              <TouchableOpacity style={styles.btnBottom}>
+                <Text style={styles.txtBtnBottom}>See Details</Text>
+              </TouchableOpacity>
+              <View style={styles.lineVertical} />
+              <TouchableOpacity style={styles.btnBottom}>
+                <Text style={styles.txtBtnBottomActive}>Set Goals</Text>
+              </TouchableOpacity>
+            </View> */}
+        </View>
+        <View style={styles.containerChart}>
+          <View style={styles.boxHeader}>
+            <Text style={styles.txtTitle}>Clientes adquiridos</Text>
+          </View>
+          <Chart />
+          <View style={styles.line} />
+          {/* <View style={styles.boxBottom}>
+              <TouchableOpacity style={styles.btnBottom}>
+                <Text style={styles.txtBtnBottom}>See Details</Text>
+              </TouchableOpacity>
+              <View style={styles.lineVertical} />
+              <TouchableOpacity style={styles.btnBottom}>
+                <Text style={styles.txtBtnBottomActive}>Set Goals</Text>
+              </TouchableOpacity>
+            </View> */}
+        </View>
       </ScrollView>
     </ColorfullContainer>
   );
@@ -131,5 +183,23 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontSize: TITULO_TAM * 0.4,
+  },
+  boxHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  containerChart: {
+    marginTop: MARGIN_VERTICAL * 3,
+    borderRadius: CURVA,
+    backgroundColor: '#FFF',
+    paddingHorizontal: 16,
+    paddingTop: MARGIN_VERTICAL,
+    marginHorizontal: MARGIN_HORIZONTAL,
+    marginBottom: MARGIN_HORIZONTAL,
+  },
+  line: {
+    height: 1,
+    backgroundColor: '#F7F8F9',
+    borderRadius: 16,
   },
 });

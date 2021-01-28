@@ -181,7 +181,7 @@ class MetaGuardar extends React.Component {
             }}>
             Especifica una fecha inicial y final para lograr tu meta
           </Text>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{flexDirection: 'row'}}>
             <View style={{flex: 1, marginRight: 4}}>
               <Validator
                 ref={(r) => (this.Validations['p4'] = r)}
@@ -205,6 +205,7 @@ class MetaGuardar extends React.Component {
                 placeholder="YYYY-MM-DD"
                 showTime={false}
               />
+
               <Validator
                 ref={(r) => (this.Validations['p5'] = r)}
                 required="OOPS"
