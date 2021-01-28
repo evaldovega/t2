@@ -11,8 +11,8 @@ import {
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 // @ts-ignore
 
-import Presentation from 'screens/Presentation';
-import FQA from 'screens/FQA';
+import Presentation from 'screens/ValidateSession/components/Presentation';
+import FQA from 'screens/ValidateSession/FQA';
 
 import ForgotPass from 'screens/ForgotPass';
 import SignIn from 'screens/SiginIn';

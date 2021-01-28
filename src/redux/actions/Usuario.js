@@ -24,86 +24,12 @@ import {
   deleteSharedPreference,
   getSharedPreference,
 } from 'utils/SharedPreference';
-import {navigationRef} from 'utils/navigation';
-
-export const acceder = (data) => {
-  return async (dispatch) => {
-    console.log('Accediendo... ', SERVER_ADDRESS + 'api/login/');
-    try {
-      let statusCode = 0;
-      dispatch({type: ACTION_USUARIO_ACCEDER});
-      fetch(SERVER_ADDRESS + 'api/login/', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-        .then((r) => {
-          statusCode = r.status;
-          return r;
-        })
-        .then((r) => r.json())
-        .then(async (r) => {
-          console.log('Login', statusCode);
-          if (statusCode == 200 || statusCode == 201) {
-            if (r.token) {
-              console.log(JSON.stringify(r.data));
-              await setSharedPreference('auth-token', r.token);
-              await setSharedPreference('data-user', JSON.stringify(r.data));
-              dispatch({type: ACTION_USUARIO_ACCESO_CORRECTO, token: r.token});
-              navigationRef?.current?.navigate('Master');
-            } else {
-              dispatch({
-                type: ACTION_USUARIO_ERROR_ACCEDIENDO,
-                error: 'Usted no cuenta con permisos para ingresar',
-              });
-            }
-          } else if (statusCode == 400) {
-            let mensaje = '';
-            for (const key in r) {
-              if (key == 'user') {
-                mensaje += `- ${key}\n`;
-                for (const key2 in r[key]) {
-                  mensaje += `-- ${key2}: ${r[key][key2]}\n`;
-                }
-              } else if (key == 'non_field_errors') {
-                mensaje += `${r[key][0]}`;
-              } else {
-                mensaje += `- ${key}: ${r[key][0]}\n`;
-              }
-            }
-            dispatch({
-              type: ACTION_USUARIO_ERROR_ACCEDIENDO,
-              error: mensaje,
-            });
-          } else {
-            dispatch({
-              type: ACTION_USUARIO_ERROR_ACCEDIENDO,
-              error: 'Error desconocido',
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          dispatch({
-            type: ACTION_USUARIO_ERROR_ACCEDIENDO,
-            error: 'Error desconocido',
-          });
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
 
 export const salir = () => {
   return (dispatch) => {
     deleteSharedPreference('auth-token');
-    deleteSharedPreference('data-user');
+    deleteSharedPreference('userId');
     dispatch({type: ACTION_USUARIO_SALIR});
-    navigationRef?.current?.navigate('Presentation');
   };
 };
 
@@ -311,7 +237,17 @@ export const subirFotoIde = (image, lado) => {
 
 export const cambiarProp = (p, v) => {
   return (dispatch) => {
+    console.log('Action user change prop ', p, v);
     dispatch({type: ACTION_USUARIO_ACTUALIZAR_PROP, p, v});
+  };
+};
+
+export const changeProps = (props) => {
+  return (dispatch) => {
+    Object.keys(props).forEach((p) => {
+      const v = props[p];
+      dispatch({type: ACTION_USUARIO_ACTUALIZAR_PROP, p, v});
+    });
   };
 };
 

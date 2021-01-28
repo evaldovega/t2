@@ -14,8 +14,7 @@ import {
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {ROUTERS} from 'utils/navigation';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import GradientContainer from 'components/GradientContainer';
-import Button from 'components/Button';
+
 const {width: viewportWidth} = Dimensions.get('window');
 
 function wp(percentage: number) {
@@ -72,14 +71,6 @@ class Presentation extends React.Component {
     ).start();
   }
 
-  vendeYa = () => {
-    if (this.props.logeado) {
-      this.props.navigation.navigate('Master');
-    } else {
-      this.props.navigation.navigate(ROUTERS.SignIn);
-    }
-  };
-
   renderItem = ({item}) => {
     return (
       <View style={{flex: 1}}>
@@ -106,92 +97,57 @@ class Presentation extends React.Component {
     );
   };
 
-  pagination = () => (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginBottom: '10%',
-      }}>
-      <View
-        style={{
-          shadowOpacity: 16,
-          backgroundColor:
-            this.state.indexActive == 0 ? COLORS.ACCENT : COLORS.GRAY,
-          paddingHorizontal: this.state.indexActive == 0 ? 8 : 0,
-          borderRadius: 4,
-          width: 8,
-          height: 8,
-          marginRight: 8,
-        }}></View>
-      <View
-        style={{
-          backgroundColor:
-            this.state.indexActive == 1 ? COLORS.ACCENT : COLORS.GRAY,
-          paddingHorizontal: this.state.indexActive == 1 ? 8 : 0,
-          borderRadius: 4,
-          width: 8,
-          height: 8,
-          marginRight: 8,
-        }}></View>
-      <View
-        style={{
-          backgroundColor:
-            this.state.indexActive == 2 ? COLORS.ACCENT : COLORS.GRAY,
-          paddingHorizontal: this.state.indexActive == 2 ? 8 : 0,
-          borderRadius: 4,
-          width: 8,
-          height: 8,
-        }}></View>
-    </View>
-  );
-
   render() {
     return (
-      <SafeAreaView style={{flex: 1}}>
-        <GradientContainer style={{flex: 1, paddingHorizontal: 16}}>
-          <StatusBar
-            translucent={true}
-            backgroundColor={'transparent'}
-            barStyle={'dark-content'}
+      <View style={{flex: 1, marginHorizontal: 16}}>
+        <StatusBar
+          translucent={true}
+          backgroundColor={'transparent'}
+          barStyle={'dark-content'}
+        />
+
+        <View style={styles.header}>
+          <Image
+            style={styles.logo}
+            resizeMode={'contain'}
+            source={require('utils/images/logo_black.png')}
           />
 
-          <View style={styles.header}>
-            <Image
-              style={styles.logo}
-              resizeMode={'contain'}
-              source={require('utils/images/logo_black.png')}
-            />
-
-            <IconAntDesign
-              onPress={() => this.props.navigation.push('FQA')}
-              name="questioncircle"
-              color={COLORS.VERDE}
-              size={24}
-            />
-          </View>
-
-          {this.pagination()}
-          <Carousel
-            data={data}
-            renderItem={this.renderItem}
-            sliderWidth={sliderWidth}
-            itemWidth={itemWidth}
-            inactiveSlideScale={0}
-            inactiveSlideOpacity={0.4}
-            containerCustomStyle={styles.slider}
-            contentContainerCustomStyle={styles.sliderContentContainer}
-            onSnapToItem={(i) => this.setState({indexActive: i})}
+          <IconAntDesign
+            onPress={() => this.props.navigation.push('FQA')}
+            name="questioncircle"
+            color={COLORS.VERDE}
+            size={24}
           />
+        </View>
 
-          <Button
-            color="morado"
-            title="Vende ya"
-            marginBottom={3}
-            onPress={this.vendeYa}
-          />
-        </GradientContainer>
-      </SafeAreaView>
+        <Pagination
+          dotsLength={data.length}
+          activeDotIndex={this.state.indexActive}
+          dotStyle={{
+            width: 10,
+            height: 10,
+            borderRadius: 5,
+            marginHorizontal: 8,
+            backgroundColor: COLORS.MORADO,
+          }}
+          inactiveDotOpacity={0.4}
+          inactiveDotScale={0.6}
+        />
+
+        <Carousel
+          data={data}
+          renderItem={this.renderItem}
+          sliderWidth={sliderWidth}
+          autoplay={true}
+          itemWidth={itemWidth}
+          inactiveSlideScale={0}
+          inactiveSlideOpacity={0.4}
+          containerCustomStyle={styles.slider}
+          contentContainerCustomStyle={styles.sliderContentContainer}
+          onSnapToItem={(i) => this.setState({indexActive: i})}
+        />
+      </View>
     );
   }
 }

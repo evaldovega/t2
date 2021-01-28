@@ -8,13 +8,14 @@ import {
 } from 'constants';
 import Navbar from 'components/Navbar';
 import InputText from 'components/InputText';
-import InputMask from 'components/InputMask';
+import InputDateTimerPicker from 'components/DatetimePicker';
 import Select from 'components/Select';
 import Button from 'components/Button';
 import Validator, {Execute} from 'components/Validator';
 import Loader from 'components/Loader';
 import {View, Text, Alert} from 'react-native';
 import {connect} from 'react-redux';
+import {fetchConfig} from 'utils/Fetch';
 
 class MetaGuardar extends React.Component {
   state = {
@@ -28,15 +29,13 @@ class MetaGuardar extends React.Component {
   };
   Validations = {};
 
-  cargar = (id) => {
+  cargar = async (id) => {
     try {
       this.setState({loading: true, msn: 'Cargando...'});
-      fetch(SERVER_ADDRESS + 'api/metas/' + id, {
-        headers: {
-          Authorization: 'Token ' + this.props.token,
-          Accept: 'application/json',
-          'content-type': 'application/json',
-        },
+      const {url, headers} = await fetchConfig();
+
+      fetch(`${url}metas/${id}`, {
+        headers,
       })
         .then((r) => r.json())
         .then((data) => {
@@ -48,8 +47,10 @@ class MetaGuardar extends React.Component {
           });
         })
         .catch((error) => {
+          console.log(error);
           this.setState({loading: false});
           Alert.alert('No se cargo la meta', error.toString());
+
           this.props.navigation.pop();
         });
     } catch (error) {
@@ -115,7 +116,7 @@ class MetaGuardar extends React.Component {
 
   render() {
     const {tipo_meta, loading, msn} = this.state;
-    console.log(this.props.id);
+
     return (
       <ColorfullContainer style={{flex: 1, backgroundColor: COLORS.BLANCO}}>
         <Navbar {...this.props} transparent back title="Guardar Meta" />
@@ -151,7 +152,7 @@ class MetaGuardar extends React.Component {
 
           <Text
             style={{
-              fontFamily: 'Mont.Regular',
+              fontFamily: 'Mont-Regular',
               marginTop: MARGIN_VERTICAL * 2,
             }}>
             {tipo_meta == 'ventas'
@@ -175,7 +176,7 @@ class MetaGuardar extends React.Component {
 
           <Text
             style={{
-              fontFamily: 'Mont.Regular',
+              fontFamily: 'Mont-Regular',
               marginTop: MARGIN_VERTICAL * 2,
             }}>
             Especifica una fecha inicial y final para lograr tu meta
@@ -186,24 +187,23 @@ class MetaGuardar extends React.Component {
                 ref={(r) => (this.Validations['p4'] = r)}
                 required="OOPS"
                 value={this.state.fecha_inicio_meta}>
-                <InputMask
-                  input={{keyboardType: 'number-pad'}}
+                <InputDateTimerPicker
                   value={this.state.fecha_inicio_meta}
-                  onChangeText={(v) => this.setState({fecha_inicio_meta: v})}
+                  onChange={(v) => this.setState({fecha_inicio_meta: v})}
                   marginTop={1}
                   placeholder="YYYY-MM-DD"
-                  mask={'[0000]-[00]-[00]'}
+                  showTime={false}
                 />
               </Validator>
             </View>
             <View style={{flex: 1, marginLeft: 4}}>
-              <InputMask
+              <InputDateTimerPicker
                 input={{keyboardType: 'number-pad'}}
                 value={this.state.fecha_final_meta}
-                onChangeText={(v) => this.setState({fecha_final_meta: v})}
+                onChange={(v) => this.setState({fecha_final_meta: v})}
                 marginTop={1}
                 placeholder="YYYY-MM-DD"
-                mask={'[0000]-[00]-[00]'}
+                showTime={false}
               />
               <Validator
                 ref={(r) => (this.Validations['p5'] = r)}

@@ -80,7 +80,6 @@ class Validator extends React.PureComponent {
     } else {
       _constraints = constraints;
     }
-    console.log(_constraints);
 
     let _errores = [];
     if (valueb) {

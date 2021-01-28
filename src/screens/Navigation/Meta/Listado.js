@@ -25,7 +25,9 @@ import {connect} from 'react-redux';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ProgressChart} from 'react-native-chart-kit';
 import Loader from 'components/Loader';
+import {fetchConfig} from 'utils/Fetch';
 const {width, height} = Dimensions.get('screen');
+
 const chart_config = {
   backgroundColor: COLORS.VERDE,
   backgroundGradientFrom: '#FFF',
@@ -45,23 +47,23 @@ class MetaListado extends React.Component {
   };
 
   cargar = () => {
-    try {
-      this.setState({cargando: true, msn: 'Cargando metas...'});
-      fetch(SERVER_ADDRESS + 'api/metas/', {
-        headers: {
-          Authorization: 'Token ' + this.props.token,
-          Accept: 'application/json',
-          'content-type': 'application/json',
-        },
+    this.setState({cargando: true, msn: 'Cargando metas...'});
+    fetchConfig().then((config) => {
+      const {url, headers} = config;
+
+      fetch(`${url}metas/`, {
+        headers: headers,
       })
         .then((r) => r.json())
         .then((data) => {
           this.setState({cargando: false, docs: data});
+        })
+        .catch((error) => {
+          console.log(error);
+          this.setState({cargando: false});
+          Alert.alert('No se cargaron las metas', error.toString());
         });
-    } catch (error) {
-      this.setState({cargando: false});
-      Alert.alert('No se cargaron las metas', error.toString());
-    }
+    });
   };
 
   eliminar = (item) => {
@@ -167,7 +169,7 @@ class MetaListado extends React.Component {
     const {docs} = this.state;
     return (
       <ColorfullContainer style={{flex: 1, backgroundColor: COLORS.BLANCO}}>
-        <Navbar {...this.props} transparent menu title="Mis metas" />
+        <Navbar {...this.props} transparent title="Mis metas" />
         <Loader loading={this.state.cargando} message={this.state.msn} />
         <ScrollView style={{flex: 1}}>
           <View style={{marginHorizontal: MARGIN_HORIZONTAL}}>

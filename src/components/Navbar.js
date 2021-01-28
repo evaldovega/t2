@@ -34,7 +34,16 @@ class Navbar extends React.Component {
     });
   };
   onBack = () => {
-    this.props.navigation.pop();
+    if (this.props.preventBack) {
+      this.props
+        .preventBack()
+        .then(() => {
+          this.props.navigation.pop();
+        })
+        .catch((error) => {});
+    } else {
+      this.props.navigation.pop();
+    }
   };
 
   componentDidMount() {
@@ -64,12 +73,12 @@ class Navbar extends React.Component {
               {
                 translateY: value.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [-16, 0],
+                  outputRange: [-3, 0],
                 }),
               },
             ],
           }}>
-          <View style={[style.wrapper, extra_styles]}>
+          <View style={[style.wrapper, extra_styles, this.props.style]}>
             {this.props.menu ? (
               <TouchableOpacity
                 hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
@@ -95,20 +104,7 @@ class Navbar extends React.Component {
                 {this.props.title}
               </Text>
             </View>
-            <View style={style.btnRight}>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('Home')}>
-                {this.props.right ? (
-                  this.props.right
-                ) : (
-                  <Image
-                    source={require('utils/images/icon.png')}
-                    style={{width: 24, height: 24}}
-                    resizeMode="contain"
-                  />
-                )}
-              </TouchableOpacity>
-            </View>
+            <View style={style.btnRight}></View>
           </View>
         </Animated.View>
       </React.Fragment>
@@ -124,10 +120,11 @@ const style = StyleSheet.create({
     paddingHorizontal: MARGIN_HORIZONTAL,
     minHeight: 96,
     paddingTop: 42 + getStatusBarHeight(),
+    paddingBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    zIndex: 99,
+    zIndex: 2,
     overflow: 'hidden',
   },
   title: {

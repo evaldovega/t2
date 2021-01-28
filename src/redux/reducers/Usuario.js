@@ -20,6 +20,7 @@ import {
 import produce from 'immer';
 
 const initialState = {
+  estadoDeSesion: 0,
   nombre: '',
   num_documento_identidad: '',
   ready_validation: false,
@@ -61,6 +62,7 @@ export default Usuario = (state = initialState, action) => {
         draft.logeado = true;
         draft.token = action.token;
         draft.accediendo = false;
+        draft.estadoDeSesion = 2;
         break;
       case ACTION_USUARIO_ERROR_ACCEDIENDO:
         draft.error = action.error;
@@ -72,6 +74,7 @@ export default Usuario = (state = initialState, action) => {
         draft.nombre = '';
         draft.logeado = false;
         draft.foto_perfil = '';
+        draft.estadoDeSesion = 0;
         break;
       case ACTION_CAMBIAR_NOMBRE_USUARIO:
         draft.nombre = action.nombre;

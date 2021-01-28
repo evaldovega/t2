@@ -17,18 +17,18 @@ import {
   ACTION_ACTIVIDAD_INTENTO,
   ACTION_USUARIO_HABILITAR,
 } from '../Constantes';
-import SInfo from 'react-native-sensitive-info';
-import {Token} from '../Utils';
+import {getSharedPreference} from 'utils/SharedPreference';
 
 import {SERVER_ADDRESS} from '../../constants';
 
 export const capacitacionesCargar = () => {
   return async (dispatch, getState) => {
     dispatch({type: ACTION_CAPACITACIONES_CARGANDO});
-    let token = await Token();
+    let token = await getSharedPreference('auth-token');
+    console.log(token);
     fetch(SERVER_ADDRESS + 'api/capacitaciones/', {
       headers: {
-        Authorization: 'Token ' + getState().Usuario.token,
+        Authorization: 'Token ' + token,
       },
     })
       .then((r) => r.json())

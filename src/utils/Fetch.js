@@ -12,3 +12,9 @@ export const fetchConfig = async () => {
     },
   };
 };
+
+export const fetchErrors = (errors) => {
+  return Object.keys(errors)
+    .map((error) => errors[error].join(', '))
+    .join('\n');
+};
