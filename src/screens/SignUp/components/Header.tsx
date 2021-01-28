@@ -20,11 +20,11 @@ const styles = StyleSheet.create({
     container: {
         marginTop: getStatusBarHeight(true) + 20,
         paddingLeft: 40,
-        paddingTop: 30,
+        paddingTop: 0,
         flexDirection:'row',
         justifyContent:'space-between',
         alignItems:'center',
-        marginBottom:(MARGIN_VERTICAL*2)
+        marginBottom:0
     },
     txtWelcome: {
         fontSize: 18,

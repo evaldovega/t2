@@ -144,11 +144,12 @@ const SignIn = ({navigation, userChangeProps}) => {
               resizeMode="contain"
               source={require('utils/images/logo_black.png')}
             />
-            <View style={{marginBottom: '16%'}}>
+            <View style={{marginBottom: '10%'}}>
               <Text
                 style={{
-                  fontSize: 30,
+                  fontSize: 40,
                   color: COLORS.VERDE,
+                  fontWeight: 'bold',
                   fontFamily: 'Mont-Bold',
                 }}>
                 Hola
@@ -156,6 +157,7 @@ const SignIn = ({navigation, userChangeProps}) => {
               <Text
                 style={{
                   fontSize: 30,
+                  fontWeight: 'bold',
                   color: COLORS.NEGRO,
                   fontFamily: 'Mont-Bold',
                 }}>

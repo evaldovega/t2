@@ -109,7 +109,7 @@ class CapacitacionListado extends React.Component {
           borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
           borderWidth: 0.3,
         }}>
-        <Card.Cover source={{uri: l.imagen_portada}} />
+        <Card.Cover style={{height: 140}} source={{uri: l.imagen_portada}} />
         {parseFloat(l.progreso) > 0 && parseFloat(l.progreso) < 100 && (
           <View
             style={{
@@ -123,7 +123,7 @@ class CapacitacionListado extends React.Component {
             <Text style={{color: '#ffff'}}>En curso</Text>
           </View>
         )}
-        <View style={{padding: MARGIN_VERTICAL}}>
+        <View style={{}}>
           <Card.Content>
             <View style={{flex: 1, justifyContent: 'center'}}>
               <Text
