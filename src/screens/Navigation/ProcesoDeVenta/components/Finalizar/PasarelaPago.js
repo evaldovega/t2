@@ -3,6 +3,7 @@ import {Linking, View} from 'react-native';
 import Select from 'components/Select';
 import {fetchConfig} from 'utils/Fetch';
 import Entypo from 'react-native-vector-icons/Entypo';
+import {COLORS} from 'constants';
 
 const PasarelaPago = ({value, selected}) => {
   const [pasarelas, setPasarelas] = useState([]);
@@ -48,6 +49,7 @@ const PasarelaPago = ({value, selected}) => {
       {value > 0 && (
         <Entypo
           size={24}
+          color={COLORS.ACCENT}
           style={{margin: 4}}
           name="help-with-circle"
           onPress={help}

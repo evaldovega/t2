@@ -223,6 +223,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
                 navigation={navigation}
                 cliente={cliente}
                 plan={planId}
+                precio={plan.precio}
                 setCurrentTab={setCurrentTab}
                 formularioGeneralRef={formularioGeneralRef}
                 variacionesRef={variacionesRef}

@@ -1,11 +1,12 @@
 import Button from 'components/Button';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, Text, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import Validator, {Execute} from 'components/Validator';
 import Select from 'components/Select';
 import NumberFormat from 'react-number-format';
 import ZoomIn from 'components/ZoomIn';
+import ModalInputPin from './ModalInputPin';
 import {
   MARGIN_HORIZONTAL,
   TITULO_TAM,
@@ -29,11 +30,14 @@ const Finalizar = ({
   navigation,
   cliente,
   plan,
+  precio,
   setCurrentTab,
   formularioGeneralRef,
   variacionesRef,
 }) => {
   const Validaciones = {};
+  let dataToSend = {};
+
   const [data, setData] = useImmer({
     metodo_pago: '',
     numero_referencia: '',
@@ -42,6 +46,9 @@ const Finalizar = ({
     pasarela: '',
     total: 0,
   });
+
+  const [inputPin, setInputPin] = useState(false);
+
   const visible = navigation.isFocused();
 
   useEffect(() => {
@@ -49,9 +56,15 @@ const Finalizar = ({
       setCurrentTab('Finalizar');
     }
     if (variacionesRef && variacionesRef.current) {
-      console.log('Calcular total');
+      console.log('Calcular total ', variacionesRef.current.total());
       setData((draft) => {
-        draft.total = variacionesRef.current.total();
+        draft.total =
+          parseFloat(variacionesRef.current.total()) + parseFloat(precio);
+        return draft;
+      });
+    } else {
+      setData((draft) => {
+        draft.total = parseFloat(precio);
         return draft;
       });
     }
@@ -72,13 +85,53 @@ const Finalizar = ({
     archivo_contrato,
   } = data;
 
+  const sendData = async () => {
+    const {url, headers} = await fetchConfig();
+    fetch(`${url}ordenes/registrar/`, {
+      method: 'POST',
+      body: JSON.stringify(dataToSend),
+      headers,
+    })
+      .then((r) => {
+        const statusCode = r.status;
+        if (statusCode == 200 || statusCode == 201) {
+          return r.json();
+        }
+        console.log(JSON.stringify(dataToSend));
+        console.log(`${url}ordenes/registrar/`);
+        console.log(headers);
+        throw 'Orden no creada';
+      })
+      .then((r) => {
+        if (r.numero_orden) {
+          Alert.alert(
+            'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
+            'Datos de subsanación enviados correctamente. Se le notificará cuando sean aprobados.',
+          );
+        } else {
+          throw r.error;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const validatePin = () => {
+    if (metodo_pago == 'financiacion') {
+      setInputPin(true);
+    } else {
+      sendData();
+    }
+  };
+
   const vender = async () => {
     try {
       if (!variacionesRef.current) {
         navigation.navigate('Variaciones');
         return;
       }
-      const datos = {
+      dataToSend = {
         cliente,
         plan,
         frecuencia_pago: frecuencia,
@@ -87,7 +140,8 @@ const Finalizar = ({
         planes: [],
         formularios: [],
       };
-      datos.planes = await variacionesRef.current.valid();
+
+      dataToSend.planes = await variacionesRef.current.valid();
 
       await Execute(Validaciones).catch((errores) => {
         console.log(errores);
@@ -95,49 +149,22 @@ const Finalizar = ({
       });
 
       if (metodo_pago == 'financiacion') {
-        datos.pasarela_financiacion = pasarela;
-        datos.numero_referencia = numero_referencia;
-        datos.archivo = archivo_contrato;
-        datos.total_pagado = datos.total_pagado * datos.frecuencia_pago;
+        dataToSend.pasarela_financiacion = pasarela;
+        dataToSend.numero_referencia = numero_referencia;
+        dataToSend.archivo = archivo_contrato;
+        dataToSend.total_pagado =
+          dataToSend.total_pagado * dataToSend.frecuencia_pago;
       }
 
       const dataFormularioGeneral = await formularioGeneralRef.current.valid();
-      datos.formularios.push(dataFormularioGeneral);
-      console.log(JSON.stringify(datos));
-      const {url, headers} = await fetchConfig();
-      fetch(`${url}ordenes/registrar/`, {
-        method: 'POST',
-        body: JSON.stringify(datos),
-        headers,
-      })
-        .then((r) => {
-          const statusCode = r.status;
-          if (statusCode == 200 || statusCode == 201) {
-            return r.json();
-          }
-          console.log(JSON.stringify(datos));
-          console.log(`${url}ordenes/registrar/`);
-          console.log(headers);
-          throw 'Orden no creada';
-        })
-        .then((r) => {
-          if (r.numero_orden) {
-            Alert.alert(
-              'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
-              'Datos de subsanación enviados correctamente. Se le notificará cuando sean aprobados.',
-            );
-          } else {
-            throw r.error;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      dataToSend.formularios.push(dataFormularioGeneral);
+      validatePin();
     } catch (error) {
       console.log(error);
       Alert.alert('Algo anda mal', error.toString());
     }
   };
+
   return (
     <View
       style={{
@@ -146,6 +173,9 @@ const Finalizar = ({
         paddingHorizontal: MARGIN_HORIZONTAL,
       }}>
       <ScrollView style={{flex: 1}}>
+        {inputPin ? (
+          <ModalInputPin customer={cliente} cancel={setInputPin} />
+        ) : null}
         <ZoomIn>
           <NumberFormat
             value={data.total}

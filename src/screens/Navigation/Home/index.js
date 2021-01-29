@@ -70,7 +70,7 @@ const Home = ({User, userChangeProps}) => {
       activeColor: COLORS.PRIMARY_COLOR_DARK_1,
       inactiveColor: COLORS.GRAY,
     },
-    {name: 'Salir', icon: 'exit'},
+    {name: 'Salir', icon: 'close', activeColor: COLORS.ROJO},
   ];
 
   const navigation = useNavigation();

@@ -36,24 +36,24 @@ const Financiacion = ({
         </Text>
       )}
 
+      <PasarelaPago
+        value={pasarela}
+        selected={(p) => cambioDeDatos('pasarela', p)}
+      />
+
       <Validator
         ref={(r) => (Validaciones['numero_referencia'] = r)}
         value={numero_referencia}
         required="Ingrese el número de contrato con la entidad">
         <InputText
           marginTop={1}
-          label="Número de contrato"
-          placeholder="Número de contrato"
+          label="Número de referencia"
+          placeholder="Número de ref"
           marginTop={2}
           value={numero_referencia}
           onChangeText={(t) => cambioDeDatos('numero_referencia', t)}
         />
       </Validator>
-
-      <PasarelaPago
-        value={pasarela}
-        selected={(p) => cambioDeDatos('pasarela', p)}
-      />
     </>
   );
 };

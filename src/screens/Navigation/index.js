@@ -63,6 +63,7 @@ const tabs = {
 function Tabs() {
   return (
     <Tab.Navigator
+      tabBarOptions={{style: {paddingTop: 16}}}
       screenOptions={({route}) => ({
         tabBarIcon: (focused, color, size) => {
           switch (route.name) {
@@ -154,6 +155,7 @@ function Navigation() {
       //navigation.navigate(remoteMessage.data.type);
     });
   }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
