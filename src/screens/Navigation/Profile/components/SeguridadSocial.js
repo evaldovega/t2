@@ -13,8 +13,7 @@ import DocumentPicker from 'react-native-document-picker';
 import {COLORS, CURVA, MARGIN_VERTICAL, TEXTO_TAM, TITULO_TAM} from 'constants';
 import {connect} from 'react-redux';
 import {subir, cargar, borrar} from 'redux/actions/SeguridadSocial';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Icon from 'react-native-vector-icons/Feather';
+import EvilIcon from 'react-native-vector-icons/EvilIcons';
 
 import Button from 'components/Button';
 import InputText from 'components/InputText';
@@ -257,6 +256,15 @@ class SeguridadSocial extends React.Component {
 
         <Button
           marginTop={2}
+          right={
+            <EvilIcon
+              name="credit-card"
+              size={32}
+              color={COLORS.PRIMARY_COLOR}
+            />
+          }
+          style={{backgroundColor: '#ffff'}}
+          style_text={{color: COLORS.PRIMARY_COLOR}}
           onPress={() => this.mostrar(true)}
           title="Subir seguridad social"
         />

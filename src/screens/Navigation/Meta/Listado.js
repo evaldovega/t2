@@ -52,7 +52,7 @@ class MetaListado extends React.Component {
       const {url, headers} = config;
 
       fetch(`${url}metas/`, {
-        headers: headers,
+        headers,
       })
         .then((r) => r.json())
         .then((data) => {

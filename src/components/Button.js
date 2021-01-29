@@ -32,8 +32,8 @@ export default function Button(props) {
       disabled={props.disabled}
       onPress={() => requestAnimationFrame(() => props.onPress())}
       style={[style.wrapper, props.style, extra_style]}>
-      <View>{props.right}</View>
-      <Text style={[style.text, extra_style_text]}>
+      {props.right}
+      <Text style={[style.text, extra_style_text, props.style_text]}>
         {props.title} {props.disabled ? '...' : ''}
       </Text>
     </TouchableOpacity>

@@ -51,7 +51,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
   const [orden, setOrden] = useImmer({});
   const [formularioGeneral, setFormularioGeneral] = useState({});
   const [loader, setLoader] = useState({cargando: false, msn: ''});
-  const {id: planId, orden_id} = route.params;
+  const {id: planId, orden_id, cliente} = route.params;
   const formularioGeneralRef = useRef();
   const variacionesRef = useRef();
 
@@ -72,8 +72,28 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
           formularios,
           planes,
         } = data;
+
         setPlan({titulo, imagen, precio, comision_fijo, comision_variable});
-        setFormularioGeneral(formularios[0]);
+        if (formularios.length) {
+          setFormularioGeneral(formularios[0]);
+        } else {
+          setTimeout(() => {
+            Alert.alert(
+              'Lo sentimos',
+              'No se han asignado campos para diligencias',
+              [
+                {
+                  title: 'Ok',
+                  onPress: () => {
+                    navigation.pop();
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+          }, 600);
+        }
+
         setPlanes(planes);
         setLoader({cargando: false, msn: ''});
       })
@@ -201,6 +221,8 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
             children={({navigation}) => (
               <Finalizar
                 navigation={navigation}
+                cliente={cliente}
+                plan={planId}
                 setCurrentTab={setCurrentTab}
                 formularioGeneralRef={formularioGeneralRef}
                 variacionesRef={variacionesRef}

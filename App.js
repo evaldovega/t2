@@ -7,14 +7,6 @@
  */
 
 import React, {useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
 import {connect} from 'react-redux';
 import ValidateSession from 'screens/ValidateSession';
 import Login from 'screens/Login';

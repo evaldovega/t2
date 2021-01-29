@@ -1,13 +1,13 @@
 import React from 'react';
-import {Title, Subheading, Card} from 'react-native-paper';
-import {Image, View, StyleSheet, Alert, Linking, Text} from 'react-native';
+import {Card} from 'react-native-paper';
+import {Alert, Linking, Text} from 'react-native';
 import {connect} from 'react-redux';
 import {subirFotoIde} from 'redux/actions/Usuario';
 import {COLORS, MARGIN_VERTICAL, TITULO_TAM} from 'constants';
 import ImagePicker from 'react-native-image-crop-picker';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Button from 'components/Button';
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 class ProfileIdentificacion extends React.Component {
   capturar = (lado) => {
     ImagePicker.openCamera({}).then((image) => {
@@ -52,32 +52,42 @@ class ProfileIdentificacion extends React.Component {
               <Card.Cover source={{uri: this.props.ide_foto_frente}} />
             ) : null}
           </TouchableOpacity>
-
-          {/* <Card.Title title="Frente"></Card.Title> */}
-          {/* <Card.Content></Card.Content>
-          <Card.Actions>
-            
-          </Card.Actions> */}
         </Card>
+
         <Button
           marginTop={1}
-          icon="camera"
+          right={<Icon name="camera" size={32} color={COLORS.PRIMARY_COLOR} />}
           loading={this.props.subiendo_ide}
-          title="Tomar foto de frente"
+          title="Foto frontal"
+          style={{backgroundColor: '#ffff', alignItems: 'center'}}
+          style_text={{color: COLORS.PRIMARY_COLOR}}
           onPress={() => this.capturar('frente')}
         />
 
-        <Card style={{marginTop: 8, borderRadius: 16, overflow: 'hidden'}}>
+        <Card
+          style={{
+            marginTop: 8,
+            borderRadius: 16,
+            overflow: 'hidden',
+          }}>
           {this.props.ide_foto_respaldo ? (
-            <Card.Cover source={{uri: this.props.ide_foto_respaldo}} />
+            <TouchableOpacity
+              onProgress={() => {
+                Linking.openURL(this.props.ide_foto_respaldo);
+              }}>
+              <Card.Cover source={{uri: this.props.ide_foto_respaldo}} />
+            </TouchableOpacity>
           ) : null}
         </Card>
+
         <Button
           marginTop={1}
-          icon="camera"
+          right={<Icon name="camera" size={32} color={COLORS.PRIMARY_COLOR} />}
           loading={this.props.subiendo_ide}
+          title="Foto respaldo"
+          style={{backgroundColor: '#ffff'}}
+          style_text={{color: COLORS.PRIMARY_COLOR}}
           onPress={() => this.capturar('respaldo')}
-          title="Tomar foto de respaldo"
         />
       </>
     );

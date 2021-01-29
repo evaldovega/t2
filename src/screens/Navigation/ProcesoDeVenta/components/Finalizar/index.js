@@ -27,6 +27,8 @@ const FRECUENCIAS = [
 
 const Finalizar = ({
   navigation,
+  cliente,
+  plan,
   setCurrentTab,
   formularioGeneralRef,
   variacionesRef,
@@ -77,6 +79,9 @@ const Finalizar = ({
         return;
       }
       const datos = {
+        cliente,
+        plan,
+        frecuencia_pago: frecuencia,
         metodo_pago,
         total_pagado: data.total,
         planes: [],
@@ -91,7 +96,6 @@ const Finalizar = ({
 
       if (metodo_pago == 'financiacion') {
         datos.pasarela_financiacion = pasarela;
-        datos.frecuencia_pago = frecuencia;
         datos.numero_referencia = numero_referencia;
         datos.archivo = archivo_contrato;
         datos.total_pagado = datos.total_pagado * datos.frecuencia_pago;
@@ -99,7 +103,7 @@ const Finalizar = ({
 
       const dataFormularioGeneral = await formularioGeneralRef.current.valid();
       datos.formularios.push(dataFormularioGeneral);
-
+      console.log(JSON.stringify(datos));
       const {url, headers} = await fetchConfig();
       fetch(`${url}ordenes/registrar/`, {
         method: 'POST',

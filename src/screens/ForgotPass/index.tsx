@@ -88,9 +88,13 @@ class ForgotPass extends React.Component {
             if(statusCode == 200 || statusCode == 201){
                 console.log(response)
                 if(response.status == "OK"){
+                    setTimeout(()=>{
+                        Alert.alert('Se ha enviado un código a tu correo electrónico','')
+                    },600)
                     this.setState({codeSent:true, msg: "Se ha enviado un código a tu correo electrónico"})
                 }else if(response.non_field_errors){
                     try{
+                        
                         this.setState({codeSent:false, msg: response.non_field_errors[0]})
                     }catch(err){
                         console.log(err)
@@ -266,6 +270,8 @@ class ForgotPass extends React.Component {
                             <InputText marginTop={3}  placeholder={'Ingresa el código'} value={this.state.codeInput} onChangeText={code => this.setState({codeInput:code})} onBlur={() =>validar(this,this.state.codeInput,'codeInput', validations.codeInput,false)} />
                             <View>{renderErrores(this, 'codeInput')}</View>
                             <Button marginTop={1} title='Validar' onPress={this.onCodeInput}/>
+
+                            <Button marginTop={3} title='Reenviar código' onPress={this.onPressRecovery}/>
                         </View>
 
                         :

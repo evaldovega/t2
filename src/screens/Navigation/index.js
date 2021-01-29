@@ -1,9 +1,12 @@
-import React from 'react';
-import {Text} from 'react-native';
+import React, {useEffect} from 'react';
+
+import AsyncStorage from '@react-native-community/async-storage';
+import {fetchConfig} from 'utils/Fetch';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import messaging from '@react-native-firebase/messaging';
 
 import Home from 'screens/Navigation/Home';
 import Profile from 'screens/Navigation/Profile';
@@ -102,6 +105,55 @@ function Tabs() {
 }
 
 function Navigation() {
+  const registerAppWithFCM = async () => {
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
+    const tokenCurrent = await AsyncStorage.getItem('token-push');
+    if (tokenCurrent != token) {
+      console.log('Send push token');
+      const {url, headers} = await fetchConfig();
+      fetch(`${url}usuarios/editar/`, {
+        method: 'PUT',
+        body: JSON.stringify({fcm_token: token}),
+        headers,
+      }).then((r) => {
+        if (r.status == 200 || r.status == 201) {
+          console.log('Token push send ok');
+          AsyncStorage.setItem('token-push', token);
+        }
+      });
+    }
+  };
+
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    if (enabled) {
+      registerAppWithFCM();
+    }
+  };
+
+  useEffect(() => {
+    requestUserPermission();
+
+    messaging().onMessage(async (remoteMessage) => {
+      //Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log('Message handled in the background!', remoteMessage);
+    });
+
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+      //navigation.navigate(remoteMessage.data.type);
+    });
+  }, []);
   return (
     <NavigationContainer>
       <Stack.Navigator>

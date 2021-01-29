@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, ActivityIndicator} from 'react-native';
+import {Text, View, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {getSharedPreference} from 'utils/SharedPreference';
 import {changeProps} from 'redux/actions/Usuario';
 import {connect} from 'react-redux';
@@ -8,9 +8,12 @@ import {COLORS} from 'constants';
 import Presentation from 'screens/ValidateSession/components/Presentation';
 import Button from 'components/Button';
 
+const TEXT = ['Siguiente', 'Siguiente', 'Vende ya'];
+
 const ValidateSession = ({navigation, userChangeProps}) => {
   const [error, setError] = useState(null);
   const [allowStart, setAllowStart] = useState(false);
+  const [indexActive, setIndexActive] = useState(0);
 
   const Validate = async () => {
     setAllowStart(false);
@@ -94,6 +97,14 @@ const ValidateSession = ({navigation, userChangeProps}) => {
   const start = () => {
     userChangeProps({estadoDeSesion: 2});
   };
+  const next = () => {
+    if (indexActive + 1 < 3) {
+      setIndexActive(indexActive + 1);
+    } else {
+      start();
+    }
+  };
+
   useEffect(() => {
     Validate();
   }, []);
@@ -105,7 +116,12 @@ const ValidateSession = ({navigation, userChangeProps}) => {
         justifyContent: 'center',
         alignItems: 'center',
       }}>
-      <Presentation navigation={navigation} />
+      <Presentation
+        indexActive={indexActive}
+        setIndexActive={setIndexActive}
+        navigation={navigation}
+      />
+
       <View
         style={{
           flexDirection: 'column',
@@ -113,12 +129,21 @@ const ValidateSession = ({navigation, userChangeProps}) => {
           bottom: 0,
           left: 0,
           width: '100%',
-          justifyContent: 'center',
+          justifyContent: 'flex-end',
           alignItems: 'center',
           padding: 16,
+          marginBottom: 16,
         }}>
+        <Button
+          title={TEXT[indexActive]}
+          onPress={next}
+          style={{marginBottom: 16}}
+        />
+
         {allowStart ? (
-          <Button onPress={start} title="Vende ahora" />
+          <TouchableOpacity onPress={start}>
+            <Text>Saltar</Text>
+          </TouchableOpacity>
         ) : (
           Loading()
         )}

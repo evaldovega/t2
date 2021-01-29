@@ -166,7 +166,7 @@ const SignIn = ({navigation, userChangeProps}) => {
             </View>
 
             <InputText
-              placeholder="Nombre de usuario"
+              placeholder="Correo electrónico"
               onChangeText={(t) => setUsername(t)}
               value={username}
             />

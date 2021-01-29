@@ -76,7 +76,7 @@ class SignUp extends React.Component {
             password2: "",
             password2Errors: false,
 
-            date: "2020-09-15",
+            date: "",
             show: false,
 
             numWhatsapp:"",
@@ -285,6 +285,7 @@ class SignUp extends React.Component {
         console.log("Cerrar ")
         this.setState({mostrarTerminos:false})
     }
+
     terminosYcondiciones=()=>{
         this.setState({mostrarTerminos:true})
         if(this.state.terminosHtml==''){
@@ -450,14 +451,14 @@ class SignUp extends React.Component {
                 <InputText marginTop={1} password placeholder={'Confirma tu contraseña'} value={this.state.password2} onChangeText={v=>this.onChangeValue('password2',v)} onBlur={()=>validar(this,{password2:this.state.password2,password1:this.state.password1},'password2',validations.password2,false)}/>
                 <View>{renderErrores(this, 'password2')}</View>
 
-                <Button title='Siguiente' marginTop={3} onPress={()=>this.nextStep(1)}/>
+                
             </View>
         )
     }
 
     stepTwo=()=>{
         return (<View>
-        <InputText marginTop={1} placeholder={'Número de WhatsApp'} value={this.state.numWhatsapp} onChangeText={v=>this.onChangeValue('numWhatsapp',v)} onBlur={()=>validar(this,this.state.numWhatsapp,'numWhatsapp',validations.numWhatsapp,false)} />
+        <InputText marginTop={1} input={{keyboardType:'phone-pad'}} placeholder={'Número de WhatsApp'} value={this.state.numWhatsapp} onChangeText={v=>this.onChangeValue('numWhatsapp',v)} onBlur={()=>validar(this,this.state.numWhatsapp,'numWhatsapp',validations.numWhatsapp,false)} />
         <View>{renderErrores(this, 'numWhatsapp')}</View>
         
 
@@ -469,6 +470,7 @@ class SignUp extends React.Component {
 
         
         <InputText marginTop={1} placeholder={'Dirección'} value={this.state.direccion} onChangeText={v=>this.onChangeValue('direccion',v)} onBlur={()=>validar(this,this.state.direccion,'direccion',validations.direccion,false)} />
+        
         <View>{renderErrores(this,'direccion')}</View>
         
         <InputDateTimerPicker
@@ -482,13 +484,10 @@ class SignUp extends React.Component {
         <Select marginTop={1} value={this.state.tipo_doc} options={this.state.optsTiposDocs}  placeholder={'Seleccione un tipo doc.'} onSelect={(item)=>this.setState({tipo_doc:item.key})}/>
 
         
-        <InputText marginTop={1}  placeholder={'Número de documento'} value={this.state.numDocumento} onChangeText={no=>this.setState({numDocumento:no})} />
+        <InputText marginTop={1} input={{keyboardType:'decimal-pad'}} placeholder={'Número de documento'} value={this.state.numDocumento} onChangeText={no=>this.setState({numDocumento:no})} />
 
         
-        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-            <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atrás'/>
-            <Button title='Siguiente' onPress={()=>this.nextStep(1)} marginTop={3}/>
-        </View>
+       
     </View>)
     }
 
@@ -540,10 +539,7 @@ class SignUp extends React.Component {
                     
                    
                 </View>
-                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                    <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atrás'/>
-                    <Button marginTop={3} disabled={this.state.isEnabled && this.state.aceptacionContrato ? false : true} onPress={this.onPressRegister} title='Empezar a vender'/>
-                </View>
+                
             </React.Fragment>
         )
     }
@@ -572,12 +568,24 @@ class SignUp extends React.Component {
                 <ModalWebView visible={this.state.contratoVisualizacion} html={this.state.contratoContent} cancelButtonText="Volver" onClose={this.cerrarContrato}></ModalWebView>
                 <ModalWebView visible={this.state.mostrarTerminos} html={this.state.terminosHtml} cancelButtonText="Volver" onClose={this.noMostrarTerminos}></ModalWebView>
 
-                <ModalPrompt visible={this.state.contratoValidationVisible} dismissModal={() => this.setState({contratoValidationVisible: false})} mt={16} valid={this.state.contratoValidated} actionDisabled={this.state.contratoValidated} error={this.state.inputCodeRegistrationError} textMessage={this.state.textResponseCodeValidation} value={this.state.inputCodeRegistration} onChangeText={(i)=>this.setState({inputCodeRegistration: i})} onCodeValidation={this.validateCodeRegistration}></ModalPrompt>
+                <ModalPrompt 
+                visible={this.state.contratoValidationVisible} 
+                dismissModal={() => this.setState({contratoValidationVisible: false})} 
+                mt={16} 
+                valid={this.state.contratoValidated} 
+                actionDisabled={this.state.contratoValidated}
+                error={this.state.inputCodeRegistrationError} 
+                textMessage={this.state.textResponseCodeValidation} 
+                value={this.state.inputCodeRegistration} 
+                onChangeText={(i)=>this.setState({inputCodeRegistration: i})} 
+                onCodeValidation={this.validateCodeRegistration} reSend={this.onSwitchAcceptContratoChange}>
+
+                </ModalPrompt>
                 
-                <ScrollView showsHorizontalScrollIndicator={false}>
+                
                     <Header navigation={this.props.navigation}/>
                     <Loader loading={this.state.loading}></Loader>
-                    <View style={{paddingHorizontal:MARGIN_HORIZONTAL,marginBottom:(MARGIN_VERTICAL*4)}}>
+                    <View style={{flex:1,paddingHorizontal:MARGIN_HORIZONTAL,marginBottom:(MARGIN_VERTICAL*4)}}>
                         
                         
                         <View style={{overflow:'visible',width:'100%',height:30,backgroundColor:COLORS.GRIS,borderRadius:CURVA,marginVertical:MARGIN_VERTICAL*3,justifyContent:'space-between',alignItems:'center',flexDirection:'row'}}>
@@ -592,9 +600,26 @@ class SignUp extends React.Component {
                                 <Text style={{fontFamily:'Mont-Bold'}}>3</Text>
                             </View>
                         </View>
-                    {this.steps(step)}
+                        <View style={{flex:1}}>
+                        <ScrollView  showsHorizontalScrollIndicator={false}>
+                            {this.steps(step)}
+                        </ScrollView>
+                        <View>
+                            {step==0 ? (<Button title='Siguiente' marginTop={3} onPress={()=>this.nextStep(1)}/>) : null}
+                            {step==1 ? ( <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atrás'/>
+            <Button title='Siguiente' onPress={()=>this.nextStep(1)} marginTop={3}/>
+        </View>) : null}
+                            {step==2 ? (<View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                    <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atrás'/>
+                    <Button marginTop={3} disabled={this.state.isEnabled && this.state.aceptacionContrato ? false : true} onPress={this.onPressRegister} title='Empezar a vender'/>
+                </View>) : null}
+                        </View>
+                        </View>
+                        
+
                     </View>
-                </ScrollView>
+                
             </ColorfullContianer>
         )
     }

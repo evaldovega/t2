@@ -117,6 +117,13 @@ const ModalPrompt = memo((props: Props) => {
             style={{borderRadius: 16, marginTop: 24}}>
             Validar
           </Button>
+
+          <Button
+            disabled={props.actionDisabled}
+            onPress={() => props.reSend()}
+            style={{borderRadius: 16, marginTop: 24}}>
+            Reenviar código
+          </Button>
         </View>
       </View>
     </Modal>

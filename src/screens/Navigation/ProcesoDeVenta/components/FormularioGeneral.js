@@ -111,7 +111,7 @@ const FormularioGeneral = React.forwardRef(
               id,
               campos: preguntas.map((p) => ({
                 id: p.id,
-                respuesta: p.respuesta,
+                respuesta: respuestas[p.id],
               })),
             };
           })

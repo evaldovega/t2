@@ -80,7 +80,9 @@ class PlanDetalle extends React.PureComponent {
               html: `<html>
                                 <head>
                                     <meta name="viewport" content="width=device-width,user-scale=no">
+                                    
                                     <style>
+                                    @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');body:{ font-family:'Roboto' !important; color: red !important; }
                                         body {
                                             padding:12px 32px 32px;
                                             margin:0 auto;

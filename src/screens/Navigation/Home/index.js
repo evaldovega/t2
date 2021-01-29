@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {changeProps} from 'redux/actions/Usuario';
 import {
@@ -22,8 +22,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ColorfullContainer from 'components/ColorfullContainer';
 import {deleteSharedPreference} from 'utils/SharedPreference';
 import Balance from './components/Balance';
+import ModalCapacitarse from '../Capacitacion/ModalCapacitarse';
+import Usuario from 'redux/reducers/Usuario';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 
-const Home = ({navigation, User, userChangeProps}) => {
+const Home = ({User, userChangeProps}) => {
   const modules = [
     {
       name: 'Capacitaciones',
@@ -70,6 +73,10 @@ const Home = ({navigation, User, userChangeProps}) => {
     {name: 'Salir', icon: 'exit'},
   ];
 
+  const navigation = useNavigation();
+
+  const visible = useIsFocused();
+
   const signOut = async () => {
     await deleteSharedPreference('auth-token');
     await deleteSharedPreference('userId');
@@ -111,27 +118,44 @@ const Home = ({navigation, User, userChangeProps}) => {
           </Text>
 
           {User.habilitado ? (
-            <Text
+            <View
               style={{
                 alignSelf: 'flex-start',
                 backgroundColor: COLORS.VERDE,
-                padding: 4,
-                color: COLORS.BLANCO,
-                borderRadius: CURVA,
+                padding: 8,
+                borderRadius: 24,
               }}>
-              Habilitado
-            </Text>
+              <Text
+                style={{
+                  color: COLORS.BLANCO,
+                }}>
+                Habilitado
+              </Text>
+            </View>
           ) : (
-            <Text
-              style={{
-                alignSelf: 'flex-start',
-                backgroundColor: COLORS.ROJO,
-                padding: 4,
-                color: COLORS.BLANCO,
-                borderRadius: CURVA,
-              }}>
-              No habilitado
-            </Text>
+            <>
+              <View
+                style={{
+                  alignSelf: 'flex-start',
+                  backgroundColor: COLORS.ROJO,
+                  padding: 8,
+                  color: COLORS.BLANCO,
+                  borderRadius: 24,
+                }}>
+                <Text
+                  style={{
+                    color: COLORS.BLANCO,
+                  }}>
+                  No habilitado
+                </Text>
+              </View>
+              <ModalCapacitarse
+                visible={visible}
+                close={signOut}
+                navigation={navigation}
+                nombre={User.nombre}
+              />
+            </>
           )}
           <Balance id={Usuario.id} token={Usuario.token} />
         </View>

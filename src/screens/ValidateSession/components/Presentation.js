@@ -55,7 +55,6 @@ class Presentation extends React.Component {
     super(props);
   }
   state = {
-    indexActive: 0,
     progress: new Animated.Value(0),
   };
 
@@ -69,6 +68,13 @@ class Presentation extends React.Component {
         useNativeDriver: true,
       }),
     ).start();
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.indexActive != this.props.indexActive) {
+      console.log('Mover');
+      this.refs['carousel'].snapToItem(this.props.indexActive, true);
+    }
   }
 
   renderItem = ({item}) => {
@@ -98,6 +104,8 @@ class Presentation extends React.Component {
   };
 
   render() {
+    const {indexActive, setIndexActive} = this.props;
+
     return (
       <View style={{flex: 1, marginHorizontal: 16}}>
         <StatusBar
@@ -106,7 +114,7 @@ class Presentation extends React.Component {
           barStyle={'dark-content'}
         />
 
-        <View style={styles.header}>
+        <View style={[styles.header, {paddingHorizontal: 16}]}>
           <Image
             style={styles.logo}
             resizeMode={'contain'}
@@ -123,7 +131,7 @@ class Presentation extends React.Component {
 
         <Pagination
           dotsLength={data.length}
-          activeDotIndex={this.state.indexActive}
+          activeDotIndex={indexActive}
           dotStyle={{
             width: 10,
             height: 10,
@@ -137,15 +145,16 @@ class Presentation extends React.Component {
 
         <Carousel
           data={data}
+          ref={'carousel'}
           renderItem={this.renderItem}
           sliderWidth={sliderWidth}
-          autoplay={true}
+          autoplay={false}
           itemWidth={itemWidth}
           inactiveSlideScale={0}
           inactiveSlideOpacity={0.4}
           containerCustomStyle={styles.slider}
           contentContainerCustomStyle={styles.sliderContentContainer}
-          onSnapToItem={(i) => this.setState({indexActive: i})}
+          onSnapToItem={(i) => setIndexActive(i)}
         />
       </View>
     );
