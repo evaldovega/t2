@@ -18,23 +18,27 @@ import {
 } from 'constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ColorfullContainer from 'components/ColorfullContainer';
-import {SERVER_ADDRESS} from 'constants';
+import {connect} from 'react-redux';
 import {getSharedPreference} from 'utils/SharedPreference';
 import {fetchConfig} from 'utils/Fetch';
-const Negocios = ({navigation}) => {
+const Negocios = ({navigation, route, user}) => {
   const [loading, setLoading] = useState(false);
   const [orders, setorders] = useState([]);
 
+  const {params = {}} = route;
+  const {forceReload = false} = params;
+
   const load = async () => {
     setLoading(true);
-    let userId = await getSharedPreference('userId');
+
     fetchConfig().then((config) => {
       const {url, headers} = config;
-
-      fetch(`${url}ordenes/?v=${userId}`, {headers})
+      console.log(`${url}ordenes/?v=${user.userId}`);
+      fetch(`${url}ordenes/?v=${user.userId}`, {headers})
         .then((r) => r.json())
         .then((data) => {
           setLoading(false);
+
           setorders(data);
         })
         .catch((error) => {
@@ -54,7 +58,7 @@ const Negocios = ({navigation}) => {
 
   const Item = (item) => (
     <TouchableOpacity
-      onPress={() => navigation.push('OrdenDetalle', {id: item.id})}>
+      onPress={() => navigation.push('NegocioDetalle', {id: item.id})}>
       <View
         style={{
           marginTop: MARGIN_VERTICAL,
@@ -66,9 +70,24 @@ const Negocios = ({navigation}) => {
         <Text style={{marginBottom: 16, fontWeight: 'bold'}}>
           {item.plan_str}
         </Text>
-        <Text>
-          Orden: {item.numero_orden} {item.estado_orden_str}
-        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <Text>Orden: {item.numero_orden}</Text>
+          <Text
+            style={{
+              color: '#ffff',
+              backgroundColor: COLORS.ACCENT,
+              padding: 8,
+              borderRadius: 8,
+            }}>
+            {item.estado_orden_str}
+          </Text>
+        </View>
+
         <Text>Cliente {item.cliente_str}</Text>
       </View>
     </TouchableOpacity>
@@ -77,6 +96,12 @@ const Negocios = ({navigation}) => {
   useEffect(() => {
     load();
   }, []);
+
+  useEffect(() => {
+    if (forceReload) {
+      load();
+    }
+  }, [forceReload]);
 
   return (
     <ColorfullContainer style={{flex: 1, background: '#fff'}}>
@@ -115,4 +140,9 @@ const Negocios = ({navigation}) => {
     </ColorfullContainer>
   );
 };
-export default Negocios;
+const mapToState = (state) => {
+  return {
+    user: state.Usuario,
+  };
+};
+export default connect(mapToState)(Negocios);

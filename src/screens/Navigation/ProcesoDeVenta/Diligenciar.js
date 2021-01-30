@@ -41,6 +41,7 @@ import Finalizar from './components/Finalizar';
 
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {useImmer} from 'use-immer';
+import ColorfullContainer from 'components/ColorfullContainer';
 
 const Tab = createBottomTabNavigator();
 
@@ -54,6 +55,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
   const {id: planId, orden_id, cliente} = route.params;
   const formularioGeneralRef = useRef();
   const variacionesRef = useRef();
+  navigation.setOptions({tabBarVisible: false});
 
   const cargarPlan = async () => {
     setLoader({cargando: true, msn: 'Cargando plan...'});
@@ -93,7 +95,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
             );
           }, 600);
         }
-
+        console.log('Planes ', planes);
         setPlanes(planes);
         setLoader({cargando: false, msn: ''});
       })
@@ -138,9 +140,6 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
   };
 
   const preventBack = () => {
-    //formularioGeneralRef.current.navigationTab().pop();
-    // console.log(formularioGeneralRef.current.navigationTab());
-
     return new Promise((resolve, reject) => {
       switch (currentTab) {
         case 'Datos generales':
@@ -150,7 +149,11 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
           navigation.navigate('Datos generales');
           break;
         case 'Finalizar':
-          navigation.navigate('Variaciones');
+          if (planes.length == 0) {
+            navigation.navigate('Datos generales');
+          } else {
+            navigation.navigate('Variaciones');
+          }
           break;
       }
       reject('');
@@ -187,18 +190,22 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
           preventBack={preventBack}
           title={plan.titulo}
           navigation={navigation}
-          transparent
         />
 
-        <Tab.Navigator shifting={true} barStyle={{paddingTop: 16}}>
+        <Tab.Navigator>
           <Tab.Screen
             name="Datos generales"
+            options={(navigation) => ({
+              tabBarVisible: false,
+              backgroundColor: 'transparent',
+            })}
             children={({navigation}) => (
               <FormularioGeneral
                 setCurrentTab={setCurrentTab}
                 navigation={navigation}
                 ref={formularioGeneralRef}
                 formulario={formularioGeneral}
+                planes={planes.length}
                 datosPrecargados={formularioGeneralPrecargado}
               />
             )}
@@ -206,6 +213,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
           <Tab.Screen
             name="Variaciones"
             setCurrentTab={setCurrentTab}
+            options={(navigation) => ({tabBarVisible: false})}
             children={({navigation}) => (
               <Variaciones
                 ref={variacionesRef}
@@ -218,12 +226,14 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
           />
           <Tab.Screen
             name="Finalizar"
+            options={(navigation) => ({tabBarVisible: false})}
             children={({navigation}) => (
               <Finalizar
                 navigation={navigation}
                 cliente={cliente}
                 plan={planId}
                 precio={plan.precio}
+                planes={planes.length}
                 setCurrentTab={setCurrentTab}
                 formularioGeneralRef={formularioGeneralRef}
                 variacionesRef={variacionesRef}

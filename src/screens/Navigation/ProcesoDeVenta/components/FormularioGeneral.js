@@ -14,9 +14,10 @@ import {useImmer} from 'use-immer';
 import Validator, {Execute} from 'components/Validator';
 import Select from 'components/Select';
 import ColorfullContainer from 'components/ColorfullContainer';
+import Button from 'components/Button';
 
 const FormularioGeneral = React.forwardRef(
-  ({navigation, setCurrentTab, formulario, datosPrecargados}, ref) => {
+  ({navigation, setCurrentTab, formulario, datosPrecargados, planes}, ref) => {
     const {id, titulo, preguntas} = formulario;
     const [respuestas, setRespuestas] = useImmer({});
     const Validaciones = {};
@@ -103,6 +104,16 @@ const FormularioGeneral = React.forwardRef(
       );
     };
 
+    const next = () => {
+      Execute(Validaciones).then(() => {
+        if (planes > 0) {
+          navigation.navigate('Variaciones');
+        } else {
+          navigation.navigate('Finalizar');
+        }
+      });
+    };
+
     useImperativeHandle(ref, () => ({
       valid: () => {
         return Execute(Validaciones)
@@ -159,7 +170,6 @@ const FormularioGeneral = React.forwardRef(
               borderRadius: CURVA,
               padding: MARGIN_HORIZONTAL,
               paddingHorizontal: MARGIN_HORIZONTAL * 2,
-              backgroundColor: 'rgba(255,255,255,.7)',
             }}>
             <Text
               style={{fontFamily: 'Mont-Regular', fontSize: TITULO_TAM * 0.7}}>
@@ -168,6 +178,7 @@ const FormularioGeneral = React.forwardRef(
             {preguntas && preguntas.map((pregunta) => Pregunta(pregunta))}
           </View>
         </ScrollView>
+        <Button title="Continuar" onPress={next} />
       </ColorfullContainer>
     );
   },

@@ -37,6 +37,8 @@
     "lottie-react-native": "^3.5.0",
     "moment": "^2.29.1",
     "npm": "^6.14.11",
+    "pouchdb-adapter-asyncstorage": "^6.4.1",
+    "pouchdb-react-native": "^6.4.1",
     "react": "16.11.0",
     "react-moment": "^1.0.0",
     "react-native": "0.62.2",

@@ -114,7 +114,7 @@ const Home = ({User, userChangeProps}) => {
       <ScrollView>
         <View style={{paddingHorizontal: MARGIN_HORIZONTAL}}>
           <Text style={{fontFamily: 'Mont-Regular'}}>
-            Bienvenido {User.nombre}
+            Bienvenido a Servi, {User.nombre}
           </Text>
 
           {User.habilitado ? (

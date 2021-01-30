@@ -3,6 +3,7 @@ import {MARGIN_HORIZONTAL} from 'constants';
 import React, {useEffect, useRef, useImperativeHandle} from 'react';
 import {ScrollView, View} from 'react-native';
 import Producto from './Producto';
+import Button from 'components/Button';
 
 const Variaciones = React.forwardRef(
   ({navigation, setCurrentTab, productos, datosPrecargados}, ref) => {
@@ -37,6 +38,16 @@ const Variaciones = React.forwardRef(
       return null;
     };
 
+    const next = () => {
+      valid()
+        .then(() => {
+          navigation.navigate('Finalizar');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
     useImperativeHandle(ref, () => ({
       valid: valid,
       total: () => {
@@ -55,8 +66,7 @@ const Variaciones = React.forwardRef(
     }, [visible]);
 
     return (
-      <ColorfullContainer
-        style={{flex: 1, paddingHorizontal: MARGIN_HORIZONTAL}}>
+      <ColorfullContainer style={{flex: 1}}>
         <ScrollView>
           {productos.map((producto, index) => {
             const planDatosPrecargados = obtenerDatosPrecargados(
@@ -73,6 +83,7 @@ const Variaciones = React.forwardRef(
             );
           })}
         </ScrollView>
+        <Button title="Continuar" onPress={next} />
       </ColorfullContainer>
     );
   },

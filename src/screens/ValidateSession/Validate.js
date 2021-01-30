@@ -37,6 +37,7 @@ const ValidateSession = ({navigation, userChangeProps}) => {
           .then((response) => response.json())
           .then((data) => {
             const {
+              id,
               user,
               email,
               foto_perfil,
@@ -52,6 +53,8 @@ const ValidateSession = ({navigation, userChangeProps}) => {
             } = data;
             userChangeProps({
               token,
+              id,
+              userId: user.id,
               nombre: user.first_name,
               apellidos: user.last_name,
               habilitado,

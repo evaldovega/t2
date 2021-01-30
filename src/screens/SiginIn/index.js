@@ -74,6 +74,7 @@ const SignIn = ({navigation, userChangeProps}) => {
         userChangeProps({
           token,
           id,
+          userId: user.id,
           nombre: user.first_name,
           apellidos: user.last_name,
           habilitado,

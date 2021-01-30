@@ -34,7 +34,7 @@ class MetaGuardar extends React.Component {
       this.setState({loading: true, msn: 'Cargando...'});
       const {url, headers} = await fetchConfig();
 
-      fetch(`${url}metas/${id}`, {
+      fetch(`${url}metas/${id}/`, {
         headers,
       })
         .then((r) => r.json())
@@ -59,6 +59,7 @@ class MetaGuardar extends React.Component {
       this.props.navigation.pop();
     }
   };
+
   guardar = () => {
     Execute(this.Validations).then(() => {
       this.setState({loading: true});
@@ -79,6 +80,7 @@ class MetaGuardar extends React.Component {
       const method = this.props.route.params.id ? 'PUT' : 'POST';
       this.setState({loading: true, msn: 'Guardando...'});
       try {
+        console.log(data);
         fetch(SERVER_ADDRESS + 'api/metas/' + id, {
           method: method,
           body: JSON.stringify(data),
@@ -189,6 +191,7 @@ class MetaGuardar extends React.Component {
                 value={this.state.fecha_inicio_meta}>
                 <InputDateTimerPicker
                   value={this.state.fecha_inicio_meta}
+                  format="YYYY-MM-DD"
                   onChange={(v) => this.setState({fecha_inicio_meta: v})}
                   marginTop={1}
                   placeholder="YYYY-MM-DD"
@@ -199,6 +202,7 @@ class MetaGuardar extends React.Component {
             <View style={{flex: 1, marginLeft: 4}}>
               <InputDateTimerPicker
                 input={{keyboardType: 'number-pad'}}
+                format="YYYY-MM-DD"
                 value={this.state.fecha_final_meta}
                 onChange={(v) => this.setState({fecha_final_meta: v})}
                 marginTop={1}
@@ -222,7 +226,7 @@ class MetaGuardar extends React.Component {
 
 const mapToProps = (state) => {
   return {
-    id: state.Usuario.id,
+    id: state.Usuario.userId,
     token: state.Usuario.token,
   };
 };

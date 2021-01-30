@@ -4,54 +4,112 @@ import Validator, {Execute} from 'components/Validator';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
 import {fetchConfig} from 'utils/Fetch';
+import {COLORS} from 'constants';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ModalInputPin = ({customer, cancel, onConfirm}) => {
   const [loading, setLoading] = useState(false);
   const [msn, setMsn] = useState('');
+  const [pin, setPin] = useState('');
+  const Validations = {};
 
-  const requestPin = async () => {
-    setMsn('Enviando PIN');
-    console.log('Send PIN to ', customer);
+  const showAlert = (title, message, onPress) => {
+    setTimeout(() => {
+      Alert.alert(
+        title,
+        message,
+        [
+          {
+            title: 'Ok',
+            onPress: onPress,
+          },
+        ],
+        {cancelable: false},
+      );
+    }, 500);
+  };
+
+  const requestPin = () => {
+    setMsn('Enviando PIN al cliente');
     setLoading(true);
-    const {url, headers} = await fetchConfig();
-    fetch(`${url}ordentoken/`, {
-      headers,
-      method: 'POST',
-      body: JSON.stringify({id_cliente: customer}),
-    })
-      .then((r) => {
-        if (r.status == 200 || r.status == 201) {
-          setLoading(false);
-        } else {
-          throw 'error';
-        }
+
+    setTimeout(async () => {
+      const {url, headers} = await fetchConfig();
+      fetch(`${url}ordentoken/`, {
+        headers,
+        method: 'POST',
+        body: JSON.stringify({id_cliente: customer}),
       })
-      .catch((error) => {
-        setLoading(false);
-        setTimeout(() => {
-          Alert.alert(
+        .then((r) => {
+          if (r.status == 200 || r.status == 201) {
+            setLoading(false);
+          } else {
+            throw 'error';
+          }
+        })
+        .catch((error) => {
+          setLoading(false);
+          showAlert(
             'No se envio el PIN',
             'Intetentelo nuevamente',
-            [
-              {
-                title: 'Ok',
-                onPress: () => cancel(false),
-              },
-            ],
-            {cancelable: false},
+            () => cancel,
           );
-        }, 500);
-        cancel(false);
-      });
+        });
+    }, 2000);
   };
 
   const validate = async () => {
     try {
-      setLoading(true);
-      const {url, headers} = fetchConfig();
-      fetch(`${url}`)
-        .then((r) => r.json())
-        .then((r) => {});
+      Execute(Validations).then(async () => {
+        setMsn('Validando...');
+        setLoading(true);
+        const {url, headers} = await fetchConfig();
+        console.log(`${url}ordertoken/validate/`);
+        fetch(`${url}ordentoken/validate/`, {
+          method: 'POST',
+          body: JSON.stringify({token: pin}),
+          headers,
+        })
+          .then((r) => {
+            console.log(r);
+            return r;
+          })
+          .then((r) => r.json())
+          .then((r) => {
+            console.log(r);
+            switch (r.status) {
+              case 'OK':
+                onConfirm();
+                cancel(false);
+                break;
+              case 'novalido':
+                showAlert('PIN no valido', 'Intetentelo nuevamente', () =>
+                  cancel(false),
+                );
+                break;
+              case 'expired':
+                showAlert('PIN vencido', 'Intetentelo nuevamente', () =>
+                  cancel(false),
+                );
+                break;
+              case 'used':
+                showAlert('PIN usado', 'Intetentelo nuevamente', () =>
+                  cancel(false),
+                );
+                break;
+              default:
+                showAlert(
+                  'No se pudo validar en PIN',
+                  'Intetentelo nuevamente',
+                  () => cancel(false),
+                );
+                break;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
     } catch (error) {
       setLoading(false);
     }
@@ -76,19 +134,56 @@ const ModalInputPin = ({customer, cancel, onConfirm}) => {
         }}>
         <View
           style={{
-            height: '20%',
-            backgroundColor: '#fff',
+            backgroundColor: '#ffff',
             borderRadius: 16,
             justifyContent: 'center',
             padding: 24,
           }}>
           {!loading && (
-            <View style={{justifyContent: 'center'}}>
-              <InputText placeholder="Ingrese el PIN recibido" />
+            <View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 24,
+                }}>
+                <Text style={{fontWeight: 'bold'}}>Validar cliente</Text>
+                <Icon
+                  name="close"
+                  color={COLORS.ROJO}
+                  size={32}
+                  onPress={() => cancel(false)}
+                />
+              </View>
+              <Validator
+                value={pin}
+                ref={(r) => (Validations['a'] = r)}
+                required="Ingrese el PIN enviado al cliente!">
+                <InputText
+                  value={pin}
+                  onChangeText={(t) => setPin(t)}
+                  placeholder="Ingrese el PIN..."
+                />
+              </Validator>
+
               <Button marginTop={2} title="Validar" onPress={validate} />
 
+              <Text
+                style={{
+                  fontSize: 14,
+                  marginTop: 24,
+                  color: COLORS.ACCENT,
+                  textAlign: 'center',
+                }}>
+                El cliente no ha recibido el PIN?
+              </Text>
               <Button
-                marginTop={4}
+                style={{backgroundColor: '#ffff'}}
+                style_text={{
+                  color: COLORS.ACCENT,
+                  textDecorationLine: 'underline',
+                }}
                 title="Volver a enviar"
                 onPress={requestPin}
               />

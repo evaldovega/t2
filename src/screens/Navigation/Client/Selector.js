@@ -11,6 +11,7 @@ import {
   Text,
 } from 'react-native';
 import {COLORS, CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
+import {Avatar} from 'react-native-paper';
 
 const ClienteSelector = ({navigation, route, items, load, loading}) => {
   const {seleccionar} = route.params;
@@ -38,12 +39,19 @@ const ClienteSelector = ({navigation, route, items, load, loading}) => {
           paddingVertical: MARGIN_VERTICAL,
           padding: 8,
           marginBottom: MARGIN_VERTICAL,
-          backgroundColor: 'rgba(255,255,255,.7)',
           borderRadius: CURVA,
         }}>
-        <TouchableOpacity onPress={() => seleccionar(item)}>
+        <TouchableOpacity
+          style={{flexDirection: 'row', alignItems: 'center'}}
+          onPress={() => {
+            seleccionar(item);
+            navigation.pop();
+          }}>
+          <Avatar.Image size={32} />
           <Text
             style={{
+              flex: 1,
+              marginLeft: 16,
               color: COLORS.NEGRO,
               fontSize: 16,
               fontFamily: 'Mont-Regular',

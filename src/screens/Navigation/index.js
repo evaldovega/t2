@@ -6,6 +6,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import messaging from '@react-native-firebase/messaging';
 
 import Home from 'screens/Navigation/Home';
@@ -68,36 +69,25 @@ function Tabs() {
         tabBarIcon: (focused, color, size) => {
           switch (route.name) {
             case 'Inicio':
-              return (
-                <SimpleLineIcons size={24} name="home" color={focused.color} />
-              );
+              return <Feather size={24} name="home" color={focused.color} />;
               break;
             case 'Perfil':
-              return (
-                <SimpleLineIcons size={24} name="user" color={focused.color} />
-              );
+              return <Feather size={24} name="user" color={focused.color} />;
               break;
             case 'Metas':
-              return (
-                <SimpleLineIcons size={24} name="flag" color={focused.color} />
-              );
+              return <Feather size={24} name="flag" color={focused.color} />;
               break;
             case 'Negocios':
-              return (
-                <SimpleLineIcons
-                  size={24}
-                  name="folder"
-                  color={focused.color}
-                />
-              );
+              return <Feather size={24} name="folder" color={focused.color} />;
               break;
           }
         },
       })}
       tabBarOptions={{
-        activeTintColor: COLORS.PRIMARY_COLOR_DARK_1,
+        title: 'e',
+        activeTintColor: COLORS.PRIMARY_COLOR,
       }}>
-      <Tab.Screen name="Inicio" component={Home} />
+      <Tab.Screen name="Inicio" options={{title: 'Servi'}} component={Home} />
       <Tab.Screen name="Perfil" component={Profile} />
       <Tab.Screen name="Metas" component={MetaListado} />
       <Tab.Screen name="Negocios" component={Negocios} />

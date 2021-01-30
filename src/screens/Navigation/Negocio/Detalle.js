@@ -218,15 +218,34 @@ class NegocioDetalle extends React.Component {
                 </Text>
               )}
             />
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 8,
+              }}>
+              <Text style={{fontWeight: 'bold'}}>Metodo de pago:</Text>
+              <Text>{doc.metodo_pago}</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 8,
+              }}>
+              <Text style={{fontWeight: 'bold'}}>Frecuencia de pago:</Text>
+              <Text>Cada {doc.frecuencia_pago} Mes(s)</Text>
+            </View>
+
             {this.renderFormularioPlan(doc)}
             {this.renderPlanes(doc)}
 
-            {doc && doc.estado_orden == 4 ? (
+            {(doc && doc.estado_orden == 4) || 1 ? (
               <Button
                 marginTop={3}
                 title="Subsanar"
                 onPress={() =>
-                  this.props.navigation.push('AdquirirPlan', {
+                  this.props.navigation.push('NegocioDiligenciarInformacion', {
                     id: doc.plan,
                     orden_id: doc.id,
                     cliente: doc.cliente,

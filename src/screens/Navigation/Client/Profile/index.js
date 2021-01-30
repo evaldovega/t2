@@ -95,6 +95,7 @@ class ClientProfile extends React.Component {
                   color: COLORS.NEGRO,
                   fontFamily: 'Mont-Bold',
                   fontSize: TITULO_TAM * 0.7,
+                  textDecorationLine: 'underline',
                 },
               ]}>
               {!this.props.loading &&
@@ -138,15 +139,15 @@ class ClientProfile extends React.Component {
           onPress={this.call}
           style={{
             backgroundColor: COLORS.PRIMARY_COLOR,
-            width: 64,
-            height: 64,
+            width: 32,
+            height: 32,
             borderRadius: CURVA,
             justifyContent: 'center',
             alignItems: 'center',
           }}>
           <MaterialCommunityIcons
             name="phone"
-            size={32}
+            size={24}
             color={COLORS.BLANCO}
           />
         </TouchableOpacity>

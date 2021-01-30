@@ -7,9 +7,16 @@ import moment from 'moment';
 import 'moment/locale/es';
 
 const InputDateTimerPicker = (props) => {
-  const {onChange, showDate = true, showTime = true, value, label = ''} = props;
+  const {
+    onChange,
+    showDate = true,
+    showTime = true,
+    value,
+    label = '',
+    format = 'YYYY-MM-DD HH:mm',
+  } = props;
 
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(null);
 
   const [showSelectDate, setShowSelectDate] = useState(false);
   const [showSelectHour, setShowSelectHour] = useState(false);
@@ -49,11 +56,11 @@ const InputDateTimerPicker = (props) => {
               }
               if (d.nativeEvent && d.nativeEvent.timestamp) {
                 const newDate = moment(d.nativeEvent.timestamp);
-                const valueDate = moment(date);
+                const valueDate = date ? moment(date) : moment();
                 valueDate
                   .minutes(newDate.format('mm'))
                   .hour(newDate.format('HH'));
-                triggerOnChange(valueDate.format('YYYY-MM-DD HH:mm'));
+                triggerOnChange(valueDate.format(format));
               }
             }}
             is24Hour={true}
@@ -75,7 +82,7 @@ const InputDateTimerPicker = (props) => {
           <DateTimePicker
             style={{flex: 1}}
             display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            value={date}
+            value={date || new Date()}
             mode="date"
             onChange={(d) => {
               if (Platform.OS !== 'ios') {
@@ -84,14 +91,14 @@ const InputDateTimerPicker = (props) => {
 
               if (d.nativeEvent && d.nativeEvent.timestamp) {
                 const newDate = moment(d.nativeEvent.timestamp);
-                const valueDate = moment(date);
+                const valueDate = date ? moment(date) : moment();
 
                 valueDate
                   .date(newDate.format('D'))
                   .month(newDate.format('M') - 1)
                   .year(newDate.format('YYYY'));
 
-                triggerOnChange(valueDate.format('YYYY-MM-DD HH:mm'));
+                triggerOnChange(valueDate.format(format));
               }
             }}
             is24Hour={true}
@@ -107,13 +114,10 @@ const InputDateTimerPicker = (props) => {
   };
 
   useEffect(() => {
-    if (value && value != '') {
-      const defaultValue =
-        value != '' && moment(value).isValid()
-          ? moment(value).toDate()
-          : moment().toDate();
-
-      setDate(defaultValue);
+    if (value) {
+      if (value != '') {
+        setDate(new Date(value));
+      }
     }
   }, [value]);
 
@@ -149,7 +153,7 @@ const InputDateTimerPicker = (props) => {
                 setShowSelectHour(false);
               }}>
               <Text style={{textAlign: 'center'}}>
-                {moment(date).format('YYYY-MM-DD')}
+                {value && value != '' && moment(date).format('YYYY-MM-DD')}
               </Text>
             </TouchableOpacity>
           </React.Fragment>
@@ -172,7 +176,7 @@ const InputDateTimerPicker = (props) => {
                 setShowSelectDate(false);
               }}>
               <Text style={{textAlign: 'center'}}>
-                {moment(date).format('HH:mm')}
+                {value && value != '' && moment(date).format('HH:mm')}
               </Text>
             </TouchableOpacity>
           </React.Fragment>
