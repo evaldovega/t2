@@ -14,6 +14,7 @@ const InputDateTimerPicker = (props) => {
     value,
     label = '',
     format = 'YYYY-MM-DD HH:mm',
+    disabled = false,
   } = props;
 
   const [date, setDate] = useState(null);
@@ -116,7 +117,8 @@ const InputDateTimerPicker = (props) => {
   useEffect(() => {
     if (value) {
       if (value != '') {
-        setDate(new Date(value));
+        console.log('Set date ', value);
+        setDate(moment(value).toDate());
       }
     }
   }, [value]);
@@ -180,6 +182,19 @@ const InputDateTimerPicker = (props) => {
               </Text>
             </TouchableOpacity>
           </React.Fragment>
+        )}
+
+        {disabled && (
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '111%',
+              height: ALTURA,
+              backgroundColor: 'rgba(0,0,0,.1)',
+              borderRadius: CURVA,
+            }}></View>
         )}
       </View>
       {selectorDate()}

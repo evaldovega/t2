@@ -6,7 +6,7 @@ import Producto from './Producto';
 import Button from 'components/Button';
 
 const Variaciones = React.forwardRef(
-  ({navigation, setCurrentTab, productos, datosPrecargados}, ref) => {
+  ({navigation, setCurrentTab, productos, datosPrecargados, orderId}, ref) => {
     const visible = navigation.isFocused();
     // const productosRefs = useRef([]);
     const productosRefs = {};
@@ -78,6 +78,7 @@ const Variaciones = React.forwardRef(
                 ref={(r) => (productosRefs[index] = r)}
                 key={producto.id}
                 data={producto}
+                orderId={orderId}
                 datosPrecargados={planDatosPrecargados}
               />
             );

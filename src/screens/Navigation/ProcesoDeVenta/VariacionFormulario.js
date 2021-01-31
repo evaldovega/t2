@@ -60,6 +60,7 @@ class VariacionFormulario extends React.Component {
       return (
         <Select
           marginTop={1}
+          disabled={!pregunta.enabled}
           value={respuesta}
           onSelect={(opcion) => this.seleccionarOpcion(pregunta, opcion.key)}
           options={opciones.map((o) => ({
@@ -96,9 +97,10 @@ class VariacionFormulario extends React.Component {
       }
       return (
         <InputText
+          disabled={!pregunta.enabled}
           input={props}
           marginTop={1}
-          value={pregunta.respuesta}
+          value={pregunta.respuesta + ' ' + pregunta.enabled}
           onChangeText={(v) => this.ingresarRespuesta(pregunta, v)}
         />
       );
@@ -110,6 +112,7 @@ class VariacionFormulario extends React.Component {
     if (tipo_pregunta == 'date') {
       return (
         <InputDateTimerPicker
+          disabled={!pregunta.enabled}
           marginTop={1}
           showTime={false}
           value={pregunta.respuesta}
@@ -197,31 +200,28 @@ class VariacionFormulario extends React.Component {
       JSON.stringify(this.props.route.params.variacion.formularios),
     );
 
-    const {preguntas} = this.props.route.params;
+    const {preguntas, orderId} = this.props.route.params;
+
     if (preguntas) {
+      // console.log('Question ', JSON.stringify(preguntas));
       this.setState({btn_text: 'Modificar datos'});
     }
+
     variacion.formularios = formularios.map((f) => {
       f.preguntas = f.preguntas.map((p) => {
         p.mostrar_selector = false;
         p.respuesta = '';
         if (preguntas) {
-          const pregunta_guardada = preguntas.find((pg) => pg.id == p.id);
+          const pregunta_guardada = preguntas.find((pg) => pg.pregunta == p.id);
           if (pregunta_guardada) {
-            p.respuesta = pregunta_guardada.respuesta;
+            p.enabled =
+              !orderId || (orderId && pregunta_guardada.subsanar === true);
+            p.respuesta =
+              pregunta_guardada.opcion_respuesta || pregunta_guardada.respuesta;
+          } else {
+            p.enabled = true;
           }
         }
-        /*
-        if (p.obligatorio) {
-          Validaciones['pregunta' + p.id] = {
-            validacion: {
-              presence: {
-                allowEmpty: false,
-                message: '^Diligencie éste campo',
-              },
-            },
-          };
-        }*/
         return p;
       });
       return f;

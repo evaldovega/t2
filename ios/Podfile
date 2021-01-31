@@ -110,7 +110,6 @@ target 'serviproteccion' do
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
-  pod 'RNInputMask', :path => '../node_modules/react-native-text-input-mask/ios/InputMask'
 
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 

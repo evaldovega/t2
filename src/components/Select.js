@@ -72,10 +72,18 @@ export default function Select(props) {
   };
 
   return (
-    <React.Fragment>
+    <View style={[style.wrapper, extra_style]}>
       <TouchableOpacity
         onPress={show}
-        style={[style.wrapper, props.style, extra_style]}>
+        style={[
+          {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+            alignItems: 'center',
+          },
+          props.style,
+        ]}>
         <Text style={[style.text]}>{label}</Text>
         <SimpleLineIcons size={24} name="arrow-down" color="#EAE8EA" />
       </TouchableOpacity>
@@ -117,7 +125,19 @@ export default function Select(props) {
         onCancel={onCancel}
         options={options}
       />
-    </React.Fragment>
+      {props.disabled && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '111%',
+            height: ALTURA,
+            backgroundColor: 'rgba(0,0,0,.1)',
+            borderRadius: CURVA,
+          }}></View>
+      )}
+    </View>
   );
 }
 const style = StyleSheet.create({

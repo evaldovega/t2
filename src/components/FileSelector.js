@@ -87,6 +87,18 @@ export default function FileSelector(props) {
           </ZoomIn>
         ) : null}
       </TouchableOpacity>
+      {props.disabled && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '111%',
+            height: ALTURA,
+            backgroundColor: 'rgba(0,0,0,.1)',
+            borderRadius: CURVA,
+          }}></View>
+      )}
     </React.Fragment>
   );
 }

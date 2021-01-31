@@ -22,6 +22,7 @@ import {connect} from 'react-redux';
 import {changeProps} from 'redux/actions/Usuario';
 import {fetchErrors} from 'utils/Fetch';
 import {setSharedPreference} from 'utils/SharedPreference';
+import FBLoginButton from './components/FB';
 
 const SignIn = ({navigation, userChangeProps}) => {
   const [username, setUsername] = useState('');
@@ -208,6 +209,8 @@ const SignIn = ({navigation, userChangeProps}) => {
               color="morado"
               onPress={onPressRegister}
             />
+
+            <FBLoginButton />
           </View>
         </ScrollView>
       </ColorfullContianer>

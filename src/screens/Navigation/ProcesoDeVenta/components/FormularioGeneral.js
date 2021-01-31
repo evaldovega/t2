@@ -17,9 +17,13 @@ import ColorfullContainer from 'components/ColorfullContainer';
 import Button from 'components/Button';
 
 const FormularioGeneral = React.forwardRef(
-  ({navigation, setCurrentTab, formulario, datosPrecargados, planes}, ref) => {
+  (
+    {navigation, setCurrentTab, formulario, datosPrecargados, orderId, planes},
+    ref,
+  ) => {
     const {id, titulo, preguntas} = formulario;
     const [respuestas, setRespuestas] = useImmer({});
+    const [subsanar, setSubsanar] = useImmer({});
     const Validaciones = {};
 
     const visible = navigation.isFocused();
@@ -42,8 +46,13 @@ const FormularioGeneral = React.forwardRef(
           props.numberofLines = 4;
         }
 
+        if (orderId && !subsanar[pregunta.id]) {
+          props.disabled = true;
+        }
+
         return (
           <InputText
+            disabled={props.disabled}
             value={respuestas[id]}
             onChangeText={(nuevoValor) => setRespuesta(id, nuevoValor)}
             marginTop={1}
@@ -56,8 +65,11 @@ const FormularioGeneral = React.forwardRef(
     const renderDate = (pregunta) => {
       const {id, tipo_pregunta, respuesta} = pregunta;
       if (tipo_pregunta == 'date') {
+        const disabled = orderId && !subsanar[pregunta.id] ? true : false;
         return (
           <InputDateTimerPicker
+            disabled={disabled}
+            format="YYYY-MM-DD"
             value={respuestas[id]}
             onChange={(nuevoValor) => setRespuesta(id, nuevoValor)}
             marginTop={1}
@@ -72,6 +84,7 @@ const FormularioGeneral = React.forwardRef(
       if (tipo_pregunta == 'choice') {
         return (
           <Select
+            disabled={orderId && !subsanar[pregunta.id]}
             marginTop={1}
             value={respuestas[id]}
             placeholder="Seleccione"
@@ -154,6 +167,11 @@ const FormularioGeneral = React.forwardRef(
     useEffect(() => {
       if (datosPrecargados) {
         datosPrecargados.forEach((dp) => {
+          if (dp.subsanar) {
+            setSubsanar((draft) => {
+              draft[dp.pregunta] = true;
+            });
+          }
           setRespuesta(
             dp.pregunta,
             dp.opcion_respuesta ? dp.opcion_respuesta : dp.respuesta,

@@ -52,7 +52,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
   const [orden, setOrden] = useImmer({});
   const [formularioGeneral, setFormularioGeneral] = useState({});
   const [loader, setLoader] = useState({cargando: false, msn: ''});
-  const {id: planId, orden_id, cliente} = route.params;
+  const {id: planId, orden_id: orderId, cliente} = route.params;
   const formularioGeneralRef = useRef();
   const variacionesRef = useRef();
   navigation.setOptions({tabBarVisible: false});
@@ -105,19 +105,23 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
   };
 
   const cargarOrden = async () => {
-    if (orden_id) {
-      console.log('Cargar orden ', orden_id);
+    if (orderId) {
+      console.log('Cargar orden ', orderId);
       setLoader({cargando: true, msn: 'Cargando Orden...'});
       const {url, headers} = await fetchConfig();
-      fetch(`${url}ordenes/${orden_id}/`, {headers})
+      fetch(`${url}ordenes/${orderId}/`, {headers})
         .then((r) => {
           console.log(r.status);
           return r;
         })
         .then((r) => r.json())
         .then((data) => {
-          //console.log(JSON.stringify(data));
+          console.log(JSON.stringify(data));
           setOrden((draft) => {
+            draft.pasarela_financiacion = data.pasarela_financiacion;
+            draft.documentacion_adicional = data.documentacion_adicional;
+            draft.frecuencia_pago = data.frecuencia_pago;
+            draft.metodo_pago = data.metodo_pago;
             draft.planes = data.planes;
             draft.formulario = data.formulario;
             return draft;
@@ -201,6 +205,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
             })}
             children={({navigation}) => (
               <FormularioGeneral
+                orderId={orderId}
                 setCurrentTab={setCurrentTab}
                 navigation={navigation}
                 ref={formularioGeneralRef}
@@ -216,6 +221,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
             options={(navigation) => ({tabBarVisible: false})}
             children={({navigation}) => (
               <Variaciones
+                orderId={orderId}
                 ref={variacionesRef}
                 navigation={navigation}
                 productos={planes}
@@ -229,6 +235,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
             options={(navigation) => ({tabBarVisible: false})}
             children={({navigation}) => (
               <Finalizar
+                orderId={orderId}
                 navigation={navigation}
                 cliente={cliente}
                 plan={planId}
@@ -237,6 +244,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
                 setCurrentTab={setCurrentTab}
                 formularioGeneralRef={formularioGeneralRef}
                 variacionesRef={variacionesRef}
+                order={orden}
               />
             )}
           />

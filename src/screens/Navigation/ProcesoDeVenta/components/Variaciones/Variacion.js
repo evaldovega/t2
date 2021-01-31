@@ -15,7 +15,7 @@ import Validator, {Execute} from 'components/Validator';
 import {chunkArray} from 'utils';
 
 const Variacion = React.forwardRef(
-  ({data, producto, datosPrecargados}, ref) => {
+  ({data, producto, datosPrecargados, orderId}, ref) => {
     const navigation = useNavigation();
     const Validaciones = {};
 
@@ -38,15 +38,16 @@ const Variacion = React.forwardRef(
     const variacionAgregada = (item, index) => {
       const {formulario} = item;
       setFormularios((draft) => {
-        if (index) {
+        if (index > -1) {
           draft[index] = formulario;
         } else {
           draft.push(formulario);
         }
         return draft;
       });
-      if (!index) {
-        setCantidad(cantidad + 1);
+      console.log(index);
+      if (index < 0) {
+        setCantidad(parseInt(cantidad) + 1);
       }
     };
 
@@ -64,6 +65,7 @@ const Variacion = React.forwardRef(
           navigation.push('VariacionFormulario', {
             variacion: data,
             callback: variacionAgregada,
+            index_form: -1,
           });
         });
       } else {
@@ -88,7 +90,8 @@ const Variacion = React.forwardRef(
         variacion: data,
         preguntas: preguntas,
         index_form: index_form,
-        callback: this.variacionEditada,
+        orderId,
+        callback: variacionAgregada,
       });
     };
 
@@ -130,16 +133,31 @@ const Variacion = React.forwardRef(
 
     useEffect(() => {
       if (datosPrecargados) {
-        const {valor: cantidadGuardada} = datosPrecargados;
+        const {
+          cantidad: cantidadGuardada,
+          formulario: forms,
+        } = datosPrecargados;
+
+        console.log('Cantidad actual ', cantidadGuardada);
         if (cantidadGuardada) {
           setCantidad(parseInt(cantidadGuardada));
         }
-      } else {
-        console.log('No precargar variacion ', id);
+        if (forms && forms.length > 0) {
+          const formulariosNew = [];
+          const formAdd = chunkArray(forms, forms[0].cantidad_preguntas);
+          formAdd.forEach((f) => {
+            formulariosNew.push({preguntas: f});
+          });
+          setFormularios((draft) => {
+            draft = formulariosNew;
+            return draft;
+          });
+        }
       }
     }, [datosPrecargados]);
 
-    const total = cantidad > 0 ? valor * (cantidad - cantidad_minima) : 0;
+    const total =
+      cantidad > 0 ? parseInt(valor) * (cantidad - cantidad_minima) : 0;
 
     return (
       <>
@@ -150,7 +168,7 @@ const Variacion = React.forwardRef(
               fontFamily: 'Mont-Regular',
               fontSize: TEXTO_TAM * 0.7,
             }}>
-            {titulo} {id}
+            {titulo}
           </Text>
 
           {cantidad_minima ? (
@@ -184,6 +202,7 @@ const Variacion = React.forwardRef(
             }}>
             {show_minus ? (
               <TouchableOpacity
+                disabled={orderId}
                 style={{
                   width: 32,
                   height: 32,
@@ -205,6 +224,7 @@ const Variacion = React.forwardRef(
             </Text>
 
             <TouchableOpacity
+              disabled={orderId}
               style={{
                 width: 32,
                 height: 32,
@@ -253,33 +273,44 @@ const Variacion = React.forwardRef(
           }}>
           {formularios.map((f, key_form) => {
             const {preguntas} = f;
+
             if (preguntas) {
+              const subsanar = preguntas.some((p) => p.subsanar);
+              const allowEdit = (orderId && subsanar) || !orderId;
+
               const body = preguntas.map((p) => p.respuesta).splice(0, 3);
               return (
                 <>
                   <View
                     key={key_form}
                     style={{
-                      marginTop: 8,
-                      borderBottomWidth: 0.2,
-                      borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
+                      marginTop: 10,
+                      padding: 8,
+                      backgroundColor: 'rgba(255,255,255,.3)',
                       flex: 1,
                       alignSelf: 'stretch',
                       flexDirection: 'row',
+                      alignItems: 'center',
+                      elevation: 2,
+                      shadowColor: '#000',
+                      shadowOffset: {width: 0, height: 2},
+                      shadowOpacity: 0.2,
                     }}>
-                    <TouchableOpacity
-                      onPress={() => edit(key_form, preguntas)}
-                      style={{
-                        width: 32,
-                        height: 32,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderColor: COLORS.NEGRO_N1,
-                        borderRadius: CURVA,
-                        borderWidth: 0.3,
-                      }}>
-                      <AntDesign name="edit" />
-                    </TouchableOpacity>
+                    {allowEdit && (
+                      <TouchableOpacity
+                        onPress={() => edit(key_form, preguntas)}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          backgroundColor: COLORS.PRIMARY_COLOR,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: CURVA,
+                        }}>
+                        <AntDesign name="edit" size={18} color="#ffff" />
+                      </TouchableOpacity>
+                    )}
+
                     {body.map((b) => (
                       <View
                         style={{
@@ -291,19 +322,21 @@ const Variacion = React.forwardRef(
                       </View>
                     ))}
                     <View>
-                      <TouchableOpacity
-                        onPress={() => remove(key_form)}
-                        style={{
-                          width: 32,
-                          height: 32,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          borderColor: COLORS.NEGRO_N1,
-                          borderRadius: CURVA,
-                          borderWidth: 0.3,
-                        }}>
-                        <AntDesign name="minus" />
-                      </TouchableOpacity>
+                      {!orderId && (
+                        <TouchableOpacity
+                          disabled={orderId}
+                          onPress={() => remove(key_form)}
+                          style={{
+                            width: 32,
+                            height: 32,
+                            backgroundColor: COLORS.PRIMARY_COLOR,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: CURVA,
+                          }}>
+                          <AntDesign name="minus" size={18} color="#ffff" />
+                        </TouchableOpacity>
+                      )}
                     </View>
                   </View>
                 </>
@@ -312,17 +345,19 @@ const Variacion = React.forwardRef(
           })}
         </View>
 
-        <Validator
-          value={cantidad}
-          ref={(r) => (Validaciones[`variacion`] = r)}
-          constraints={{
-            numericality: {
-              greaterThanOrEqualTo: cantidad_minima,
-              lessThanOrEqualTo: cantidad_maxima,
-              message: `^Ingrese mínimo ${cantidad_minima} ${titulo}`,
-            },
-          }}
-        />
+        {cantidad_minima > 0 ? (
+          <Validator
+            value={cantidad}
+            ref={(r) => (Validaciones[`variacion`] = r)}
+            constraints={{
+              numericality: {
+                greaterThanOrEqualTo: cantidad_minima,
+                lessThanOrEqualTo: cantidad_maxima,
+                message: `^Ingrese mínimo ${cantidad_minima} ${titulo}`,
+              },
+            }}
+          />
+        ) : null}
       </>
     );
   },

@@ -119,9 +119,9 @@ class CapacitacionDetalle extends React.Component {
             <View
               style={{
                 flex: 1,
-                marginLeft: -MARGIN_VERTICAL,
+                marginLeft: -MARGIN_VERTICAL * 1.5,
                 borderLeftColor: COLORS.PRIMARY_COLOR,
-                borderLeftWidth: !last ? 1.5 : 0,
+                borderLeftWidth: !last ? 3 : 0,
                 paddingLeft: MARGIN_VERTICAL * 2,
                 paddingBottom: MARGIN_VERTICAL * 2,
               }}>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: COLORS.PRIMARY_COLOR,
     backgroundColor: COLORS.BG_GRAY,
-    borderWidth: 1.5,
+    borderWidth: 3,
     width: 32,
     height: 32,
     justifyContent: 'center',

@@ -28,7 +28,7 @@ import {
   actividadEnviarCuestionario,
   capacitacionesCargar,
 } from '../../../redux/actions';
-import {habilitar} from 'redux/actions/Usuario';
+import {changeProps} from 'redux/actions/Usuario';
 
 import {
   COLORS,
@@ -86,6 +86,7 @@ class Actividad extends React.Component {
       seccion_index,
       actividad_index,
     } = this.props.route.params;
+
     this.setState({
       seccion_id: seccion_index,
       actividad_id: actividad_index,
@@ -111,7 +112,7 @@ class Actividad extends React.Component {
     }
 
     if (prev.habilitado != this.props.habilitado) {
-      this.props.habilitar(this.props.habilitado);
+      this.props.changePropsUser({habilitado: true});
       this.props.recargarCapacitaciones();
     }
 
@@ -141,28 +142,29 @@ class Actividad extends React.Component {
     if (data.tipo != 'lectura') {
       return;
     }
-    let html = `
-            <html lang='es'>
-                <head>
-                    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
-                    <style>
-                    p{
-                        textAlign:'justify'
-                    }
-                    body{
-                        textAlign:'justify';
-                        padding:32px
-                    }
-                    img{
-                        maxWidth:100%
-                    }
-                    </style>
-                </head>
-                <body>
-                ${data.contenido}
-                </body>
-            </html>
-        `;
+    let html = `<html>
+    <head>
+        <meta name="viewport" content="width=device-width,user-scale=no">
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+        
+            body {
+                padding:12px 32px 32px;
+                margin:0 auto;
+            }
+            *{
+              text-align: justify;
+              font-family:Roboto !important;
+            }
+        </style>
+        
+    </head>
+    <body>
+        ${data.contenido}
+    </body>
+    
+    </html>`;
+
     return (
       <View
         style={{
@@ -405,8 +407,8 @@ const mapToState = (state) => {
 };
 const mapToActions = (dispatch) => {
   return {
-    habilitar: (state) => {
-      dispatch(habilitar(state));
+    changePropsUser: (props) => {
+      dispatch(changeProps(props));
     },
     recargarCapacitaciones: () => {
       dispatch(capacitacionesCargar());

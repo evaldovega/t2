@@ -32,6 +32,7 @@ export default Clients = (state = initial_state, action) => {
       case ACTION_CLIENTS_ERROR:
         draft.loading = false;
         draft.error = action.error;
+        draft.items = [];
         break;
       case ACTION_CLIENT_DELETING:
         draft.loading = true;

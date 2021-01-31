@@ -68,6 +68,12 @@ class NotificacionListado extends React.Component {
               onRefresh={() => this.load()}
             />
           }>
+          {!loading && docs.length == 0 ? (
+            <Text
+              style={{fontSize: 24, textAlign: 'center', alignSelf: 'center'}}>
+              No hay notificaciones
+            </Text>
+          ) : null}
           {docs.map((doc) => (
             <TouchableOpacity
               onPress={() => this.detail(doc)}

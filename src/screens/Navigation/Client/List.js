@@ -152,29 +152,8 @@ class ClienteListado extends React.Component {
       Alert.alert('Buen trabajo', this.props.success);
     }
 
-    if (
-      prev.items.length == 0 &&
-      this.props.items.length > 0 &&
-      this.state.items.length == 0
-    ) {
+    if (prev.items.length == 0 && this.props.items.length > 0) {
       this.setState({items: this.props.items});
-
-      AsyncStorage.getItem('ayuda1').then((a) => {
-        console.log('Storage ', a);
-        if (!a) {
-          this.setState({mostrar_ayuda: true});
-          Animated.timing(this.state.progress, {
-            toValue: 1,
-            duration: 5000,
-            easing: Easing.linear,
-            useNativeDriver: true,
-          }).start();
-          setTimeout(() => {
-            this.setState({mostrar_ayuda: false});
-          }, 5000);
-          AsyncStorage.setItem('ayuda1', '1');
-        }
-      });
     }
   }
 

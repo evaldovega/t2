@@ -70,7 +70,12 @@ class Soporte extends React.Component {
       .then((r) => r.json())
       .then((data) => {
         const user = this.props.id;
-        const mensajes = data.map((d) => ({...d, ...{me: d.user == user}}));
+        const mensajes = data.map((d) => ({
+          ...d,
+          ...{message: d.mensaje},
+          ...{me: d.user == user},
+        }));
+
         this.setState({
           mensajes: mensajes,
           total_mensajes: mensajes.length,
@@ -112,7 +117,7 @@ class Soporte extends React.Component {
           m.mb = null;
           return m;
         });
-        mensajes.push({me: false, mensaje: data.message, mb: 130});
+        mensajes.push({me: false, message: data.message, mb: 130});
 
         this.setState({mensajes: mensajes, total_mensajes: mensajes.length});
         this.msn.play();
@@ -137,8 +142,8 @@ class Soporte extends React.Component {
       m.mb = null;
       return m;
     });
-
-    mensajes.push({me: true, msn: this.state.msg, mb: 130});
+    console.log('Message sended ', this.state.msg);
+    mensajes.push({me: true, message: this.state.msg, mb: 130});
     this.setState({
       mensajes: mensajes,
       msg: '',
@@ -146,7 +151,7 @@ class Soporte extends React.Component {
     });
   };
 
-  transformarMensaje = (msn) => {
+  transformarMensaje = (msn = '') => {
     return msn.split(' ').map((palabra) => {
       if (urlRegex.test(palabra)) {
         return (
@@ -161,7 +166,9 @@ class Soporte extends React.Component {
       }
     });
   };
+
   renderItem = ({item, index}) => {
+    console.log('Ite ', item);
     const igual = index > 0 && this.state.mensajes[index - 1].me == item.me;
     return (
       <View
@@ -172,13 +179,15 @@ class Soporte extends React.Component {
           igual && {marginTop: 1},
         ]}>
         {!item.me && !igual && <Caption>Asesor</Caption>}
-        <Text style={styles.text}>{this.transformarMensaje(item.mensaje)}</Text>
+        <Text style={styles.text}>{this.transformarMensaje(item.message)}</Text>
       </View>
     );
   };
+
   render() {
     return (
-      <ColorfullContainer style={{flex: 1, flexDirection: 'column'}}>
+      <ColorfullContainer
+        style={{flex: 1, flexDirection: 'column', backgroundColor: '#ffff'}}>
         <StatusBar
           translucent={true}
           backgroundColor={'transparent'}
@@ -244,7 +253,7 @@ class Soporte extends React.Component {
 }
 const mapearEstado = (state) => {
   return {
-    id: state.Usuario.id,
+    id: state.Usuario.userId,
     nombre: state.Usuario.nombre,
     token: state.Usuario.token,
   };

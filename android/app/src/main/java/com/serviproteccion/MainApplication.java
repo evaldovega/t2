@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.rssignaturecapture.RSSignatureCapturePackage;
 import io.realm.react.RealmReactPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 
@@ -13,7 +14,6 @@ import com.airbnb.android.react.lottie.LottiePackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
-import com.rssignaturecapture.RSSignatureCapturePackage;
 import com.rnfs.RNFSPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;

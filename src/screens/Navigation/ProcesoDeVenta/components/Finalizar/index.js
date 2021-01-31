@@ -37,6 +37,8 @@ const Finalizar = ({
   setCurrentTab,
   formularioGeneralRef,
   variacionesRef,
+  order,
+  orderId,
 }) => {
   const Validaciones = {};
 
@@ -55,6 +57,7 @@ const Finalizar = ({
 
   const previusNeedPIN = usePrevious(needPIN);
   const previusCustomer = usePrevious(data.cliente);
+  const [firstLoad, setFirstLoad] = useState(true);
 
   const visible = navigation.isFocused();
 
@@ -76,6 +79,15 @@ const Finalizar = ({
       });
     }
   }, [visible]);
+
+  useEffect(() => {
+    if (order) {
+      setData((draft) => {
+        draft.metodo_pago = order.metodo_pago;
+        draft.frecuencia = order.frecuencia_pago;
+      });
+    }
+  }, [order]);
 
   const cambioDeDatos = (propiedad, valor) => {
     setData((draft) => {
@@ -155,8 +167,11 @@ const Finalizar = ({
         return;
       }
 
-      console.log('Data ', JSON.stringify(dataToSend));
       const {url, headers} = await fetchConfig();
+      if (orderId) {
+        dataToSend.orden = orderId;
+      }
+
       fetch(`${url}ordenes/registrar/`, {
         method: 'POST',
         body: JSON.stringify(dataToSend),
@@ -208,9 +223,13 @@ const Finalizar = ({
   }, [needPIN]);
 
   useEffect(() => {
-    if (!previusCustomer && data.cliente && data.cliente != '') {
-      console.log('Customer selected');
-      vender();
+    if (firstLoad) {
+      setFirstLoad(false);
+    } else {
+      if (!previusCustomer && data.cliente && data.cliente != '') {
+        console.log('Customer selected');
+        vender();
+      }
     }
   }, [data.cliente]);
 
@@ -295,7 +314,7 @@ const Finalizar = ({
           ) : null}
         </View>
       </ScrollView>
-      <Button title="Vender" onPress={vender} />
+      <Button title={orderId ? 'Subsanar' : 'Vender'} onPress={vender} />
     </ColorfullContainer>
   );
 };

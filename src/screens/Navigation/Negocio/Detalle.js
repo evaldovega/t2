@@ -178,7 +178,7 @@ class NegocioDetalle extends React.Component {
     return (
       <ColorfullContainer style={{flex: 1, backgroundColor: COLORS.BLANCO}}>
         <NavBar {...this.props} back transparent title="Detalle Orden" />
-        <ScrollView>
+        <ScrollView style={{flex: 1}}>
           <View style={{flex: 1, paddingHorizontal: MARGIN_HORIZONTAL}}>
             <Text
               style={{
@@ -239,23 +239,21 @@ class NegocioDetalle extends React.Component {
 
             {this.renderFormularioPlan(doc)}
             {this.renderPlanes(doc)}
-
-            {(doc && doc.estado_orden == 4) || 1 ? (
-              <Button
-                marginTop={3}
-                title="Subsanar"
-                onPress={() =>
-                  this.props.navigation.push('NegocioDiligenciarInformacion', {
-                    id: doc.plan,
-                    orden_id: doc.id,
-                    cliente: doc.cliente,
-                    callback: this.load,
-                  })
-                }
-              />
-            ) : null}
           </View>
         </ScrollView>
+        {doc && doc.estado_orden == 4 ? (
+          <Button
+            title="Subsanar"
+            onPress={() =>
+              this.props.navigation.push('NegocioDiligenciarInformacion', {
+                id: doc.plan,
+                orden_id: doc.id,
+                cliente: doc.cliente,
+                callback: this.load,
+              })
+            }
+          />
+        ) : null}
       </ColorfullContainer>
     );
   }

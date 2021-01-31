@@ -5,7 +5,7 @@ import {useImmer} from 'use-immer';
 import Variacion from './Variacion';
 import Variaciones from '.';
 
-const Producto = React.forwardRef(({data, datosPrecargados}, ref) => {
+const Producto = React.forwardRef(({data, datosPrecargados, orderId}, ref) => {
   const {id, titulo, requerido, variaciones} = data;
   const [seleccionado, setSeleccionado] = useState(false);
   //const variacionesRef = useRef([]);
@@ -80,9 +80,10 @@ const Producto = React.forwardRef(({data, datosPrecargados}, ref) => {
               marginBottom: 16,
               fontFamily: 'Mont-Bold',
             }}>
-            {titulo} {id}
+            {titulo}
           </Text>
           <Switch
+            disabled={orderId}
             value={seleccionado}
             onValueChange={(v) => setSeleccionado(v)}
           />
@@ -92,6 +93,7 @@ const Producto = React.forwardRef(({data, datosPrecargados}, ref) => {
         ? variaciones.map((v, i) => {
             return (
               <Variacion
+                orderId={orderId}
                 producto={titulo}
                 key={i}
                 ref={(r) => (variacionesRef[i] = r)}

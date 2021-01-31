@@ -77,24 +77,28 @@ class PlanDetalle extends React.PureComponent {
           <WebView
             originWhitelist={['*']}
             source={{
+              baseUrl: '',
               html: `<html>
                                 <head>
                                     <meta name="viewport" content="width=device-width,user-scale=no">
-                                    
                                     <style>
-                                    @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');body:{ font-family:'Roboto' !important; color: red !important; }
+                                    @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+                                    
                                         body {
                                             padding:12px 32px 32px;
                                             margin:0 auto;
                                         }
                                         *{
                                           text-align: justify;
+                                          font-family:Roboto !important;
                                         }
                                     </style>
+                                    
                                 </head>
                                 <body>
                                     ${informacion}
                                 </body>
+                                
                                 </html>`,
             }}
             style={{width: '100%', backgroundColor: 'transparent', flex: 1}}

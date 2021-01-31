@@ -30,7 +30,7 @@ export default function Input(props) {
     <View style={[style.wrapper, props.style, extra_style]}>
       <TextInput
         {...props.input}
-        editable={!props.disabled}
+        disabled={props.disabled}
         autoCapitalize="none"
         secureTextEntry={pass}
         placeholder={props.placeholder}
@@ -46,6 +46,18 @@ export default function Input(props) {
           onPress={() => setPass(!pass)}
         />
       ) : null}
+      {props.disabled && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '111%',
+            height: ALTURA,
+            backgroundColor: 'rgba(0,0,0,.1)',
+            borderRadius: CURVA,
+          }}></View>
+      )}
     </View>
   );
 }

@@ -1,7 +1,6 @@
 import {ALTURA, COLORS, CURVA, MARGIN_VERTICAL, TEXTO_TAM} from 'constants';
 import React from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
-import TextInputMask from 'react-native-text-input-mask';
 
 export default function InputMask(props) {
   const extra_style = {};
@@ -15,22 +14,7 @@ export default function InputMask(props) {
   if (props.marginTop) {
     extra_style.marginTop = props.marginTop * MARGIN_VERTICAL;
   }
-  return (
-    <View style={[style.wrapper, props.style, extra_style]}>
-      <TextInputMask
-        {...props.input}
-        editable={!props.disabled}
-        style={[style.input]}
-        placeholder={props.placeholder}
-        value={props.value}
-        onChangeText={props.onChangeText}
-        onFocus={props.onFocus}
-        onBlur={props.onBlur}
-        onBlur={props.onBlur}
-        mask={props.mask}
-      />
-    </View>
-  );
+  return <View style={[style.wrapper, props.style, extra_style]}></View>;
 }
 const style = StyleSheet.create({
   wrapper: {
