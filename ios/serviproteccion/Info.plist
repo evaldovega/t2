@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleGetInfoString</key>
+	<string/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -22,8 +24,16 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>FacebookAppID</key>
+	<string>893331661479078</string>
 	<key>LSApplicationCategoryType</key>
 	<string/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>2831106907160474</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -118,12 +128,16 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>LSApplicationQueriesSchemes</key>
-<array>
-        
-        <string>2831106907160474</string>
-        <string>fbauth2</string>
-		<string>fbshareextension</string>
-</array>
+	<key>FacebookDisplayName</key>
+	<string>ServiProtección</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb893331661479078</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

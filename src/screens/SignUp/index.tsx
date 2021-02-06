@@ -476,6 +476,7 @@ class SignUp extends React.Component {
         <InputDateTimerPicker
             marginTop={1}
             showTime={false}
+            format={"YYYY-MM-DD"}
             value={this.state.fechaNac}
             onChange={(v) => this.setState({'fechaNac':v})}
             />
@@ -603,18 +604,20 @@ class SignUp extends React.Component {
                         <View style={{flex:1}}>
                         <ScrollView  showsHorizontalScrollIndicator={false}>
                             {this.steps(step)}
+
+                            <View>
+                                {step == 0 ? (<Button title='Siguiente' marginTop={3} onPress={() => this.nextStep(1)} />) : null}
+                                {step == 1 ? (<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <Button color='morado' onPress={() => this.nextStep(-1)} marginTop={3} title='Atrás' />
+                                    <Button title='Siguiente' onPress={() => this.nextStep(1)} marginTop={3} />
+                                </View>) : null}
+                                {step == 2 ? (<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <Button color='morado' onPress={() => this.nextStep(-1)} marginTop={3} title='Atrás' />
+                                    <Button marginTop={3} disabled={this.state.isEnabled && this.state.aceptacionContrato ? false : true} onPress={this.onPressRegister} title='Empezar a vender' />
+                                </View>) : null}
+                            </View>
                         </ScrollView>
-                        <View>
-                            {step==0 ? (<Button title='Siguiente' marginTop={3} onPress={()=>this.nextStep(1)}/>) : null}
-                            {step==1 ? ( <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-            <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atrás'/>
-            <Button title='Siguiente' onPress={()=>this.nextStep(1)} marginTop={3}/>
-        </View>) : null}
-                            {step==2 ? (<View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                    <Button color='morado' onPress={()=>this.nextStep(-1)} marginTop={3} title='Atrás'/>
-                    <Button marginTop={3} disabled={this.state.isEnabled && this.state.aceptacionContrato ? false : true} onPress={this.onPressRegister} title='Empezar a vender'/>
-                </View>) : null}
-                        </View>
+                        
                         </View>
                         
 
