@@ -25,6 +25,7 @@ import {
   COLORS,
   MARGIN_HORIZONTAL,
   MARGIN_VERTICAL,
+  NOTIMAGE,
   TITULO_TAM,
 } from 'constants';
 import {styleHeader} from 'styles';
@@ -87,7 +88,10 @@ function Profile(props) {
             marginTop: MARGIN_VERTICAL,
           }}>
           <TouchableOpacity style={{width: 96}} onPress={cambiarFoto}>
-            <Avatar.Image size={96} source={{uri: usuario.foto_perfil}} />
+            <Avatar.Image
+              size={96}
+              source={{uri: usuario.foto_perfil || NOTIMAGE}}
+            />
             <SimpleLineIcons
               name="camera"
               size={16}
@@ -215,6 +219,7 @@ function Profile(props) {
             <InputDateTimerPicker
               marginTop={1}
               showTime={false}
+              format="YYYY-MM-DD"
               disabled={usuario.actualizando_perfil}
               value={moment(usuario.fecha_nacimiento).startOf('day')}
               onChange={(v) => cambiarProp('fecha_nacimiento', v)}

@@ -49,7 +49,9 @@ class ProfileIdentificacion extends React.Component {
               Linking.openURL(this.props.ide_foto_frente);
             }}>
             {this.props.ide_foto_frente ? (
-              <Card.Cover source={{uri: this.props.ide_foto_frente}} />
+              <Card.Cover
+                source={{uri: this.props.ide_foto_frente || NOTIMAGE}}
+              />
             ) : null}
           </TouchableOpacity>
         </Card>
@@ -75,7 +77,9 @@ class ProfileIdentificacion extends React.Component {
               onProgress={() => {
                 Linking.openURL(this.props.ide_foto_respaldo);
               }}>
-              <Card.Cover source={{uri: this.props.ide_foto_respaldo}} />
+              <Card.Cover
+                source={{uri: this.props.ide_foto_respaldo || NOTIMAGE}}
+              />
             </TouchableOpacity>
           ) : null}
         </Card>

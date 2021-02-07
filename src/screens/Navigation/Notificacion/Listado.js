@@ -69,8 +69,7 @@ class NotificacionListado extends React.Component {
             />
           }>
           {!loading && docs.length == 0 ? (
-            <Text
-              style={{fontSize: 24, textAlign: 'center', alignSelf: 'center'}}>
+            <Text style={{fontSize: 24, textAlign: 'center'}}>
               No hay notificaciones
             </Text>
           ) : null}

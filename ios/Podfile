@@ -110,9 +110,10 @@ target 'serviproteccion' do
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
-
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 
+
+  pod 'RNGoogleSignin', :path => '../node_modules/react-native-google-signin'
 
   target 'serviproteccionTests' do
     inherit! :complete

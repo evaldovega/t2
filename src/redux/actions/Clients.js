@@ -59,7 +59,7 @@ export const loadClient = (id) => {
     }
     dispatch({type: ACTION_CLIENT_LOADING});
 
-    fetch(SERVER_ADDRESS + 'api/clientes/' + id, {
+    fetch(SERVER_ADDRESS + 'api/clientes/' + id + '/', {
       headers: {
         Authorization: 'Token ' + getState().Usuario.token,
       },

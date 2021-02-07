@@ -222,7 +222,7 @@ class ClienteListado extends React.Component {
             icon="plus"
           />
           <FAB
-            onPress={() => this.props.navigation.push('ContactoAcliente')}
+            onPress={() => this.props.navigation.push('ContactToClient')}
             color={COLORS.SECONDARY_COLOR_LIGHTER}
             style={{
               backgroundColor: COLORS.BG_GRAY,

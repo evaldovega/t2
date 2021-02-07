@@ -260,7 +260,7 @@ export const actualizarDatos = () => {
         numero_whatsapp: getState().Usuario.cel,
         fecha_nacimiento: getState().Usuario.fecha_nacimiento,
       };
-      console.log(cambios);
+
       dispatch({type: ACTION_ACTUALIZANDO_PERFIL});
       fetch(SERVER_ADDRESS + 'api/usuarios/editar/', {
         method: 'PUT',
@@ -280,6 +280,7 @@ export const actualizarDatos = () => {
           console.log(data_user);
           setSharedPreference('data-user', JSON.stringify(data_user));
           dispatch({type: ACTION_PERFIL_ACTUALIZADO});
+          Alert.alert('Datos actualizados', '');
         })
         .catch((error) => {
           console.log(error);

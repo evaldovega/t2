@@ -100,7 +100,7 @@ class VariacionFormulario extends React.Component {
           disabled={!pregunta.enabled}
           input={props}
           marginTop={1}
-          value={pregunta.respuesta + ' ' + pregunta.enabled}
+          value={pregunta.respuesta}
           onChangeText={(v) => this.ingresarRespuesta(pregunta, v)}
         />
       );
@@ -201,7 +201,7 @@ class VariacionFormulario extends React.Component {
     );
 
     const {preguntas, orderId} = this.props.route.params;
-
+    console.log('Order id ', orderId, preguntas);
     if (preguntas) {
       // console.log('Question ', JSON.stringify(preguntas));
       this.setState({btn_text: 'Modificar datos'});
@@ -219,8 +219,11 @@ class VariacionFormulario extends React.Component {
             p.respuesta =
               pregunta_guardada.opcion_respuesta || pregunta_guardada.respuesta;
           } else {
+            console.log('Activar');
             p.enabled = true;
           }
+        } else {
+          p.enabled = true;
         }
         return p;
       });

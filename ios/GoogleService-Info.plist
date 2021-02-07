@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>559705585134-2q8g7j2qaff7v3dd181sr33tcqieklc7.apps.googleusercontent.com</string>
+	<string>662054188954-kqu3410us0rld982mosle3hb66had56b.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.559705585134-2q8g7j2qaff7v3dd181sr33tcqieklc7</string>
+	<string>com.googleusercontent.apps.662054188954-kqu3410us0rld982mosle3hb66had56b</string>
 	<key>API_KEY</key>
-	<string>AIzaSyATQ9ZLRExwTFmz1XM1HZXMDs-U-PKlVxw</string>
+	<string>AIzaSyDHZPcIkm9LDr8LPYRgVbORAGjdE0_dNM4</string>
 	<key>GCM_SENDER_ID</key>
-	<string>559705585134</string>
+	<string>662054188954</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.macondo.prueba</string>
+	<string>com.serviproteccion</string>
 	<key>PROJECT_ID</key>
-	<string>serviproteccion</string>
+	<string>servi-proteccion</string>
 	<key>STORAGE_BUCKET</key>
-	<string>serviproteccion.appspot.com</string>
+	<string>servi-proteccion.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:559705585134:ios:c16483ddacc64a70850aff</string>
-	<key>DATABASE_URL</key>
-	<string>https://serviproteccion.firebaseio.com</string>
+	<string>1:662054188954:ios:0c3aedac178ce7cc61ac23</string>
 </dict>
 </plist>

@@ -118,15 +118,33 @@ class SignUp extends React.Component {
             mostrarTerminos:false,
             terminosHtml:''
         }
+        
     }
 
     componentDidMount() {
+
+        if(this.props.route && this.props.route.params){
+            console.log(JSON.stringify(this.props.route.params))
+            const {social}=this.props.route.params
+            if(social){
+                this.setState({
+                    email:social.email,
+                    firstname:social.first_name,
+                    lastname:social.last_name,
+                    social_user_id:social.id
+                })
+            }
+        }
        
-        fetch(SERVER_ADDRESS+"api/config/departamentos/").then(r=>r.json()).then(response=>{
+        fetch(SERVER_ADDRESS+"api/config/departamentos/")
+        .then(r=>r.json())
+        .then(response=>{
+            console.log(response)
             let deptos = []
             response.forEach((item) => {
                 deptos.push({'key': item.id, 'label':item.descripcion})
             })
+            console.log('Deps ',deptos)
             this.setState({optsDepartamentos: deptos})
         })
 
@@ -296,7 +314,7 @@ class SignUp extends React.Component {
     }
 
     enviar=(firma)=>{
-        const body=JSON.stringify({
+        const _body={
             user:{
                 first_name: this.state.firstname,
                 last_name: this.state.lastname,
@@ -313,8 +331,12 @@ class SignUp extends React.Component {
             tipo_documento_identidad: this.state.tipo_doc,
             num_documento_identidad: this.state.numDocumento,
             contrato_aprobado: this.state.aceptacionContrato
-        })
-        console.log(JSON.stringify(body))
+        }
+        if(this.state.social_user_id){
+            _body.social_user_id=this.state.social_user_id
+        }
+        const body=JSON.stringify(_body)
+        
         let statusCode = 0;
         fetch(SERVER_ADDRESS+"api/usuarios/", {
             method: 'POST',
@@ -396,7 +418,7 @@ class SignUp extends React.Component {
         if(plus>-1){
             if(this.state.step==0){
                 validar(this,this.state.firstname,'firstname',validations.firstname,false)
-                validar(this,this.state.lastname,'firstname',validations.lastname,false)
+                validar(this,this.state.lastname,'lastname',validations.lastname,false)
                 validar(this,this.state.email,'email',validations.email,false)
                 validar(this,this.state.password1,'password1',validations.password1,false)
                 validar(this,{password2:this.state.password2,password1:this.state.password1},'password2',validations.password2,false)
@@ -476,7 +498,7 @@ class SignUp extends React.Component {
         <InputDateTimerPicker
             marginTop={1}
             showTime={false}
-            value={this.state.fechaNac}
+            value={this.state.fechaNac} format='YYYY-MM-DD'
             onChange={(v) => this.setState({'fechaNac':v})}
             />
 

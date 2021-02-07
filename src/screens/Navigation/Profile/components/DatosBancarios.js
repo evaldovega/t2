@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Text} from 'react-native';
+import {Text, Alert} from 'react-native';
 import {
   COLORS,
   MARGIN_HORIZONTAL,
@@ -49,6 +49,7 @@ const DatosBancarios = ({user}) => {
           .then((r) => r.json())
           .then((data) => {
             console.log(data);
+            Alert.alert('Datos bancarios actualizados', '');
           });
       })
       .catch((error) => {});

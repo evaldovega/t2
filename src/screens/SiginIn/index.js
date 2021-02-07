@@ -23,7 +23,7 @@ import {changeProps} from 'redux/actions/Usuario';
 import {fetchErrors} from 'utils/Fetch';
 import {setSharedPreference} from 'utils/SharedPreference';
 import FBLoginButton from './components/FB';
-
+import Google from './components/Google';
 const SignIn = ({navigation, userChangeProps}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -210,7 +210,8 @@ const SignIn = ({navigation, userChangeProps}) => {
               onPress={onPressRegister}
             />
 
-            <FBLoginButton />
+            <FBLoginButton style={{flex: 1}} />
+            <Google />
           </View>
         </ScrollView>
       </ColorfullContianer>
