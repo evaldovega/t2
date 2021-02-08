@@ -57,10 +57,15 @@ const Google = ({userChangeProps}) => {
 
   const signIn = async () => {
     try {
-      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-      const userInfo = await GoogleSignin.signIn();
-      login(userInfo);
+      const play = await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+
+      GoogleSignin.signIn().then((userInfo) => {
+        login(userInfo);
+      });
     } catch (err) {
+      console.log(err);
       console.error('play services are not available');
     }
   };

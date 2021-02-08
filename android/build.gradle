@@ -3,9 +3,10 @@
 buildscript {
     ext {
         buildToolsVersion = "30.0.2"
-        minSdkVersion = 16
+        minSdkVersion = 23
         compileSdkVersion = 28
         targetSdkVersion = 29
+        googlePlayServicesAuthVersion = "16.0.1"
     }
     repositories {
         google()

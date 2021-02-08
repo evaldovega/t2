@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.rssignaturecapture.RSSignatureCapturePackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 

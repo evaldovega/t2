@@ -28,7 +28,6 @@ import {useNavigation, useIsFocused} from '@react-navigation/native';
 var {FBLoginManager} = require('react-native-facebook-login');
 
 const Home = ({User, userChangeProps}) => {
-  console.log(FBLoginManager.logout);
   const modules = [
     {
       name: 'Capacitaciones',

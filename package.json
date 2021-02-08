@@ -8,7 +8,8 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "android:apk": "cd android && ./gradlew assembleRelease"
+    "android:apk": "cd android && ./gradlew assembleRelease",
+    "sha1": "keytool -exportcert -keystore ~/.android/debug.keystore -list -v"
   },
   "husky": {
     "hooks": {
@@ -56,7 +57,6 @@
     "react-native-fix-image": "^2.1.0",
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.6.1",
-    "react-native-google-signin": "^2.1.1",
     "react-native-image-crop-picker": "^0.35.0",
     "react-native-iphone-x-helper": "^1.2.1",
     "react-native-linear-gradient": "^2.5.6",
