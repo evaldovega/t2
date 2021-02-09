@@ -41,7 +41,7 @@ const Finalizar = ({
   orderId,
 }) => {
   const Validaciones = {};
-
+  console.log(JSON.stringify(order));
   const [data, setData] = useImmer({
     cliente: clienteId,
     metodo_pago: '',
@@ -83,8 +83,11 @@ const Finalizar = ({
   useEffect(() => {
     if (order) {
       setData((draft) => {
+        draft.documentacion_adicional = order.documentacion_adicional;
         draft.metodo_pago = order.metodo_pago;
         draft.frecuencia = order.frecuencia_pago;
+        draft.pasarela = order.pasarela_financiacion;
+        draft.numero_referencia = order.numero_referencia;
       });
     }
   }, [order]);
@@ -140,7 +143,6 @@ const Finalizar = ({
       }
 
       await Execute(Validaciones).catch((errores) => {
-        console.log(errores);
         throw errores.map((error) => error['0']).join('\n');
       });
 
@@ -168,6 +170,7 @@ const Finalizar = ({
       }
 
       const {url, headers} = await fetchConfig();
+
       if (orderId) {
         dataToSend.orden = orderId;
       }
@@ -182,9 +185,6 @@ const Finalizar = ({
           if (statusCode == 200 || statusCode == 201) {
             return r.json();
           }
-          console.log(JSON.stringify(dataToSend));
-          console.log(`${url}ordenes/registrar/`);
-          console.log(headers);
           throw 'Orden no creada';
         })
         .then((r) => {
@@ -276,6 +276,7 @@ const Finalizar = ({
 
           <Select
             marginTop={1}
+            disabled={orderId ? true : false}
             placeholder="Seleccione una frecuencia"
             value={frecuencia}
             options={FRECUENCIAS}
@@ -290,6 +291,7 @@ const Finalizar = ({
               marginTop={1}
               value={metodo_pago}
               placeholder="Metodo pago"
+              disabled={orderId ? true : false}
               onSelect={(v) => {
                 if (v.key == 'financiacion') {
                   setNeedPIN(true);
@@ -307,7 +309,9 @@ const Finalizar = ({
 
           {metodo_pago == 'financiacion' ? (
             <Financiacion
+              orderId={orderId}
               {...data}
+              documentacion_adicional={data.documentacion_adicional}
               cambioDeDatos={cambioDeDatos}
               Validaciones={Validaciones}
             />

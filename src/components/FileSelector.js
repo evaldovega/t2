@@ -33,12 +33,6 @@ export default function FileSelector(props) {
   const select = async () => {
     const res = await DocumentPicker.pick({
       type: [DocumentPicker.types.pdf, DocumentPicker.types.images],
-      //There can me more options as well
-      // DocumentPicker.types.allFiles
-      // DocumentPicker.types.images
-      // DocumentPicker.types.plainText
-      // DocumentPicker.types.audio
-      // DocumentPicker.types.pdf
     });
     console.log(res);
     setFileName(res.name);
@@ -86,6 +80,18 @@ export default function FileSelector(props) {
             />
           </ZoomIn>
         ) : null}
+        {props.disabled && (
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '111%',
+              height: ALTURA,
+              backgroundColor: 'rgba(0,0,0,.1)',
+              borderRadius: CURVA,
+            }}></View>
+        )}
       </TouchableOpacity>
       {props.disabled && (
         <View

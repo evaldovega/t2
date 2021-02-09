@@ -13,6 +13,7 @@ const TEXT = ['Siguiente', 'Siguiente', 'Vende ya'];
 const ValidateSession = ({navigation, userChangeProps}) => {
   const [error, setError] = useState(null);
   const [allowStart, setAllowStart] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [indexActive, setIndexActive] = useState(0);
 
   const Validate = async () => {
@@ -20,7 +21,7 @@ const ValidateSession = ({navigation, userChangeProps}) => {
     const token = await getSharedPreference('auth-token');
     if (token) {
       const userId = await getSharedPreference('userId');
-
+      setLoading(true);
       fetchConfig().then((config) => {
         const {url, headers} = config;
 
@@ -51,6 +52,7 @@ const ValidateSession = ({navigation, userChangeProps}) => {
               tipo_cuenta,
               numero_cuenta,
             } = data;
+            setLoading(false);
             userChangeProps({
               token,
               id,
@@ -72,12 +74,11 @@ const ValidateSession = ({navigation, userChangeProps}) => {
             setAllowStart(true);
           })
           .catch((error) => {
+            setLoading(false);
             console.log(error);
             setError(error.toString());
           });
       });
-    } else {
-      userChangeProps({estadoDeSesion: 1});
     }
   };
 
@@ -98,8 +99,13 @@ const ValidateSession = ({navigation, userChangeProps}) => {
   };
 
   const start = () => {
-    userChangeProps({estadoDeSesion: 2});
+    if (allowStart) {
+      userChangeProps({estadoDeSesion: 2});
+    } else {
+      userChangeProps({estadoDeSesion: 1});
+    }
   };
+
   const next = () => {
     if (indexActive + 1 < 3) {
       setIndexActive(indexActive + 1);
@@ -143,13 +149,12 @@ const ValidateSession = ({navigation, userChangeProps}) => {
           style={{marginBottom: 16}}
         />
 
-        {allowStart ? (
+        {allowStart && (
           <TouchableOpacity onPress={start}>
             <Text>Saltar</Text>
           </TouchableOpacity>
-        ) : (
-          Loading()
         )}
+        {loading && Loading()}
       </View>
     </View>
   );

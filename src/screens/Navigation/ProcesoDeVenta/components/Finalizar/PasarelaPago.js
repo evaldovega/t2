@@ -5,7 +5,7 @@ import {fetchConfig} from 'utils/Fetch';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {COLORS} from 'constants';
 
-const PasarelaPago = ({value, selected}) => {
+const PasarelaPago = ({value, selected, disabled}) => {
   const [pasarelas, setPasarelas] = useState([]);
 
   const load = () => {
@@ -37,6 +37,7 @@ const PasarelaPago = ({value, selected}) => {
         justifyContent: 'space-between',
       }}>
       <Select
+        disabled={disabled}
         style={{flex: 1}}
         marginTop={1}
         value={value}

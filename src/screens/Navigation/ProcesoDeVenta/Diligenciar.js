@@ -124,6 +124,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
             draft.metodo_pago = data.metodo_pago;
             draft.planes = data.planes;
             draft.formulario = data.formulario;
+            draft.numero_referencia = data.numero_referencia;
             return draft;
           });
         })
