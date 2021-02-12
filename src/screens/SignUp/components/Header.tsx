@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {StyleSheet, Text, View, Image} from "react-native";
+import {StyleSheet, Text, View, Image,PixelRatio} from "react-native";
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {getStatusBarHeight} from "react-native-iphone-x-helper";
 import { COLORS,MARGIN_VERTICAL,TITULO_TAM } from 'constants';
@@ -8,7 +8,7 @@ const Header = memo((props) => {
     return (
         <View style={styles.container}>
             <SimpleLineIcons name='arrow-left' size={16} onPress={()=>props.navigation.pop()}/>
-            <Text style={styles.txtTo}>Crea tu cuenta {'\n'}en Servi!</Text>
+            <Text style={styles.txtTo}>¡Crea tu cuenta {'\n'}en Servi!</Text>
             <Image style={styles.image} resizeMode='contain' source={require('utils/images/registro.png')}></Image>
         </View>
     )
@@ -18,8 +18,9 @@ export default Header;
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: getStatusBarHeight(true) + 20,
-        paddingLeft: 40,
+        marginTop: getStatusBarHeight(true) + 10,
+        paddingHorizontal:24,
+        alignSelf:'center',
         paddingTop: 0,
         flexDirection:'row',
         justifyContent:'space-between',
@@ -36,10 +37,12 @@ const styles = StyleSheet.create({
         height: 60
     },
     image: {
-        width: 150,
-        height: 150
+        width: PixelRatio.getPixelSizeForLayoutSize(35),
+        height: PixelRatio.getPixelSizeForLayoutSize(35)
     },
     txtTo: {
+        flex:1,
+        marginLeft:16,
         fontSize: TITULO_TAM,
         color: COLORS.NEGRO,
         fontFamily:'Mont-Bold',

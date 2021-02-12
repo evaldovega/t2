@@ -36,17 +36,17 @@ const data = [
   {
     color: '#113b50',
     image: require('utils/images/presentation/A.png'),
-    Titulo: 'Conéctate y gana dinero \n vendiendo seguros',
+    Titulo: '¡Genera ingresos con tu red de contactos!',
   },
   {
     color: '#72D4C2',
     image: require('utils/images/presentation/B.png'),
-    Titulo: 'Sin horarios \n actívate cuando quieras',
+    Titulo: 'En tus horarios. Conéctate cuando quieras',
   },
   {
     color: '#113b50',
     image: require('utils/images/presentation/C.png'),
-    Titulo: 'Genera ingresos \ny cumple tus metas',
+    Titulo: 'Comienza a ganar comisiones',
   },
 ];
 

@@ -44,13 +44,13 @@ const Balance = (props) => {
   }, [props.id, props.token]);
   return (
     <View style={styles.containerChart}>
+      <Text style={{fontFamily: 'Mont-Bold', fontSize: 18}}>Ingresos</Text>
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
-        <Text style={{fontFamily: 'Mont-Bold', fontSize: 18}}>Balance</Text>
         <NumberFormat
           value={total}
           displayType={'text'}
@@ -76,10 +76,7 @@ const styles = StyleSheet.create({
   containerChart: {
     marginTop: MARGIN_VERTICAL * 3,
     borderRadius: CURVA,
-    backgroundColor: '#FFF',
-    paddingHorizontal: 16,
     paddingTop: MARGIN_VERTICAL,
-    marginHorizontal: MARGIN_HORIZONTAL,
     marginBottom: MARGIN_HORIZONTAL,
   },
 });

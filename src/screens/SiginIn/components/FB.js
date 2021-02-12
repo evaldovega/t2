@@ -78,8 +78,11 @@ const FBLoginButton = ({userChangeProps}) => {
           alignSelf: 'center',
           backgroundColor: '#2874A6',
           padding: 16,
+          height: 32,
           borderRadius: CURVA,
           marginTop: 32,
+          alignItems: 'center',
+          justifyContent: 'center',
         }}>
         <Text style={{color: '#ffff', textAlign: 'center'}}>
           Acceder con Facebook

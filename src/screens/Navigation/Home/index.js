@@ -8,6 +8,7 @@ import {
   View,
   ScrollView,
   Alert,
+  Dimensions,
 } from 'react-native';
 import Navbar from 'components/Navbar';
 import {
@@ -26,6 +27,7 @@ import ModalCapacitarse from '../Capacitacion/ModalCapacitarse';
 import Usuario from 'redux/reducers/Usuario';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 var {FBLoginManager} = require('react-native-facebook-login');
+const width = Dimensions.get('window').width;
 
 const Home = ({User, userChangeProps}) => {
   const modules = [
@@ -118,22 +120,7 @@ const Home = ({User, userChangeProps}) => {
             Bienvenido a Servi, {User.nombre}
           </Text>
 
-          {User.habilitado ? (
-            <View
-              style={{
-                alignSelf: 'flex-start',
-                backgroundColor: COLORS.VERDE,
-                padding: 8,
-                borderRadius: 24,
-              }}>
-              <Text
-                style={{
-                  color: COLORS.BLANCO,
-                }}>
-                Habilitado
-              </Text>
-            </View>
-          ) : (
+          {!User.habilitado ? (
             <>
               <View
                 style={{
@@ -157,7 +144,7 @@ const Home = ({User, userChangeProps}) => {
                 nombre={User.nombre}
               />
             </>
-          )}
+          ) : null}
           <Balance id={Usuario.id} token={Usuario.token} />
         </View>
 
@@ -237,6 +224,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.PRIMARY_COLOR,
     textAlign: 'center',
-    fontSize: TITULO_TAM * 0.4,
+    fontSize: 0.02 * width,
   },
 });

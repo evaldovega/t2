@@ -140,7 +140,7 @@ const InputDateTimerPicker = (props) => {
         {showDate && (
           <React.Fragment>
             <SimpleLineIcons
-              size={24}
+              size={16}
               name="calendar"
               color="#787778"
               onPress={() => {
@@ -163,7 +163,7 @@ const InputDateTimerPicker = (props) => {
         {showTime && (
           <React.Fragment>
             <SimpleLineIcons
-              size={24}
+              size={16}
               name="clock"
               color="#787778"
               onPress={() => {
@@ -209,7 +209,7 @@ const style = StyleSheet.create({
   wrapper: {
     backgroundColor: COLORS.BLANCO,
     width: '100%',
-    height: ALTURA,
+    height: 32,
     borderRadius: CURVA,
     borderColor: '#EAE8EA',
     borderWidth: 1,

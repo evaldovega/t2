@@ -85,14 +85,14 @@ export default function Select(props) {
           props.style,
         ]}>
         <Text style={[style.text]}>{label}</Text>
-        <SimpleLineIcons size={24} name="arrow-down" color="#EAE8EA" />
+        <SimpleLineIcons size={12} name="arrow-down" color="#EAE8EA" />
       </TouchableOpacity>
       <ModalFilterPicker
         optionTextStyle={{
           flex: 1,
           textAlign: 'left',
           color: '#000',
-          fontSize: TEXTO_TAM,
+          fontSize: TEXTO_TAM * 0.4,
           fontFamily: 'Mont-Regular',
         }}
         cancelButtonText="Cancelar"
@@ -108,7 +108,7 @@ export default function Select(props) {
         cancelButtonTextStyle={{
           textAlign: 'center',
           fontFamily: 'Mont-Regular',
-          fontSize: TEXTO_TAM,
+          fontSize: TEXTO_TAM * 0.4,
           color: COLORS.BLANCO,
         }}
         listContainerStyle={{
@@ -119,6 +119,7 @@ export default function Select(props) {
           backgroundColor: COLORS.BLANCO,
           borderRadius: CURVA,
           marginVertical: MARGIN_VERTICAL,
+          fontSize: 14,
         }}
         visible={visible}
         onSelect={onSelect}
@@ -145,7 +146,7 @@ const style = StyleSheet.create({
     zIndex: 999,
     backgroundColor: COLORS.BLANCO,
     width: '100%',
-    height: ALTURA,
+    height: 32,
     borderRadius: CURVA,
     borderColor: '#EAE8EA',
     borderWidth: 1,
@@ -156,7 +157,7 @@ const style = StyleSheet.create({
   },
   text: {
     color: COLORS.NEGRO,
-    fontSize: TEXTO_TAM * 0.7,
+    fontSize: TEXTO_TAM * 0.4,
     fontFamily: 'Mont-Regular',
   },
   input: {

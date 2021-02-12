@@ -42,8 +42,8 @@ export default function Button(props) {
 const style = StyleSheet.create({
   wrapper: {
     backgroundColor: COLORS.VERDE,
-    height: ALTURA,
-    paddingHorizontal: ALTURA / 2,
+    height: 32,
+    paddingHorizontal: 32 / 2,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: CURVA,
@@ -51,7 +51,7 @@ const style = StyleSheet.create({
   },
   text: {
     color: COLORS.BLANCO,
-    fontSize: TEXTO_TAM * 0.8,
+    fontSize: TEXTO_TAM * 0.6,
     fontFamily: 'Mont-Regular',
   },
 });

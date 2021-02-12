@@ -79,11 +79,14 @@ const Google = ({userChangeProps}) => {
       onPress={signIn}
       style={{
         width: '100%',
+        height: 32,
         alignSelf: 'center',
         backgroundColor: '#C0392B',
         padding: 16,
         borderRadius: CURVA,
         marginTop: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
       }}>
       <Text style={{color: '#ffff', textAlign: 'center'}}>
         Acceder con Google

@@ -51,7 +51,7 @@ class Validator extends React.PureComponent {
   state = {errores: []};
 
   execute = () => {
-    const {value, valueb, constraints} = this.props;
+    const {value, valueb, constraints, message} = this.props;
     let _constraints = {};
 
     if (!constraints) {
@@ -83,6 +83,10 @@ class Validator extends React.PureComponent {
 
     let _errores = [];
     if (valueb) {
+      _constraints = {
+        ..._constraints,
+        ...{equality: {attribute: 'e2', message: `^${message}`}},
+      };
       _errores = validate({e: value, e2: valueb}, {e: _constraints});
     } else {
       _errores = validate({e: value}, {e: _constraints});
@@ -109,9 +113,7 @@ class Validator extends React.PureComponent {
     return (
       <>
         {this.props.children}
-        {errores.map((e) => (
-          <Error>{e}</Error>
-        ))}
+        {errores && errores.map((e) => <Error>{e}</Error>)}
       </>
     );
   }

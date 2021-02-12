@@ -16,7 +16,7 @@ import ColorfullContianer from 'components/ColorfullContainer';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
 import Validator, {Execute} from 'components/Validator';
-import {SERVER_ADDRESS, COLORS} from 'constants';
+import {SERVER_ADDRESS, COLORS, TITULO_TAM} from 'constants';
 import Loader from 'components/Loader';
 import {connect} from 'react-redux';
 import {changeProps} from 'redux/actions/Usuario';
@@ -133,14 +133,14 @@ const SignIn = ({navigation, userChangeProps}) => {
           <View
             style={{
               flex: 1,
-              paddingHorizontal: 16,
+              paddingHorizontal: 42,
               marginTop: 24,
               marginBottom: 24,
             }}>
             <Image
               style={{
-                width: 150,
-                height: 150,
+                width: 100,
+                height: 100,
                 alignSelf: 'center',
               }}
               resizeMode="contain"
@@ -149,16 +149,16 @@ const SignIn = ({navigation, userChangeProps}) => {
             <View style={{marginBottom: '10%'}}>
               <Text
                 style={{
-                  fontSize: 40,
+                  fontSize: TITULO_TAM,
                   color: COLORS.VERDE,
                   fontWeight: 'bold',
                   fontFamily: 'Mont-Bold',
                 }}>
-                Hola
+                ¡Hola!
               </Text>
               <Text
                 style={{
-                  fontSize: 30,
+                  fontSize: TITULO_TAM,
                   fontWeight: 'bold',
                   color: COLORS.NEGRO,
                   fontFamily: 'Mont-Bold',

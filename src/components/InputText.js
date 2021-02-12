@@ -1,7 +1,7 @@
 import {ALTURA, COLORS, CURVA, MARGIN_VERTICAL, TEXTO_TAM} from 'constants';
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Text, TextInput} from 'react-native';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 export default function Input(props) {
   const [pass, setPass] = useState(false);
@@ -20,29 +20,39 @@ export default function Input(props) {
   }
 
   useEffect(() => {
-    if (props.password && !isPass) {
+    if (props.password === true && !isPass) {
       setPass(true);
       setIsPass(true);
+    } else {
+      setPass(false);
+      setIsPass(false);
     }
-  });
+  }, [props.password]);
 
   return (
     <View style={[style.wrapper, props.style, extra_style]}>
       <TextInput
         {...props.input}
         disabled={props.disabled}
-        autoCapitalize="none"
-        secureTextEntry={pass}
+        secureTextEntry={pass === true ? true : false}
         placeholder={props.placeholder}
         value={props.value}
         onChangeText={props.onChangeText}
         onBlur={props.onBlur}
+        autoCapitalize={
+          isPass ||
+          (props.input &&
+            props.input.autoCompleteType &&
+            props.input.autoCompleteType == 'email')
+            ? 'none'
+            : 'sentences'
+        }
         style={[style.input, props.styleInput]}
       />
-      {isPass ? (
-        <SimpleLineIcons
+      {pass ? (
+        <Entypo
           size={24}
-          name={pass ? 'lock' : 'lock-open'}
+          name={pass ? 'eye-with-line' : 'eye'}
           onPress={() => setPass(!pass)}
         />
       ) : null}
@@ -65,7 +75,7 @@ const style = StyleSheet.create({
   wrapper: {
     backgroundColor: COLORS.BLANCO,
     width: '100%',
-    height: ALTURA,
+    height: 32,
     borderRadius: CURVA,
     borderColor: '#EAE8EA',
     borderWidth: 1,
@@ -86,5 +96,6 @@ const style = StyleSheet.create({
     padding: 0,
     margin: 0,
     fontFamily: 'Mont-Regular',
+    fontSize: 14,
   },
 });

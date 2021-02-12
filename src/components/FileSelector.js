@@ -112,7 +112,7 @@ const style = StyleSheet.create({
   wrapper: {
     backgroundColor: COLORS.BLANCO,
     width: '100%',
-    height: ALTURA,
+    height: 32,
     borderRadius: CURVA,
     borderColor: '#EAE8EA',
     borderWidth: 1,
