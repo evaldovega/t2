@@ -4,25 +4,19 @@ import {
   ScrollView,
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   Alert,
-  Picker,
-  TextInput,
-  StatusBar,
   Platform,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
+
 import Loader from 'components/Loader';
-import {styleHeader, styleInput, styleButton} from 'styles';
-import {TouchableNativeFeedback} from 'react-native-gesture-handler';
+import {styleInput} from 'styles';
 import {loadClient, changeProp, save} from '../../../redux/actions/Clients';
 
 import ColorfullContainer from 'components/ColorfullContainer';
 import Navbar from 'components/Navbar';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
-import InputMask from 'components/InputMask';
 import Select from 'components/Select';
 import Validator, {Execute} from 'components/Validator';
 import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
@@ -163,13 +157,23 @@ class ClientSave extends React.Component {
               />
             </Validator>
 
-            <Text style={styleInput.label}>Genero:</Text>
+            <Text style={styleInput.label}>Género:</Text>
             <Select
               value={this.props.genero}
               onSelect={(item) => this.props.changeProp('genero', item.key)}
               options={[
-                {key: 'F', label: 'Mujer'},
-                {key: 'M', label: 'Hombre'},
+                {
+                  key: 'masculino',
+                  label: 'Masculino',
+                },
+                {
+                  key: 'femenino',
+                  label: 'Femenino',
+                },
+                {
+                  key: 'otro',
+                  label: 'Otro',
+                },
               ]}
             />
 

@@ -91,7 +91,7 @@ export default Client = (state = initial_state, action) => {
         draft.error = '';
 
         if (draft.id == '') {
-          draft.success = 'Cliente registrado correctamente';
+          draft.success = 'Registro exitoso';
           draft.id = '';
           draft.primer_nombre = '';
           draft.segundo_nombre = '';
@@ -104,7 +104,7 @@ export default Client = (state = initial_state, action) => {
           draft.ordenes = [];
           draft.tareas = [];
         } else {
-          draft.success = 'Cliente editado correctamente';
+          draft.success = 'Edición exitosa';
         }
         break;
       case ACTION_CLIENT_ADD_ORDEN:

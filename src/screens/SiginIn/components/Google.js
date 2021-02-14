@@ -82,7 +82,6 @@ const Google = ({userChangeProps}) => {
         height: 32,
         alignSelf: 'center',
         backgroundColor: '#C0392B',
-        padding: 16,
         borderRadius: CURVA,
         marginTop: 16,
         alignItems: 'center',

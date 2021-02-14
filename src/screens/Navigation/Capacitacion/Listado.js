@@ -109,7 +109,9 @@ class CapacitacionListado extends React.Component {
           borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
           borderWidth: 0.3,
         }}>
-        <Card.Cover style={{height: 140}} source={{uri: l.imagen_portada}} />
+        {l.imagen_portada && (
+          <Card.Cover style={{height: 140}} source={{uri: l.imagen_portada}} />
+        )}
         {parseFloat(l.progreso) > 0 && parseFloat(l.progreso) < 100 && (
           <View
             style={{
@@ -132,7 +134,7 @@ class CapacitacionListado extends React.Component {
                   marginBottom: MARGIN_VERTICAL * 2,
                   color: COLORS.NEGRO,
                   textAlign: 'left',
-                  fontSize: TITULO_TAM,
+                  fontSize: TITULO_TAM * 0.7,
                   fontFamily: 'Mont-Bold',
                 }}>
                 {l.titulo}

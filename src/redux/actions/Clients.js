@@ -102,9 +102,7 @@ export const save = (props) => {
       correo_electronico: props.correo_electronico,
       genero: props.genero,
     };
-    console.log('GUARDAR CLIENTE');
-    console.log(url);
-    console.log(data);
+
     fetch(SERVER_ADDRESS + url, {
       method: method,
       body: JSON.stringify(data),

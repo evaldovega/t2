@@ -10,6 +10,8 @@ import {
 } from 'constants';
 import moment from 'moment';
 
+import {fetchConfig} from 'utils/Fetch';
+
 const Balance = (props) => {
   const [total, setTotal] = useState(0);
   const [cargando, setCargado] = useState(false);
@@ -17,34 +19,44 @@ const Balance = (props) => {
   const sum = (acomulado, item) => {
     return acomulado + item.valor;
   };
-  useEffect(() => {
-    if (props.id && props.token) {
-      setCargado(true);
-      try {
-        const fi = moment().startOf('month').format('YYYY-MM-DD');
-        const ff = moment().endOf('month').format('YYYY-MM-DD');
-        fetch(SERVER_ADDRESS + `api/usuarios/comisiones/?fi=${fi}&ff=${ff}`, {
-          headers: {
-            Authorization: 'Token ' + props.token,
-            Accept: 'application/json',
-            'content-type': 'application/json',
-          },
-        })
-          .then((r) => r.json())
-          .then((r) => {
-            console.log(r);
-            const t = r.reduce(sum, 0);
-            setTotal(t);
-            setCargado(false);
-          });
-      } catch (error) {
+
+  const load = async () => {
+    const {url, headers} = await fetchConfig();
+    setCargado(true);
+    const fi = moment().startOf('month').format('YYYY-MM-DD');
+    const ff = moment().endOf('month').format('YYYY-MM-DD');
+    fetch(`${url}api/usuarios/comisiones/?fi=${fi}&ff=${ff}`, {
+      headers,
+    })
+      .then((r) => r.json())
+      .then((r) => {
+        console.log(r);
+        const t = r.reduce(sum, 0);
+        setTotal(t);
         setCargado(false);
-      }
+      })
+      .catch((error) => {
+        console.log(error);
+        setCargado(false);
+      });
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  useEffect(() => {
+    if (props.refresh) {
+      console.log('refresh...');
+      load();
     }
-  }, [props.id, props.token]);
+  }, [props.refresh]);
+
   return (
     <View style={styles.containerChart}>
-      <Text style={{fontFamily: 'Mont-Bold', fontSize: 18}}>Ingresos</Text>
+      <Text style={{fontFamily: 'Mont-Bold', fontSize: 18}}>
+        Ingresos {cargando ? 'Cargando...' : ''}
+      </Text>
       <View
         style={{
           flexDirection: 'row',

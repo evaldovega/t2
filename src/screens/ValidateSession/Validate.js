@@ -51,6 +51,9 @@ const ValidateSession = ({navigation, userChangeProps}) => {
               banco,
               tipo_cuenta,
               numero_cuenta,
+              no_clientes,
+              no_ventas,
+              ganancias,
             } = data;
             setLoading(false);
             userChangeProps({
@@ -70,6 +73,9 @@ const ValidateSession = ({navigation, userChangeProps}) => {
               banco,
               numero_cuenta,
               tipo_cuenta,
+              no_clientes,
+              no_ventas,
+              ganancias,
             });
             setAllowStart(true);
           })

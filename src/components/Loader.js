@@ -16,7 +16,7 @@ const Loader = (props) => {
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
           <ActivityIndicator animating={loading} size="large" />
-          <Text style={{fontFamily: 'Mont-Regular', fontSize: TEXTO_TAM}}>
+          <Text style={{fontFamily: 'Mont-Regular', fontSize: TEXTO_TAM * 0.5}}>
             {message || '...'}
           </Text>
         </View>

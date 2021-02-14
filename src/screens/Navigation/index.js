@@ -22,7 +22,6 @@ import Actividad from 'screens/Navigation/Capacitacion/Actividad';
 import ClienteListado from 'screens/Navigation/Client/List';
 import ClientSave from 'screens/Navigation/Client/Save';
 import ClientProfile from 'screens/Navigation/Client/Profile';
-import ClienteSelector from 'screens/Navigation/Client/Selector';
 import ContactToClient from 'screens/Navigation/Client/Import';
 
 import PlanesListado from 'screens/Navigation/Planes/Listado';
@@ -183,11 +182,7 @@ function Navigation() {
           options={optionNavigator}
           component={ClientProfile}
         />
-        <Stack.Screen
-          name="ClienteSelector"
-          options={optionNavigator}
-          component={ClienteSelector}
-        />
+
         <Stack.Screen
           name="ContactToClient"
           options={optionNavigator}

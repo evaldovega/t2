@@ -196,7 +196,9 @@ const FormularioGeneral = React.forwardRef(
             {preguntas && preguntas.map((pregunta) => Pregunta(pregunta))}
           </View>
         </ScrollView>
-        <Button title="Continuar" onPress={next} />
+        <View style={{margin: 24}}>
+          <Button title="Continuar" onPress={next} />
+        </View>
       </ColorfullContainer>
     );
   },

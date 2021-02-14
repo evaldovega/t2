@@ -49,7 +49,7 @@ export default function Input(props) {
         }
         style={[style.input, props.styleInput]}
       />
-      {pass ? (
+      {isPass ? (
         <Entypo
           size={24}
           name={pass ? 'eye-with-line' : 'eye'}

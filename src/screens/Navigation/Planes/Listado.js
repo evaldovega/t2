@@ -96,7 +96,7 @@ class PlanesListado extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'dark-content'}
         />
-        <Navbar transparent back title="Seleccione un Plan" {...this.props} />
+        <Navbar transparent back title="Selecciona un Plan" {...this.props} />
         <View style={{marginHorizontal: MARGIN_HORIZONTAL}}>
           <InputText
             marginTop={1}

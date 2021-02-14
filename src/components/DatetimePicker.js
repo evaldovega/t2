@@ -15,6 +15,7 @@ const InputDateTimerPicker = (props) => {
     label = '',
     format = 'YYYY-MM-DD HH:mm',
     disabled = false,
+    placeholder = '',
   } = props;
 
   const [date, setDate] = useState(null);
@@ -154,9 +155,15 @@ const InputDateTimerPicker = (props) => {
                 setShowSelectDate(!showSelectDate);
                 setShowSelectHour(false);
               }}>
-              <Text style={{textAlign: 'center'}}>
-                {value && value != '' && moment(date).format('YYYY-MM-DD')}
-              </Text>
+              {value && value != '' ? (
+                <Text style={{textAlign: 'center'}}>
+                  {moment(date).format('YYYY-MM-DD')}
+                </Text>
+              ) : (
+                <Text style={{textAlign: 'center', color: '#AAB7B8'}}>
+                  {placeholder}
+                </Text>
+              )}
             </TouchableOpacity>
           </React.Fragment>
         )}

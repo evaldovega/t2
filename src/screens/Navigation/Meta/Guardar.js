@@ -22,7 +22,7 @@ class MetaGuardar extends React.Component {
     msn: '',
     loading: false,
     titulo: '',
-    tipo_meta: '',
+    tipo_meta: 'ventas',
     fecha_inicio_meta: '',
     fecha_final_meta: '',
     valor_meta: '',
@@ -117,7 +117,7 @@ class MetaGuardar extends React.Component {
   }
 
   render() {
-    const {tipo_meta, loading, msn} = this.state;
+    const {tipo_meta = 'ventas', loading, msn} = this.state;
 
     return (
       <ColorfullContainer style={{flex: 1, backgroundColor: COLORS.BLANCO}}>
@@ -133,22 +133,6 @@ class MetaGuardar extends React.Component {
               onChangeText={(v) => this.setState({titulo: v})}
               marginTop={1}
               placeholder="Titulo"
-            />
-          </Validator>
-
-          <Validator
-            ref={(r) => (this.Validations['p2'] = r)}
-            value={tipo_meta}
-            required="Selecciona un tipo de meta">
-            <Select
-              value={tipo_meta}
-              onSelect={(v) => this.setState({tipo_meta: v.key})}
-              options={[
-                {key: 'ventas', label: 'Ventas'},
-                {key: 'clientes', label: 'Clientes'},
-              ]}
-              marginTop={1}
-              placeholder="Tipo de metas"
             />
           </Validator>
 

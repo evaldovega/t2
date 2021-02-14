@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {
   Animated,
@@ -16,22 +16,11 @@ import {
   SafeAreaView,
   TextInput,
 } from 'react-native';
-import LottieView from 'lottie-react-native';
+
 import InputText from 'components/InputText';
 
-import {
-  Avatar,
-  Title,
-  FAB,
-  Card,
-  Colors,
-  Caption,
-  Divider,
-} from 'react-native-paper';
-import AsyncStorage from '@react-native-community/async-storage';
-
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import {styleHeader} from 'styles';
+import {FAB} from 'react-native-paper';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {loadClients, trash} from 'redux/actions/Clients';
 import {COLORS, CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
 import Navbar from 'components/Navbar';
@@ -44,26 +33,25 @@ const styles = StyleSheet.create({
   },
 });
 
-class ClienteListado extends React.Component {
-  state = {
-    open_fab: false,
-    progress: new Animated.Value(0),
-    mostrar_ayuda: false,
-    items: [],
-    itemsOriginal: [],
-    valorBusqueda: '',
+const ClienteListado = ({navigation, clients, load, trash, loading, route}) => {
+  const [items, setItems] = useState([]);
+  const [itemsOriginal, setItemsOriginal] = useState([]);
+  const [valorBusqueda, setValorBusqueda] = useState('');
+  const {seleccionar} = route.params;
+  const getItem = (data, index) => {
+    return items[index];
   };
 
-  getItem = (data, index) => {
-    return this.state.items[index];
+  const getItemCount = () => {
+    return items.length;
   };
 
-  getItemCount = () => {
-    return this.state.items.length;
-  };
-
-  Item = (item) => {
-    const nombre = `${item.primer_nombre} ${item.segundo_nombre} ${item.primer_apellido} ${item.segundo_apellido}`;
+  const Item = (item) => {
+    const nombre = `${item.primer_nombre}${
+      item.segundo_nombre ? ' ' + item.segundo_nombre : ''
+    } ${item.primer_apellido}${
+      item.segundo_apellido ? ' ' + item.segundo_apellido : ''
+    }`;
     return (
       <View
         style={{
@@ -74,172 +62,185 @@ class ClienteListado extends React.Component {
           backgroundColor: 'rgba(255,255,255,.7)',
           borderRadius: CURVA,
         }}>
-        <View
+        <Text
           style={{
-            paddingVertical: MARGIN_VERTICAL,
-            flexDirection: 'row',
-            alignItems: 'center',
+            marginTop: MARGIN_VERTICAL,
+            marginBottom: MARGIN_VERTICAL,
+            color: COLORS.NEGRO,
+            fontSize: 18,
+            fontFamily: 'Mont-Regular',
           }}>
+          {nombre}
+        </Text>
+        <View style={{flexDirection: 'row'}}>
           <FAB
-            icon="phone"
+            icon="eye"
+            small
             color={COLORS.BLANCO}
             style={{
               borderWidth: 0.2,
               backgroundColor: COLORS.VERDE,
+              marginRight: 8,
             }}
-            onPress={() => this.call(item)}
+            onPress={() => detail(item)}
           />
-          <TouchableOpacity
-            style={{flex: 1, marginLeft: 16}}
-            onPress={() => this.detail(item)}>
-            <Text
+          <FAB
+            icon="pencil"
+            small
+            color={COLORS.BLANCO}
+            style={{
+              borderWidth: 0.2,
+              backgroundColor: COLORS.VERDE,
+              marginRight: 8,
+            }}
+            onPress={() => edit(item.id)}
+          />
+          <FAB
+            icon="phone"
+            small
+            color={COLORS.BLANCO}
+            style={{
+              borderWidth: 0.2,
+              backgroundColor: COLORS.VERDE,
+              marginRight: 8,
+            }}
+            onPress={() => call(item)}
+          />
+          {seleccionar ? (
+            <TouchableOpacity
+              onPress={() => seleccionar(item)}
               style={{
-                marginTop: MARGIN_VERTICAL,
-                marginBottom: MARGIN_VERTICAL,
-                color: COLORS.NEGRO,
-                fontSize: 18,
-                fontFamily: 'Mont-Regular',
+                padding: 8,
+                justifyContent: 'center',
+                backgroundColor: COLORS.PRIMARY_COLOR,
+                borderRadius: CURVA,
               }}>
-              {nombre}
-            </Text>
-            <Text
-              style={{
-                color: COLORS.NEGRO_N1,
-                fontFamily: 'Mont-Regular',
-                fontSize: 12,
-              }}>
-              {item.numero_telefono}
-            </Text>
-          </TouchableOpacity>
+              <Text style={{color: '#ffff'}}>Asignar</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     );
   };
 
-  borrar = (item) => {
+  const borrar = (item) => {
     Alert.alert('Se borrara el cliente ' + item.primer_nombre, '', [
       {
         text: 'Mantener',
         style: 'cancel',
       },
-      {text: 'Borrar', onPress: () => this.props.trash(item.id)},
+      {text: 'Borrar', onPress: () => trash(item.id)},
     ]);
   };
 
-  call = (item) => {
+  const call = (item) => {
     let tel = item.numero_telefono.split(',')[0];
     Linking.openURL(
       Platform.OS === 'android' ? `tel:${tel}` : `telprompt:${tel}`,
     );
   };
 
-  detail = (item) => {
+  const detail = (item) => {
     requestAnimationFrame(() => {
-      this.props.navigation.push('ClientProfile', {id: item.id});
+      navigation.push('ClientProfile', {id: item.id});
     });
   };
 
-  componentDidMount() {
-    this.props.load();
-    this.setState({items: this.props.items});
-  }
+  useEffect(() => {
+    load();
+  }, []);
 
-  componentDidUpdate(prev) {
-    if (this.props.error != prev.error && this.props.error != '') {
-      Alert.alert('Algo anda mal', this.props.error);
-    }
-    if (prev.success != this.props.success && this.props.success != '') {
-      Alert.alert('Buen trabajo', this.props.success);
-    }
+  useEffect(() => {
+    setItems(clients);
+  }, [clients]);
 
-    if (prev.items.length == 0 && this.props.items.length > 0) {
-      this.setState({items: this.props.items});
-    }
-  }
-
-  changeSearchInput = (t) => {
-    this.setState({valorBusqueda: t});
-
+  const changeSearchInput = (t) => {
+    setValorBusqueda(t);
     if (t != '') {
       const valorBusqueda = t.toUpperCase();
-      let datafiltrada = this.props.items.filter(
+      let datafiltrada = clients.filter(
         (item) =>
           item.primer_nombre.toUpperCase().includes(valorBusqueda) ||
           item.segundo_nombre.toUpperCase().includes(valorBusqueda) ||
           item.primer_apellido.toUpperCase().includes(valorBusqueda) ||
           item.segundo_apellido.toUpperCase().includes(valorBusqueda),
       );
-
-      this.setState({items: datafiltrada});
+      setItems(datafiltrada);
     } else if (t == '') {
-      this.setState({items: this.props.items});
+      setItems(clients);
     }
   };
 
-  render() {
-    const {items} = this.state;
+  const edit = (id) => {
+    navigation.push('ClientSave', {id: id});
+  };
 
-    return (
-      <ColorfullContainer style={styles.container}>
-        <Navbar transparent back title="Clientes" {...this.props} />
+  return (
+    <ColorfullContainer style={styles.container}>
+      <Navbar navigation={navigation} transparent back title="Clientes" />
 
-        <View style={{marginHorizontal: MARGIN_HORIZONTAL}}>
-          <InputText
-            marginTop={1}
-            placeholder={'Buscar'}
-            onChangeText={(t) => this.changeSearchInput(t)}
-            value={this.state.valorBusqueda}
-          />
-        </View>
-
-        <VirtualizedList
-          style={{flex: 1, marginTop: MARGIN_HORIZONTAL, overflow: 'visible'}}
-          data={items}
-          initialNumToRender={10}
-          renderItem={({item}) => this.Item(item)}
-          keyExtractor={(item) => item.id}
-          getItemCount={this.getItemCount}
-          getItem={this.getItem}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.props.loading}
-              onRefresh={this.props.load}
-            />
-          }
+      <View style={{marginHorizontal: MARGIN_HORIZONTAL}}>
+        <InputText
+          marginTop={1}
+          placeholder={'Buscar'}
+          onChangeText={(t) => changeSearchInput(t)}
+          value={valorBusqueda}
         />
+      </View>
 
-        <View
-          style={{flexDirection: 'row', justifyContent: 'flex-end', margin: 8}}>
-          <FAB
-            onPress={() => this.props.navigation.push('ClientSave', {id: ''})}
-            color={COLORS.SECONDARY_COLOR_LIGHTER}
-            style={{
-              backgroundColor: COLORS.BG_GRAY,
-              borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-              borderWidth: 0.2,
-              marginRight: 8,
-            }}
-            icon="plus"
-          />
-          <FAB
-            onPress={() => this.props.navigation.push('ContactToClient')}
-            color={COLORS.SECONDARY_COLOR_LIGHTER}
-            style={{
-              backgroundColor: COLORS.BG_GRAY,
-              borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
-              borderWidth: 0.2,
-            }}
-            icon="card-account-phone"
-          />
-        </View>
-      </ColorfullContainer>
-    );
-  }
-}
+      <VirtualizedList
+        style={{flex: 1, marginTop: MARGIN_HORIZONTAL, overflow: 'visible'}}
+        data={items}
+        initialNumToRender={10}
+        renderItem={({item}) => Item(item)}
+        keyExtractor={(item) => item.id}
+        getItemCount={getItemCount}
+        getItem={getItem}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={load} />
+        }
+      />
+
+      <TouchableOpacity
+        style={{
+          width: '90%',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: COLORS.MORADO,
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+          borderRadius: CURVA,
+          marginHorizontal: 16,
+        }}
+        onPress={() => navigation.push('ClientSave', {id: ''})}>
+        <AntDesign name="plus" color={COLORS.BLANCO} />
+        <Text style={{color: COLORS.BLANCO}}>Registrar un nuevo cliente</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={{
+          width: '90%',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: COLORS.MORADO,
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+          borderRadius: CURVA,
+          marginHorizontal: 16,
+          marginVertical: 10,
+        }}
+        onPress={() => navigation.push('ContactToClient')}>
+        <AntDesign name="user" color={COLORS.BLANCO} />
+        <Text style={{color: COLORS.BLANCO}}>Importar un contacto</Text>
+      </TouchableOpacity>
+    </ColorfullContainer>
+  );
+};
 
 const mapToState = (state) => {
   return {
-    items: state.Clients.items,
+    clients: state.Clients.items,
     error: state.Clients.error,
     loading: state.Clients.loading,
     success: state.Clients.success,

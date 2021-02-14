@@ -261,6 +261,7 @@ export default connect(mapToState, mapToActions)(CapacitacionDetalle);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFF',
   },
   shadowHole: {
     borderRadius: 16,

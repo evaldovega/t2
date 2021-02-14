@@ -134,7 +134,9 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
           console.log(error);
         })
         .finally(() => {
-          setLoader({cargando: false, msn: ''});
+          setTimeout(() => {
+            setLoader({cargando: false, msn: ''});
+          }, 800);
         });
     }
   };

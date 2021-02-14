@@ -19,6 +19,7 @@ import Financiacion from './Financiacion';
 import {useImmer} from 'use-immer';
 import {fetchConfig} from 'utils/Fetch';
 import ColorfullContainer from 'components/ColorfullContainer';
+import Loader from 'components/Loader';
 
 const FRECUENCIAS = [
   {key: 1, label: 'Mensual'},
@@ -41,7 +42,12 @@ const Finalizar = ({
   orderId,
 }) => {
   const Validaciones = {};
-  console.log(JSON.stringify(order));
+
+  const [loader, setLoader] = useState({
+    loading: false,
+    msn: 'Registrando negocio',
+  });
+
   const [data, setData] = useImmer({
     cliente: clienteId,
     metodo_pago: '',
@@ -114,6 +120,7 @@ const Finalizar = ({
       draft.cliente = id;
       return draft;
     });
+    navigation.pop();
   };
 
   const validPIN = () => {
@@ -160,7 +167,7 @@ const Finalizar = ({
       dataToSend.formularios.push(dataFormularioGeneral);
 
       if (!cliente) {
-        navigation.push('ClienteSelector', {seleccionar: customerSelected});
+        navigation.push('Clientes', {seleccionar: customerSelected});
         return;
       }
 
@@ -174,6 +181,7 @@ const Finalizar = ({
       if (orderId) {
         dataToSend.orden = orderId;
       }
+      setLoader({...loader, ...{loading: true}});
 
       fetch(`${url}ordenes/registrar/`, {
         method: 'POST',
@@ -188,30 +196,39 @@ const Finalizar = ({
           throw 'Orden no creada';
         })
         .then((r) => {
-          if (r.numero_orden) {
-            Alert.alert(
-              'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
-              'Se le notificará cuando sea aprobada.',
-              [
-                {
-                  title: 'Ok',
-                  onPress: () => {
-                    navigation.navigate('Negocios', {forceReload: true});
+          setLoader({...loader, ...{loading: false}});
+          setTimeout(() => {
+            if (r.numero_orden) {
+              Alert.alert(
+                'Orden ' + r.numero_orden + ' ' + r.estado_orden_str,
+                'Se le notificará cuando sea aprobada.',
+                [
+                  {
+                    title: 'Ok',
+                    onPress: () => {
+                      navigation.navigate('Negocios', {forceReload: true});
+                    },
                   },
-                },
-              ],
-              {cancelable: false},
-            );
-          } else {
-            throw r.error;
-          }
+                ],
+                {cancelable: false},
+              );
+            } else {
+              throw r.error;
+            }
+          }, 600);
         })
         .catch((error) => {
           console.log(error);
+          setLoader({...loader, ...{loading: false}});
+          setTimeout(() => {
+            Alert.alert('Algo anda mal', 'Intentalo nuevamente');
+          }, 600);
         });
     } catch (error) {
-      console.log(error);
-      Alert.alert('Algo anda mal', error.toString());
+      setLoader({...loader, ...{loading: false}});
+      setTimeout(() => {
+        Alert.alert('Algo anda mal', error.toString());
+      }, 600);
     }
   };
 
@@ -238,6 +255,7 @@ const Finalizar = ({
 
   return (
     <ColorfullContainer style={{flex: 1, backgroundColor: '#ffff'}}>
+      <Loader loading={loader.loading} message={loader.msn} />
       <ScrollView style={{flex: 1}}>
         <View
           style={{
@@ -318,7 +336,9 @@ const Finalizar = ({
           ) : null}
         </View>
       </ScrollView>
-      <Button title={orderId ? 'Subsanar' : 'Vender'} onPress={vender} />
+      <View style={{margin: 24}}>
+        <Button title={orderId ? 'Subsanar' : 'Vender'} onPress={vender} />
+      </View>
     </ColorfullContainer>
   );
 };

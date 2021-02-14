@@ -66,6 +66,9 @@ const SignIn = ({navigation, userChangeProps}) => {
           banco,
           tipo_cuenta,
           numero_cuenta,
+          no_clientes,
+          no_ventas,
+          ganancias,
         } = data;
 
         await setSharedPreference('userId', '' + id);
@@ -89,6 +92,9 @@ const SignIn = ({navigation, userChangeProps}) => {
           banco,
           numero_cuenta,
           tipo_cuenta,
+          no_clientes,
+          no_ventas,
+          ganancias,
           estadoDeSesion: 2,
         });
         setLoading(false);
@@ -171,6 +177,7 @@ const SignIn = ({navigation, userChangeProps}) => {
               placeholder="Correo electrónico"
               onChangeText={(t) => setUsername(t)}
               value={username}
+              input={{keyboardType: 'email-address', autoCompleteType: 'email'}}
             />
             <Validator
               ref={(r) => (Validations['a'] = r)}

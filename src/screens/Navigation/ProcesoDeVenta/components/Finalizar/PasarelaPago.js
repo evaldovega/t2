@@ -35,6 +35,7 @@ const PasarelaPago = ({value, selected, disabled}) => {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        marginRight: 24,
       }}>
       <Select
         disabled={disabled}

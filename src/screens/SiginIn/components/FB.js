@@ -77,7 +77,6 @@ const FBLoginButton = ({userChangeProps}) => {
           width: '100%',
           alignSelf: 'center',
           backgroundColor: '#2874A6',
-          padding: 16,
           height: 32,
           borderRadius: CURVA,
           marginTop: 32,

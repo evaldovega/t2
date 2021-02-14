@@ -25,7 +25,7 @@ import ColorfullContainer from 'components/ColorfullContainer';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import ClienteOrdenes from './components/Ordenes';
 import ClientAgenda from './components/Agenda';
@@ -51,13 +51,7 @@ class ClientProfile extends React.Component {
     }
   }
 
-  call = () => {
-    if (this.props.numero_telefono == '') {
-      Alert.alert('Número de teléfono no configurado', 'Hazlo ahora');
-      this.props.navigation.push('ClientSave', {id: this.props.id});
-      return;
-    }
-    let tel = this.props.numero_telefono.split(',')[0];
+  call = (tel) => {
     Linking.openURL(
       Platform.OS === 'android' ? `tel:${tel}` : `telprompt:${tel}`,
     );
@@ -77,6 +71,12 @@ class ClientProfile extends React.Component {
       numero_telefono && numero_telefono != ''
         ? numero_telefono.split(',')
         : [];
+    const nombre = [
+      this.props.primer_nombre,
+      this.props.segundo_nombre,
+      this.props.primer_apellido,
+      this.props.segundo_apellido,
+    ];
     return (
       <View
         style={{
@@ -98,14 +98,8 @@ class ClientProfile extends React.Component {
                   textDecorationLine: 'underline',
                 },
               ]}>
-              {!this.props.loading &&
-                this.props.primer_nombre +
-                  ' ' +
-                  this.props.segundo_nombre +
-                  ' ' +
-                  this.props.primer_apellido +
-                  ' ' +
-                  this.props.segundo_apellido}
+              {!this.props.loading && nombre.filter((n) => n != '').join(' ')}{' '}
+              <AntDesign name="edit" />
             </Text>
             <Text style={{color: COLORS.NEGRO}}>
               {this.props.numero_cedula || '...'}
@@ -115,42 +109,43 @@ class ClientProfile extends React.Component {
             </Text>
           </TouchableOpacity>
 
-          <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+          <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 16}}>
             {telefonos.map((tel, i) => (
-              <TouchableOpacity
-                onPress={() => this.wp(tel)}
+              <View
                 key={{i}}
                 style={{
-                  backgroundColor: COLORS.PRIMARY_COLOR,
-                  borderRadius: CURVA,
-                  padding: 4,
-                  margin: 2,
                   flexDirection: 'row',
+                  justifyContent: 'center',
                   alignItems: 'center',
+                  margin: 8,
                 }}>
-                <FontAwesome name="whatsapp" color={COLORS.BLANCO} />
-                <Text style={{color: COLORS.BLANCO, marginLeft: 8}}>{tel}</Text>
-              </TouchableOpacity>
+                <FontAwesome
+                  size={24}
+                  onPress={() => this.wp(tel)}
+                  name="whatsapp"
+                  color={COLORS.PRIMARY_COLOR}
+                />
+                <View
+                  style={{
+                    backgroundColor: COLORS.PRIMARY_COLOR,
+                    borderRadius: CURVA,
+                    padding: 2,
+                    marginHorizontal: 4,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{color: COLORS.BLANCO}}>{tel}</Text>
+                </View>
+                <Ionicons
+                  size={24}
+                  onPress={() => this.call(tel)}
+                  name="call"
+                  color={COLORS.PRIMARY_COLOR}
+                />
+              </View>
             ))}
           </View>
         </View>
-
-        <TouchableOpacity
-          onPress={this.call}
-          style={{
-            backgroundColor: COLORS.PRIMARY_COLOR,
-            width: 32,
-            height: 32,
-            borderRadius: CURVA,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <MaterialCommunityIcons
-            name="phone"
-            size={24}
-            color={COLORS.BLANCO}
-          />
-        </TouchableOpacity>
       </View>
     );
   };

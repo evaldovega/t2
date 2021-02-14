@@ -65,7 +65,11 @@ export default function FileSelector(props) {
       <TouchableOpacity
         onPress={select}
         style={[style.wrapper, props.style, extra_style]}>
-        <SimpleLineIcons size={24} name="paper-clip" />
+        <SimpleLineIcons
+          size={16}
+          name="paper-clip"
+          color={COLORS.PRIMARY_COLOR}
+        />
         <Text numberOfLines={1} ellipsizeMode="head" style={style.text}>
           {filename != '' ? filename : 'Seleccione un archivo'}
         </Text>
@@ -74,7 +78,7 @@ export default function FileSelector(props) {
           <ZoomIn>
             <SimpleLineIcons
               onPress={remove}
-              size={24}
+              size={16}
               name="trash"
               color={COLORS.ROJO}
             />
@@ -124,7 +128,7 @@ const style = StyleSheet.create({
   text: {
     flex: 1,
     color: COLORS.NEGRO_N1,
-    fontSize: TEXTO_TAM * 0.5,
+    fontSize: TEXTO_TAM * 0.4,
     fontFamily: 'Mont-Regular',
     marginHorizontal: MARGIN_HORIZONTAL,
   },

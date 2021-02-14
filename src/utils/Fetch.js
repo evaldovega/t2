@@ -9,6 +9,7 @@ export const fetchConfig = async () => {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       authorization: 'Token ' + token,
+      Origin: '',
     },
   };
 };

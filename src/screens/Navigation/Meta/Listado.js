@@ -137,7 +137,7 @@ class MetaListado extends React.Component {
               {doc.titulo}
             </Text>
             <Text style={{fontFamily: 'Mont-Regular', fontSize: TEXTO_TAM}}>
-              {doc.valor_cumplido}/{doc.valor_meta} {doc.tipo_meta}
+              {doc.valor_cumplido}/{doc.valor_meta}
             </Text>
             <Text
               style={{fontFamily: 'Mont-Regular', fontSize: TEXTO_TAM * 0.5}}>

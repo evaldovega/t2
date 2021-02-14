@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {changeProps} from 'redux/actions/Usuario';
 import {
@@ -9,6 +9,7 @@ import {
   ScrollView,
   Alert,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import Navbar from 'components/Navbar';
 import {
@@ -26,7 +27,7 @@ import Balance from './components/Balance';
 import ModalCapacitarse from '../Capacitacion/ModalCapacitarse';
 import Usuario from 'redux/reducers/Usuario';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
-var {FBLoginManager} = require('react-native-facebook-login');
+import Calendar from './components/Calendar';
 const width = Dimensions.get('window').width;
 
 const Home = ({User, userChangeProps}) => {
@@ -46,6 +47,7 @@ const Home = ({User, userChangeProps}) => {
       icon: 'account-group',
       activeColor: COLORS.PRIMARY_COLOR_DARK_1,
       inactiveColor: COLORS.GRAY,
+      params: {},
     },
 
     {
@@ -75,6 +77,8 @@ const Home = ({User, userChangeProps}) => {
     },
     {name: 'Salir', icon: 'close', activeColor: COLORS.ROJO},
   ];
+
+  const [refresh, setRefresh] = useState(null);
 
   const navigation = useNavigation();
 
@@ -114,10 +118,16 @@ const Home = ({User, userChangeProps}) => {
   return (
     <ColorfullContainer style={styles.container}>
       <Navbar title="Inicio" transparent navigation={navigation} />
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => setRefresh(Date.now())}
+          />
+        }>
         <View style={{paddingHorizontal: MARGIN_HORIZONTAL}}>
           <Text style={{fontFamily: 'Mont-Regular'}}>
-            Bienvenido a Servi, {User.nombre}
+            ¡Hola, {User.nombre}! Bienvenido(a) a Servi
           </Text>
 
           {!User.habilitado ? (
@@ -145,7 +155,8 @@ const Home = ({User, userChangeProps}) => {
               />
             </>
           ) : null}
-          <Balance id={Usuario.id} token={Usuario.token} />
+          <Balance id={Usuario.id} token={Usuario.token} refresh={refresh} />
+          <Calendar refresh={refresh} />
         </View>
 
         <ZoomIn>

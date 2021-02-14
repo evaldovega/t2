@@ -66,6 +66,7 @@ class ContactToClient extends PreventDoubleTap {
   load = () => {
     this.setState({loading: true});
     Contacts.getAll((err, contacts) => {
+      console.log(contacts[0]);
       contacts = contacts.map((c, i) => {
         let nombre = c.givenName + ' ' + c.middleName + ' ' + c.familyName;
 

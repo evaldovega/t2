@@ -10,11 +10,19 @@ import {
   Dimensions,
   Animated,
   Easing,
+  Linking,
 } from 'react-native';
 import {withAnchorPoint} from 'react-native-anchor-point';
 import {WebView} from 'react-native-webview';
 import YoutubePlayer, {getYoutubeMeta} from 'react-native-youtube-iframe';
-import {Card, Switch, FAB, Title, Paragraph} from 'react-native-paper';
+import {
+  Card,
+  Switch,
+  FAB,
+  Title,
+  Paragraph,
+  ActivityIndicator,
+} from 'react-native-paper';
 import {CheckBox} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loader from 'components/Loader';
@@ -46,6 +54,7 @@ import Button from 'components/Button';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFF',
   },
   content: {
     flex: 1,
@@ -282,13 +291,14 @@ class Actividad extends React.Component {
   };
 
   onStateChange = (state) => {
-    console.log('Cambio de estado');
-    console.log(state);
+    console.log('Cambio de estado ', state);
+
     this.setState({estado_video: state});
     switch (state) {
       case 'ended':
         Alert.alert('Buen trabajo', 'Actividad completada');
-        this.marcarLeida(this.state.seccion_id, this.state.actividad_id, true);
+        const {seccion_index, actividad_index} = this.props.route.params;
+        this.props.marcarLeida(seccion_index, actividad_index, true);
         break;
     }
   };
@@ -296,7 +306,7 @@ class Actividad extends React.Component {
   playVideo = () => {
     this.setState({reproducir: !this.state.reproducir});
     if (this.state.estado_video != 'playing') {
-      //this.reproductor.current?.play()
+      this.reproductor.current?.play();
     }
   };
 
@@ -312,18 +322,17 @@ class Actividad extends React.Component {
           borderTopRightRadius: CURVA,
           height: 250,
         }}>
-        {this.state.estado_video != 'playing' &&
-        this.state.video_cover != '' ? (
-          <Image
+        {this.state.estado_video == '' ? (
+          <View
             style={{
-              zIndex: 4,
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              bottom: -10,
-              left: 0,
-            }}
-            source={{uri: this.state.video_cover}}></Image>
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 128,
+            }}>
+            <ActivityIndicator />
+            <Text>Cargando...</Text>
+          </View>
         ) : null}
 
         <YoutubePlayer
@@ -337,6 +346,7 @@ class Actividad extends React.Component {
             controls: true,
             modestbranding: true,
           }}
+          onReady={() => this.setState({estado_video: 'ready'})}
           onChangeState={this.onStateChange}
         />
       </View>
@@ -370,6 +380,14 @@ class Actividad extends React.Component {
                 }}>
                 {data.titulo}
               </Text>
+
+              {data.tipo == 'archivo' ? (
+                <Button
+                  style={{marginHorizontal: 32}}
+                  onPress={() => Linking.openURL(data.archivo_descargable)}
+                  title="Descargar arhcivo"
+                />
+              ) : null}
               {data.tipo == 'lectura' ? (
                 <View
                   style={{
@@ -389,6 +407,7 @@ class Actividad extends React.Component {
 
             {this.renderLectura(data)}
             {this.renderCuestionario(data)}
+            {this.renderVideo(data)}
           </View>
         </View>
       </ColorfullContainer>

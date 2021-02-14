@@ -53,7 +53,12 @@ class ModalCapacitarse extends React.Component {
               elevation: 3,
               width: '80%',
             }}>
-            <View style={{padding: 64}}>
+            <View
+              style={{
+                padding: 64,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
               <Image
                 elevation={2}
                 source={require('utils/images/icon.png')}
@@ -66,10 +71,10 @@ class ModalCapacitarse extends React.Component {
                   resizeMode: 'contain',
                 }}
               />
-              <Title>Hola {nombre}</Title>
-              <Paragraph>
-                Completa el entrenamiento para empezar a generar ingresos con
-                Servi
+              <Title>¡Hola, {nombre}!</Title>
+              <Paragraph style={{textAlign: 'center'}}>
+                Bienvenido(a) a Servi. Completa el entrenamiento para empezar a
+                vender.
               </Paragraph>
               <LottieView
                 autoPlay
@@ -79,8 +84,6 @@ class ModalCapacitarse extends React.Component {
                 source={require('animations/educacion.json')}
               />
               <Button onPress={this.capacitarme}>Empezar</Button>
-              <Text style={{textAlign: 'center'}}>O</Text>
-              <Button onPress={this.props.close}>Cerrar sesión</Button>
             </View>
           </View>
         </View>

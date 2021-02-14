@@ -60,6 +60,14 @@ class NotificacionListado extends React.Component {
     return (
       <ColorfullContainer style={{flex: 1, backgroundColor: COLORS.BLANCO}}>
         <NavBar back transparent title="Notificaciones" {...this.props} />
+        {!loading && docs.length == 0 ? (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={{fontSize: 18, textAlign: 'center'}}>
+              No hay notificaciones
+            </Text>
+          </View>
+        ) : null}
         <ScrollView
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -68,11 +76,6 @@ class NotificacionListado extends React.Component {
               onRefresh={() => this.load()}
             />
           }>
-          {!loading && docs.length == 0 ? (
-            <Text style={{fontSize: 24, textAlign: 'center'}}>
-              No hay notificaciones
-            </Text>
-          ) : null}
           {docs.map((doc) => (
             <TouchableOpacity
               onPress={() => this.detail(doc)}

@@ -57,7 +57,7 @@ const Financiacion = ({
           marginTop={1}
           disabled={orderId ? true : false}
           label="Número de referencia"
-          placeholder="Número de ref"
+          placeholder="Número de referencia"
           marginTop={2}
           value={numero_referencia}
           onChangeText={(t) => cambioDeDatos('numero_referencia', t)}

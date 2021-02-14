@@ -7,6 +7,7 @@ import {
   Image,
   Animated,
   Easing,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Entypo';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
@@ -33,6 +34,7 @@ class Navbar extends React.Component {
       this.props.navigation.openDrawer();
     });
   };
+
   onBack = () => {
     if (this.props.preventBack) {
       this.props
@@ -104,7 +106,13 @@ class Navbar extends React.Component {
                 {this.props.title}
               </Text>
             </View>
-            <View style={style.btnRight}></View>
+            <View style={style.btnRight}>
+              <Image
+                style={{width: 40, height: 40}}
+                resizeMode="contain"
+                source={require('utils/images/isologo.png')}
+              />
+            </View>
           </View>
         </Animated.View>
       </React.Fragment>
@@ -119,7 +127,7 @@ const style = StyleSheet.create({
     backgroundColor: COLORS.BLANCO,
     paddingHorizontal: MARGIN_HORIZONTAL,
     minHeight: 96,
-    paddingTop: 42 + getStatusBarHeight(),
+    paddingTop: getStatusBarHeight() + (Platform.OS == 'ios' ? 20 : 0),
     paddingBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -128,7 +136,7 @@ const style = StyleSheet.create({
     overflow: 'hidden',
   },
   title: {
-    marginHorizontal: MARGIN_HORIZONTAL,
+    marginHorizontal: 0,
     fontSize: TITULO_TAM * 0.8,
     color: COLORS.NEGRO,
     fontFamily: 'Mont-Bold',

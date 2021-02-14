@@ -39,7 +39,6 @@ class PlanDetalle extends React.PureComponent {
         />
         <Cover uri={imagen} style={{height: '25%'}} />
         <Navbar
-          style={{marginTop: MARGIN_VERTICAL * 2}}
           back
           transparent
           icon_color={COLORS.BLANCO}
@@ -61,7 +60,6 @@ class PlanDetalle extends React.PureComponent {
                   fontFamily: 'Mont-Bold',
                   color: COLORS.BLANCO,
                   textAlign: 'center',
-                  marginTop: MARGIN_VERTICAL * 1,
                   marginBottom: MARGIN_VERTICAL * 3,
                 }}>
                 {nf}

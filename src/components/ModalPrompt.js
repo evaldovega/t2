@@ -10,12 +10,12 @@ import {
   View,
   Dimensions,
   TouchableHighlightComponent,
+  TouchableOpacity,
 } from 'react-native';
 import {Button} from 'react-native-paper';
 import {Montserrat} from 'utils/fonts';
 import WebView from 'react-native-webview';
 import SvgClose from 'svgs/forgotPass/SvgClose';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {COLORS} from 'constants';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import Input from 'screens/SiginIn/components/Input';
@@ -55,7 +55,7 @@ const ModalPrompt = memo((props: Props) => {
           <Text style={styles.desc}>
             {props.textMessage != null && props.textMessage != ''
               ? props.textMessage
-              : 'Se ha enviado un código a \n su correo electrónico'}
+              : 'Se ha enviado un código de verificación a tu correo electrónico'}
           </Text>
           {props.error ? (
             <View>

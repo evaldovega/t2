@@ -18,7 +18,7 @@ export default Header;
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: getStatusBarHeight(true) + 10,
+        marginTop: getStatusBarHeight(true) + 20,
         paddingHorizontal:24,
         alignSelf:'center',
         paddingTop: 0,

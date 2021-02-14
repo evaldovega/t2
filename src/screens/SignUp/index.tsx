@@ -20,37 +20,6 @@ import moment from 'moment'
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import Validator, { Execute } from 'components/Validator'
 
-const validations = {
-    firstname: {
-        presence: { allowEmpty: false, message: '^Este campo es requerido' },
-    },
-    lastname: {
-        presence: { allowEmpty: false, message: '^Este campo es requerido' },
-    },
-    email: {
-        email: { message: '^Email invalido' },
-        presence: { allowEmpty: false, message: '^Este campo es requerido' },
-    },
-    password1: {
-        presence: { allowEmpty: false, message: '^Este campo es requerido' },
-    },
-    password2: {
-        equality: {
-            attribute: "password1",
-            message: '^Las contraseñas introducidas no coinciden',
-        },
-        presence: { allowEmpty: false, message: '^Este campo es requerido' },
-    },
-    direccion: {
-        presence: { allowEmpty: false, message: '^Este campo es requerido' },
-    },
-    numWhatsapp: {
-        presence: { allowEmpty: false, message: '^Este campo es requerido' },
-    },
-    numDocumento: {
-        presence: { allowEmpty: false, message: '^Este campo es requerido' },
-    },
-}
 
 class SignUp extends React.Component {
 
@@ -60,7 +29,7 @@ class SignUp extends React.Component {
         this.state = {
             stepOneError: true,
             showHeader: true,
-            step: 2,
+            step: 0,
             contratoVisualizacion: false,
             isEnabled: false,
             loading: false,
@@ -137,13 +106,13 @@ class SignUp extends React.Component {
         this.setState({ showHeader: true })
     }
 
-   
+
 
     componentDidMount() {
 
         Keyboard.addListener("keyboardDidShow", this._keyboardDidShow);
         Keyboard.addListener("keyboardDidHide", this._keyboardDidHide);
-        
+
         if (this.props.route && this.props.route.params) {
             console.log(JSON.stringify(this.props.route.params))
             const { social } = this.props.route.params
@@ -209,32 +178,37 @@ class SignUp extends React.Component {
                 return
             }
             this.setState({ contratoValidationVisible: true })
+            const body = JSON.stringify({
+                'email': this.state.email,
+                'nombre': this.state.firstname
+            })
+            console.log('Enviar codigo ', body)
             fetch(SERVER_ADDRESS + "api/usuarios/registro/token/", {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify({
-                    'email': this.state.email
-                })
-            }).then(r => r.json()).then(response => {
-                if (response.activo) {
-                    // this.setState({contratoValidationVisible: true})
-                } else {
-                    if (response.non_field_errors) {
-                        try {
-                            this.setState({ msgAlertCode: response.non_field_errors[0] })
-                        } catch (e) {
-                            console.log(e)
+                body: body
+            })
+                .then(r => r.json())
+                .then(response => {
+                    if (response.activo) {
+                        // this.setState({contratoValidationVisible: true})
+                    } else {
+                        if (response.non_field_errors) {
+                            try {
+                                this.setState({ msgAlertCode: response.non_field_errors[0] })
+                            } catch (e) {
+                                console.log(e)
+                            }
                         }
                     }
-                }
-            }).catch((err) => {
-                console.log(err.toString())
-            }).finally(() => {
+                }).catch((err) => {
+                    console.log(err.toString())
+                }).finally(() => {
 
-            })
+                })
         }
     }
 
@@ -321,8 +295,6 @@ class SignUp extends React.Component {
         })
     }
 
-
-
     firmaGuardada = (result) => {
         this.enviar(result.encoded)
     }
@@ -380,7 +352,7 @@ class SignUp extends React.Component {
             if (statusCode == 200 || statusCode == 201) {
                 this.setState({ loading: false })
                 setTimeout(() => {
-                    Alert.alert("Listo", "Usuario registrado exitosamente")
+                    Alert.alert("¡Te has registrado exitosamente!", "Ya puedes comenzar a vender con Servi")
                     this.props.navigation.pop()
                 }, 400)
             } else if (statusCode == 400) {
@@ -456,7 +428,7 @@ class SignUp extends React.Component {
 
     stepOne = () => {
         return (
-            <View>
+            <View style={{marginHorizontal:16}}>
                 <InputText placeholder='Nombres' value={this.state.firstname} onChangeText={v => this.onChangeValue('firstname', v)} />
                 <Validator value={this.state.firstname} required='Campo requerido' ref={ref => this.ValidationsStep1['firstname'] = ref} />
 
@@ -483,8 +455,6 @@ class SignUp extends React.Component {
         )
     }
 
-
-
     stepThree = () => {
         return (
             <React.Fragment>
@@ -510,7 +480,7 @@ class SignUp extends React.Component {
                     <View style={{ flex: 1 }}>
                         <Text>
                             Acepto las condiciones en el
-                                    <Text style={styles.link} onPress={() => this.setState({ contratoVisualizacion: true })}> contrato de carrotaje </Text>
+                                    <Text style={styles.link} onPress={() => this.setState({ contratoVisualizacion: true })}> contrato de corresponsalía </Text>
                         </Text>
                     </View>
                     <Switch
@@ -522,7 +492,8 @@ class SignUp extends React.Component {
                         value={this.state.aceptacionContrato}
                     />
                 </View>
-                <View style={{ marginTop: MARGIN_VERTICAL, paddingHorizontal: MARGIN_HORIZONTAL, paddingVertical: 16, backgroundColor: COLORS.GRIS, justifyContent: 'center', borderRadius: CURVA, elevation: 2 }}>
+
+                <View style={{ marginTop: MARGIN_VERTICAL, paddingHorizontal: 42, paddingVertical: 16, backgroundColor: COLORS.GRIS, justifyContent: 'center', borderRadius: CURVA, elevation: 2 }}>
 
 
                     <SignatureCapture ref='firma' onSaveEvent={this.firmaGuardada} saveImageFileInExtStorage={false} minStrokeWidth={1} and maxStrokeWidth={4} showNativeButtons={false} style={{ width: '100%', aspectRatio: 16 / 9, marginVertical: 8 }} />
@@ -533,7 +504,12 @@ class SignUp extends React.Component {
 
 
                 </View>
-
+                <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center',marginVertical:32}}>
+                        <TouchableOpacity  onPress={() => this.setState({ step: 1 })}>
+                            <Text style={{fontSize:18,color:'#007aff'}}>Atrás</Text>
+                        </TouchableOpacity>
+                        <Button title='¡Empezar a vender!' onPress={this.onPressRegister}/>
+                    </View>
             </React.Fragment>
         )
     }
@@ -577,23 +553,30 @@ class SignUp extends React.Component {
                 </ModalPrompt>
 
 
-                <Header navigation={this.props.navigation} />
+                {this.state.showHeader && <Header navigation={this.props.navigation} />}
                 <Loader loading={this.state.loading}></Loader>
-                <View style={{ flex: 1, paddingHorizontal: 32, marginBottom: 16 }}>
+                <View style={{ flex: 1, paddingHorizontal:0}}>
                     <ProgressSteps activeStep={this.state.step}>
-                        <ProgressStep label="" nextBtnText='Siguiente' onNext={() => this.nextStep(1)} errors={true}>
+                        <ProgressStep label="" nextBtnText='Siguiente' nextBtnStyle={{ backgroundColor: COLORS.PRIMARY_COLOR, borderRadius: CURVA }} nextBtnTextStyle={{ color: '#fff' }} onNext={() => this.nextStep(1)} errors={true}>
                             {this.stepOne()}
                         </ProgressStep>
 
-                        <ProgressStep label="" nextBtnText='Estamos terminando' onPrevious={() => this.setState({ step: 0 })} onNext={() => this.nextStep(2)} previousBtnText='Atras' errors={true} previousBtnTextStyle={{ color: COLORS.ROJO }}>
-                            <View>
-                                <InputText marginTop={1} input={{ keyboardType: 'phone-pad' }} placeholder={'Número de WhatsApp'} value={this.state.numWhatsapp} onChangeText={v => this.onChangeValue('numWhatsapp', v)} />
-                                <Validator value={this.state.numWhatsapp} required='Campo requerido' ref={ref => this.ValidationsStep2['numWhatsapp'] = ref} />
+                        <ProgressStep label="" 
+                        nextBtnStyle={{ backgroundColor: COLORS.PRIMARY_COLOR }} 
+                        nextBtnStyle={{ backgroundColor: COLORS.PRIMARY_COLOR, borderRadius: CURVA }} 
+                        nextBtnTextStyle={{ color: '#fff' }} 
+                        nextBtnText='Siguiente' 
+                        onPrevious={() => this.setState({ step: 0 })} 
+                        onNext={() => this.nextStep(2)} 
+                        previousBtnText='Atrás' 
+                        errors={true} 
+                        >
+                            <View style={{marginHorizontal:16}}>
 
 
-                                <Select marginTop={1} value={this.state.genero} options={this.generoOpts} placeholder={'Seleccione un genero'} onSelect={(item) => this.setState({ genero: item.key })} />
+                                <Select marginTop={1} value={this.state.genero} options={this.generoOpts} placeholder={'Seleccione un género'} onSelect={(item) => this.setState({ genero: item.key })} />
 
-                                <InputDateTimerPicker
+                                <InputDateTimerPicker placeholder='Fecha de nacimiento'
                                     marginTop={1}
                                     showTime={false}
                                     value={this.state.fechaNac} format='YYYY-MM-DD'
@@ -615,36 +598,26 @@ class SignUp extends React.Component {
 
                                 <Validator value={this.state.direccion} required='Campo requerido' ref={ref => this.ValidationsStep2['direccion'] = ref} />
 
+                                <InputText marginTop={1} input={{ keyboardType: 'phone-pad' }} placeholder={'Número de WhatsApp'} value={this.state.numWhatsapp} onChangeText={v => this.onChangeValue('numWhatsapp', v)} />
+                                <Validator value={this.state.numWhatsapp} required='Campo requerido' ref={ref => this.ValidationsStep2['numWhatsapp'] = ref} />
 
 
                             </View>
                         </ProgressStep>
-                        
-                        <ProgressStep label="Finalizar" finishBtnText='Empezar a vender' onPrevious={() => this.setState({ step: 1 })} errors={true} previousBtnText='Atras' previousBtnTextStyle={{ color: COLORS.ROJO }} onSubmit={this.onPressRegister}>
+
+                        <ProgressStep
+                            label="Finalizar" previousBtnStyle={{alignSelf:'flex-start'}}
+                            finishBtnText='¡Empezar a vender!'
+                            errors={false}
+                            nextBtnStyle={{ padding:4,backgroundColor: COLORS.PRIMARY_COLOR, borderRadius: CURVA,marginLeft:16 }}
+                            nextBtnTextStyle={{ color: '#fff',margin:0}}
+                            previousBtnStyle={{textAlign:'left',fontSize:24,flex:1}}
+                            removeBtnRow={true}
+                            previousBtnText='Atrás'>
                             {this.stepThree()}
                         </ProgressStep>
                     </ProgressSteps>
-
-                    {/*<View style={{ flex: 1 }}>
-                        <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-                            {this.steps(step)}
-
-                            <View>
-                                {step == 0 ? (<Button title='Siguiente' marginTop={3} onPress={() => this.nextStep(1)} />) : null}
-                                {step == 1 ? (<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Button onPress={() => this.nextStep(-1)} marginTop={3} title='Atrás' />
-                                    <Button title='Siguiente' onPress={() => this.nextStep(1)} marginTop={3} />
-                                </View>) : null}
-                                {step == 2 ? (<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Button color='morado' onPress={() => this.nextStep(-1)} marginTop={3} title='Atrás' />
-                                    <Button marginTop={3} disabled={this.state.isEnabled && this.state.aceptacionContrato ? false : true} onPress={this.onPressRegister} title='Empezar a vender' />
-                                </View>) : null}
-                            </View>
-                        </ScrollView>
-
-                    </View>*/}
-
-
+                    
                 </View>
 
             </ColorfullContianer>

@@ -84,7 +84,9 @@ const Variaciones = React.forwardRef(
             );
           })}
         </ScrollView>
-        <Button title="Continuar" onPress={next} />
+        <View style={{margin: 24}}>
+          <Button title="Continuar" onPress={next} />
+        </View>
       </ColorfullContainer>
     );
   },
