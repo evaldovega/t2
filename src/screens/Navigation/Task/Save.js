@@ -26,7 +26,6 @@ import InputDateTimerPicker from 'components/DatetimePicker';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {fetchConfig} from 'utils/Fetch';
 import {getSharedPreference} from 'utils/SharedPreference';
-import {config} from 'react-native-firebase';
 
 class TaskSave extends React.Component {
   state = {
