@@ -211,6 +211,7 @@ dependencies {
         exclude group: "com.google.android.gms" // very important
     }
     implementation project(':react-native-contacts')
+    compile project(':react-native-facebook-login')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
