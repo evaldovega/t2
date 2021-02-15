@@ -177,7 +177,7 @@ class TaskSave extends React.Component {
                   onSelect={(v) => this.setState({tipo_tarea: v.key})}
                   options={this.props.tipos.map((t) => ({
                     key: t.id,
-                    label: t.descripcion,
+                    label: t.titulo,
                   }))}
                 />
               </Validator>

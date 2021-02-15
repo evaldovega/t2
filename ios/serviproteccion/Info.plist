@@ -27,7 +27,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb893331661479078</string>
+				<string>fb2831106907160474</string>
 			</array>
 		</dict>
 		<dict>
@@ -42,14 +42,14 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>FacebookAppID</key>
-	<string>893331661479078</string>
+	<string>2831106907160474</string>
 	<key>FacebookDisplayName</key>
-	<string>ServiProtección</string>
+	<string>Servi</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>893331661479078</string>
+		<string>2831106907160474</string>
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
 	</array>
