@@ -51,6 +51,10 @@ const styles = StyleSheet.create({
 //10.0.82.90
 const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 class Soporte extends React.Component {
+  socket = SocketIOClient(SOCKET_ADDRESS, {
+    transports: ['websocket'],
+  });
+
   state = {
     cargando: false,
     entrando: true,
@@ -70,15 +74,17 @@ class Soporte extends React.Component {
       .then((r) => r.json())
       .then((data) => {
         const user = this.props.id;
-        const mensajes = data.map((d) => ({
-          ...d,
-          ...{message: d.mensaje},
-          ...{me: d.user == user},
-        }));
+        if (data) {
+          const mensajes = data.map((d) => ({
+            ...d,
+            ...{message: d.mensaje},
+            ...{me: d.user == user},
+          }));
+        }
 
         this.setState({
-          mensajes: mensajes,
-          total_mensajes: mensajes.length,
+          mensajes: mensajes || [],
+          total_mensajes: mensajes.length || 0,
           cargando: false,
         });
       })
@@ -96,20 +102,24 @@ class Soporte extends React.Component {
       }
     });
 
-    this.socket = SocketIOClient(SOCKET_ADDRESS, {transports: ['websocket']});
     console.log('Room ' + this.props.id);
 
     this.load();
 
     this.socket.on('disconnect', () => {
+      console.log('SOcket diconect');
       this.setState({entrando: true});
     });
+
     this.socket.on('connect', () => {
+      console.log('socket connect');
       this.socket.emit('enter', {user: this.props.id});
     });
+
     this.socket.on('message_enter', (data) => {
       this.setState({entrando: false});
     });
+
     this.socket.on('message', (data) => {
       if (data.id != this.props.id) {
         let mensajes = this.state.mensajes;
@@ -193,7 +203,7 @@ class Soporte extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'dark-content'}
         />
-        <NavBar {...this.props} back title="Soporte" transparent />
+        <NavBar {...this.props} back title="Sopore" transparent />
         <SafeAreaView style={{flex: 1}}>
           <FlatList
             data={this.state.mensajes}

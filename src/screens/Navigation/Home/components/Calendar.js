@@ -31,8 +31,9 @@ const Calendar = ({refresh}) => {
       .then((r) => r.json())
       .then((tareas) => {
         setLoading(false);
-        console.log(tareas);
-        setDocs(tareas);
+        if (tareas) {
+          setDocs(tareas || []);
+        }
       })
       .catch((error) => {
         setLoading(false);
@@ -112,32 +113,33 @@ const Calendar = ({refresh}) => {
           scrollEventThrottle={200}
           decelerationRate="fast"
           pagingEnabled>
-          {docs.map((doc) => (
-            <TouchableOpacity
-              style={{
-                width: '15%',
-                height: '100%',
-                backgroundColor: 'rgba(84,4,118,.05)',
-                marginRight: 8,
-                padding: 8,
-                borderRadius: 4,
-              }}
-              onLongPress={() => trash(doc)}
-              onPress={() =>
-                navigation.push('TaskSave', {
-                  id: doc.id,
-                  cliente_id: '',
-                  reload: load,
-                })
-              }>
-              <Text style={{fontFamily: 'Mont-Regular', fontSize: 12}}>
-                {moment(doc.fecha_agendamiento).format('dddd hh:mm a')}
-              </Text>
-              <Text style={{fontFamily: 'Mont-Regular', fontSize: 10}}>
-                {doc.tipo_tarea_str}, {doc.cliente_str}.
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {docs &&
+            docs.map((doc) => (
+              <TouchableOpacity
+                style={{
+                  width: '15%',
+                  height: '100%',
+                  backgroundColor: 'rgba(84,4,118,.05)',
+                  marginRight: 8,
+                  padding: 8,
+                  borderRadius: 4,
+                }}
+                onLongPress={() => trash(doc)}
+                onPress={() =>
+                  navigation.push('TaskSave', {
+                    id: doc.id,
+                    cliente_id: '',
+                    reload: load,
+                  })
+                }>
+                <Text style={{fontFamily: 'Mont-Regular', fontSize: 12}}>
+                  {moment(doc.fecha_agendamiento).format('dddd hh:mm a')}
+                </Text>
+                <Text style={{fontFamily: 'Mont-Regular', fontSize: 10}}>
+                  {doc.tipo_tarea_str}, {doc.cliente_str}.
+                </Text>
+              </TouchableOpacity>
+            ))}
         </ScrollView>
       </View>
     </>

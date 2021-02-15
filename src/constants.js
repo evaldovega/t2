@@ -1,5 +1,5 @@
 export const SERVER_ADDRESS = 'https://app.serviapp.co/';
-export const SOCKET_ADDRESS = 'https://wss.serviapp.co';
+export const SOCKET_ADDRESS = 'https://app.serviapp.co:8080';
 
 export const MARGIN_HORIZONTAL = 21;
 export const TITULO_TAM = 24;
