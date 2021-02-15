@@ -74,19 +74,20 @@ class Soporte extends React.Component {
       .then((r) => r.json())
       .then((data) => {
         const user = this.props.id;
+
         if (data) {
           const mensajes = data.map((d) => ({
             ...d,
             ...{message: d.mensaje},
             ...{me: d.user == user},
           }));
-        }
 
-        this.setState({
-          mensajes: mensajes || [],
-          total_mensajes: mensajes.length || 0,
-          cargando: false,
-        });
+          this.setState({
+            mensajes: mensajes || [],
+            total_mensajes: mensajes.length || 0,
+            cargando: false,
+          });
+        }
       })
       .catch((error) => {
         this.setState({cargando: false});
