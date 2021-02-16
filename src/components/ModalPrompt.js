@@ -1,26 +1,20 @@
-import React, {Component, memo} from 'react';
+import React, {memo} from 'react';
 import {
-  Alert,
   Modal,
   StyleSheet,
   Text,
   TextInput,
   Image,
-  TouchableHighlight,
   View,
   Dimensions,
-  TouchableHighlightComponent,
   TouchableOpacity,
 } from 'react-native';
 import {Button} from 'react-native-paper';
 import {Montserrat} from 'utils/fonts';
-import WebView from 'react-native-webview';
 import SvgClose from 'svgs/forgotPass/SvgClose';
 import {COLORS} from 'constants';
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
-import Input from 'screens/SiginIn/components/Input';
 
-const {width, heigth} = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 interface Props {
   mt?: number;

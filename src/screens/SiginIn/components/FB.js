@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {SERVER_ADDRESS, CURVA} from 'constants';
 import {Text, TouchableOpacity} from 'react-native';
@@ -8,7 +8,6 @@ import {connect} from 'react-redux';
 import {changeProps} from 'redux/actions/Usuario';
 
 const FBLoginButton = ({userChangeProps}) => {
-  const fbLogin = useRef();
   const navigation = useNavigation();
 
   const login = (fb) => {

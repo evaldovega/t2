@@ -115,10 +115,11 @@ export const cambiarFotoPerfil = (data) => {
           console.log(response.body);
           const body = JSON.parse(response.body);
 
-          let data_user = await getSharedPreference('data-user');
-          data_user = JSON.parse(data_user);
-          data_user.foto_perfil = body.foto_perfil;
-          setSharedPreference('data-user', JSON.stringify(data_user));
+          dispatch({
+            type: ACTION_USUARIO_ACTUALIZAR_PROP,
+            p: 'foto_perfil',
+            v: body.foto_perfil,
+          });
 
           dispatch({
             type: ACTION_USUARIO_FOTO_PERFIL_CAMBIADA,
@@ -148,8 +149,8 @@ export const cambiarFotoPerfil = (data) => {
 export const subirFotoIde = (image, lado) => {
   return async (dispatch, getState) => {
     try {
-      let data_user = await getSharedPreference('data-user');
-      data_user = JSON.parse(data_user);
+      //let data_user = await getSharedPreference('data-user');
+      //data_user = JSON.parse(data_user);
 
       dispatch({type: ACTION_USUARIO_SUBIENDO_IDE, lado: lado});
       const RNFS = require('react-native-fs');
@@ -200,11 +201,21 @@ export const subirFotoIde = (image, lado) => {
             foto_subida =
               SERVER_ADDRESS + foto_subida.replace('/media', 'media');
             if (lado == 'frente') {
-              data_user.foto_documento_cara1 = foto_subida;
+              //data_user.foto_documento_cara1 = foto_subida;
+              dispatch({
+                type: ACTION_USUARIO_ACTUALIZAR_PROP,
+                p: 'foto_documento_cara1',
+                v: foto_subida,
+              });
             } else {
-              data_user.foto_documento_cara2 = foto_subida;
+              //data_user.foto_documento_cara2 = foto_subida;
+              dispatch({
+                type: ACTION_USUARIO_ACTUALIZAR_PROP,
+                p: 'foto_documento_cara2',
+                v: foto_subida,
+              });
             }
-            setSharedPreference('data-user', JSON.stringify(data_user));
+            //setSharedPreference('data-user', JSON.stringify(data_user));
             dispatch({
               type: ACTION_USUARIO_IDE_SUBIDA,
               ide: foto_subida,

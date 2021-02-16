@@ -1,4 +1,3 @@
-import module from '@react-native-firebase/app';
 import React from 'react';
 import {StatusBar, ScrollView, Text, View} from 'react-native';
 import NavBar from 'components/Navbar';
@@ -57,6 +56,7 @@ class FQA extends React.Component {
                   </Text>
                 </View>
                 <WebView
+                  androidHardwareAccelerationDisabled={true}
                   automaticallyAdjustContentInsets={false}
                   style={{width: '100%', aspectRatio: 16 / 9}}
                   source={{html: `${head} ${r.respuesta}`}}

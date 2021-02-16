@@ -6,10 +6,7 @@ import {
   Text,
   Alert,
   Image,
-  Animated,
-  Dimensions,
   KeyboardAvoidingView,
-  Easing,
   ScrollView,
 } from 'react-native';
 import ColorfullContianer from 'components/ColorfullContainer';

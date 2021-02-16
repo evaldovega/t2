@@ -17,6 +17,7 @@ import Cover from 'components/Cover';
 
 class PlanDetalle extends React.PureComponent {
   componentDidMount() {}
+  componentWillUnmount() {}
 
   adquirir = () => {
     console.log('ADQUIRIR');
@@ -73,9 +74,10 @@ class PlanDetalle extends React.PureComponent {
             marginTop: Platform.OS === 'ios' ? MARGIN_VERTICAL * 5 : 0,
           }}>
           <WebView
+            androidHardwareAccelerationDisabled={true}
             originWhitelist={['*']}
+            renderLoading={() => <Text>Cargando...</Text>}
             source={{
-              baseUrl: '',
               html: `<html>
                                 <head>
                                     <meta name="viewport" content="width=device-width,user-scale=no">

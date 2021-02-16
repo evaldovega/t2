@@ -1,8 +1,5 @@
 import React, {memo} from 'react';
 import {StyleSheet, Text, View, Image} from "react-native";
-import SvgLogo from "svgs/signIn/SvgLogo";
-import {Montserrat} from "utils/fonts";
-import SvgPerson from "svgs/signIn/SvgPerson";
 import {getStatusBarHeight} from "react-native-iphone-x-helper";
 
 const Header = memo(() => {
@@ -42,14 +39,12 @@ const styles = StyleSheet.create({
         fontSize: 32,
         color: '#209a91',
         fontWeight: '600',
-        fontFamily: Montserrat,
         marginTop: 40
     },
     txtTo: {
         fontSize: 24,
         color: '#00817a',
-        fontWeight: '500',
-        fontFamily: Montserrat
+        fontWeight: '500'
     },
     circle: {
         width: 176,

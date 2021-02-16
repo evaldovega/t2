@@ -1,12 +1,5 @@
-import React, {Component} from 'react';
-import {
-  StyleSheet,
-  View,
-  Modal,
-  ActivityIndicator,
-  Text,
-  Image,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, View, Modal, Text, Image} from 'react-native';
 
 const icon = require('utils/images/icon.png');
 

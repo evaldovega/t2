@@ -2,17 +2,14 @@ import React from 'react';
 import {
   Dimensions,
   StyleSheet,
-  TouchableOpacity,
   View,
   Text,
   StatusBar,
   Image,
   Animated,
   Easing,
-  SafeAreaView,
 } from 'react-native';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
-import {ROUTERS} from 'utils/navigation';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 const {width: viewportWidth} = Dimensions.get('window');
@@ -21,8 +18,6 @@ function wp(percentage: number) {
   const value = (percentage * viewportWidth) / 100;
   return Math.round(value);
 }
-
-const slideHeight = '100%';
 const slideWidth = wp(80);
 const itemHorizontalMargin = wp(2);
 export const sliderWidth = viewportWidth;

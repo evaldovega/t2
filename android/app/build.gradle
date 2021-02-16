@@ -207,11 +207,11 @@ dependencies {
     implementation project(':react-native-fs')
      implementation 'com.android.support:multidex:1.0.3'
     implementation project(':@react-native-community_datetimepicker')
-    compile(project(":@react-native-community_google-signin")){
-        exclude group: "com.google.android.gms" // very important
-    }
+    implementation project(":@react-native-community_google-signin")
+    implementation 'com.facebook.soloader:soloader:0.9.0+'
     implementation project(':react-native-contacts')
     compile project(':react-native-facebook-login')
+    implementation project(':react-native-webview')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules

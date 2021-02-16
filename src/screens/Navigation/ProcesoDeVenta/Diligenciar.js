@@ -1,18 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 
-import {
-  View,
-  Alert,
-  Dimensions,
-  ScrollView,
-  StatusBar,
-  Switch,
-  Image,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-} from 'react-native';
-import {Text} from 'react-native-paper';
-import NumberFormat from 'react-number-format';
+import {View, Alert, StatusBar, KeyboardAvoidingView} from 'react-native';
 
 import Loader from 'components/Loader';
 
@@ -26,7 +14,6 @@ import {
   TEXTO_TAM,
 } from 'constants';
 
-import {connect} from 'react-redux';
 import {addOrden} from 'redux/actions/Clients';
 import Navbar from 'components/Navbar';
 
@@ -270,5 +257,4 @@ const mapToAction = (dispatch) => {
   };
 };
 
-//export default connect(mapearEstado,mapToAction,)(NegocioDiligenciarInformacion);
 export default NegocioDiligenciarInformacion;

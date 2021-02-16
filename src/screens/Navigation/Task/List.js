@@ -3,9 +3,7 @@ import {View, FlatList, TouchableNativeFeedback, Alert} from 'react-native';
 
 import {COLORS} from 'constants';
 import moment from 'moment';
-import {Subheading, Title, Caption, Colors, Avatar} from 'react-native-paper';
-import Detail from '../Product/Detail';
-
+import {Subheading, Title, Caption, Colors} from 'react-native-paper';
 class TaskList extends React.Component {
   constructor(props) {
     super(props);

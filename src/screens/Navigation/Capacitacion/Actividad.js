@@ -1,18 +1,15 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {
   View,
   StyleSheet,
   Text,
-  TouchableOpacity,
   ScrollView,
   Alert,
-  Image,
   Dimensions,
   Animated,
   Easing,
   Linking,
 } from 'react-native';
-import {withAnchorPoint} from 'react-native-anchor-point';
 import {WebView} from 'react-native-webview';
 import YoutubePlayer, {getYoutubeMeta} from 'react-native-youtube-iframe';
 import {
@@ -27,7 +24,6 @@ import {CheckBox} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Loader from 'components/Loader';
 const {width, height} = Dimensions.get('screen');
-import {styleText, styleHeader, styleButton} from 'styles';
 import {connect} from 'react-redux';
 import {
   capacitacionDetalleObtenerActividad,
@@ -187,6 +183,7 @@ class Actividad extends React.Component {
           borderWidth: 0.3,
         }}>
         <WebView
+          androidHardwareAccelerationDisabled={true}
           showsVerticalScrollIndicator={true}
           originWhitelist={['*']}
           source={{html: html}}
@@ -280,6 +277,7 @@ class Actividad extends React.Component {
         style={{
           flex: 1,
           marginHorizontal: MARGIN_HORIZONTAL,
+          backgroundColor: '#ffff',
         }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{flex: 1, padding: 16}}>{preguntas}</View>

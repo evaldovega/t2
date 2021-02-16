@@ -3,8 +3,6 @@ import {Text} from 'react-native';
 import {styleInput} from 'styles';
 import validate from 'utils/validate.min.js';
 import produce from 'immer';
-import scour from 'scourjs';
-import {screensEnabled} from 'react-native-screens';
 
 export const totalErrores = (scope) => {
   let total = 0;

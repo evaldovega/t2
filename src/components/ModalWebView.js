@@ -56,6 +56,7 @@ const ModalWebView = (props) => {
         </TouchableOpacity>
 
         <WebView
+          androidHardwareAccelerationDisabled={true}
           originWhitelist={['*']}
           source={{
             html: `<html>

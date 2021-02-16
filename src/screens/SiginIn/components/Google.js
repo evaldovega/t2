@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCodes,
-} from '@react-native-community/google-signin';
+import {GoogleSignin} from '@react-native-community/google-signin';
 import {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Text, TouchableOpacity} from 'react-native';

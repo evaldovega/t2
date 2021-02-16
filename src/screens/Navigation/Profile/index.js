@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Alert,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {Lato, Montserrat} from 'utils/fonts';
@@ -28,7 +27,6 @@ import {
   NOTIMAGE,
   TITULO_TAM,
 } from 'constants';
-import {styleHeader} from 'styles';
 import ProfileIdentificacion from './components/Identificacion';
 import {actualizarDatos, cambiarProp} from 'redux/actions/Usuario';
 
