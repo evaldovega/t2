@@ -256,7 +256,7 @@ class Actividad extends React.Component {
                 fontSize: 18,
                 marginBottom: 20,
               }}>
-              ¿{p.pregunta}?
+              {p.pregunta}
             </Text>
             {p.opciones.map((o, k2) => this.renderOpcion(o, p, k, k2))}
             {p.error && p.error != '' ? (
@@ -309,44 +309,52 @@ class Actividad extends React.Component {
   };
 
   renderVideo = (data) => {
+    console.log(data);
     if (data.tipo != 'video') {
       return;
     }
     return (
-      <View
-        style={{
-          overflow: 'hidden',
-          borderTopLeftRadius: CURVA,
-          borderTopRightRadius: CURVA,
-          height: 250,
-        }}>
-        {this.state.estado_video == '' ? (
-          <View
-            style={{
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 128,
-            }}>
-            <ActivityIndicator />
-            <Text>Cargando...</Text>
-          </View>
-        ) : null}
+      <View>
+        <View
+          style={{
+            overflow: 'hidden',
+            borderTopLeftRadius: CURVA,
+            borderTopRightRadius: CURVA,
+            height: 250,
+          }}>
+          {this.state.estado_video == '' ? (
+            <View
+              style={{
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 128,
+              }}>
+              <ActivityIndicator />
+              <Text>Cargando...</Text>
+            </View>
+          ) : null}
 
-        <YoutubePlayer
-          webViewStyle={{width: '100%', zIndex: 2}}
-          ref={this.reproductor}
-          height={300}
-          play={this.state.reproducir}
-          videoId={data.enlace_externo.split('?v=')[1]}
-          initialPlayerParams={{
-            rel: false,
-            controls: true,
-            modestbranding: true,
-          }}
-          onReady={() => this.setState({estado_video: 'ready'})}
-          onChangeState={this.onStateChange}
-        />
+          <YoutubePlayer
+            webViewStyle={{width: '100%', zIndex: 2}}
+            ref={this.reproductor}
+            height={300}
+            play={this.state.reproducir}
+            videoId={data.enlace_externo.split('?v=')[1]}
+            initialPlayerParams={{
+              rel: false,
+              controls: true,
+              modestbranding: true,
+            }}
+            onReady={() => this.setState({estado_video: 'ready'})}
+            onChangeState={this.onStateChange}
+          />
+        </View>
+
+        <Text
+          style={{textAlign: 'justify', marginHorizontal: MARGIN_HORIZONTAL}}>
+          {data.descripcion}
+        </Text>
       </View>
     );
   };
@@ -358,7 +366,7 @@ class Actividad extends React.Component {
     return (
       <ColorfullContainer style={styles.container}>
         <Loader loading={cargando} />
-        <Navbar back title={data.tipo} transparent {...this.props} />
+        <Navbar back title={'Actividad'} transparent {...this.props} />
 
         <View style={styles.container}>
           <View
@@ -380,11 +388,21 @@ class Actividad extends React.Component {
               </Text>
 
               {data.tipo == 'archivo' ? (
-                <Button
-                  style={{marginHorizontal: 32}}
-                  onPress={() => Linking.openURL(data.archivo_descargable)}
-                  title="Descargar arhcivo"
-                />
+                <View>
+                  <Text
+                    style={{
+                      textAlign: 'justify',
+                      marginHorizontal: MARGIN_HORIZONTAL,
+                      marginVertical: MARGIN_VERTICAL,
+                    }}>
+                    {data.descripcion}
+                  </Text>
+                  <Button
+                    style={{marginHorizontal: MARGIN_HORIZONTAL}}
+                    onPress={() => Linking.openURL(data.archivo_descargable)}
+                    title="Descargar archivo"
+                  />
+                </View>
               ) : null}
               {data.tipo == 'lectura' ? (
                 <View

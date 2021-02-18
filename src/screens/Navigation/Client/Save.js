@@ -6,20 +6,21 @@ import {
   Text,
   StyleSheet,
   Alert,
+  TouchableOpacity,
   Platform,
 } from 'react-native';
 
 import Loader from 'components/Loader';
 import {styleInput} from 'styles';
 import {loadClient, changeProp, save} from '../../../redux/actions/Clients';
-
 import ColorfullContainer from 'components/ColorfullContainer';
 import Navbar from 'components/Navbar';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
 import Select from 'components/Select';
 import Validator, {Execute} from 'components/Validator';
-import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL} from 'constants';
+import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL, COLORS} from 'constants';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,7 +30,10 @@ const styles = StyleSheet.create({
 });
 
 class ClientSave extends React.Component {
-  state = {};
+  state = {
+    telefonos: '',
+    num_telefono: '',
+  };
   Validations = {};
 
   componentDidMount() {
@@ -40,7 +44,7 @@ class ClientSave extends React.Component {
       this.props.changeProp('segundo_nombre', item.segundo_nombre);
       this.props.changeProp('primer_apellido', item.primer_apellido);
       this.props.changeProp('segundo_apellido', item.segundo_apellido);
-      this.props.changeProp('numero_telefono', item.telefonos);
+      this.props.changeProp('numero_telefono', item.numero_telefono);
       this.props.changeProp('correo_electronico', item.email);
     } else {
       console.log('No hay valores por defecto');
@@ -56,14 +60,42 @@ class ClientSave extends React.Component {
       Alert.alert('Buen trabajo', this.props.success);
       this.props.navigation.pop();
     }
+
+    if (prev.loading_client == true && this.props.loading_client == false) {
+      this.setState({telefonos: this.props.numero_telefono});
+    }
   }
 
   guardar = () => {
-    Execute(this.Validations)
-      .then(() => {
-        this.props.save(this.props);
-      })
-      .catch((error) => {});
+    let totalTelefonos = this.state.telefonos;
+    let campoTelefono = this.state.num_telefono;
+    if (totalTelefonos.replace(',', '').trim().length == 0) {
+      this.setState({telefonos: campoTelefono});
+    }
+
+    setTimeout(() => {
+      Execute(this.Validations)
+        .then(() => {
+          this.props.save(this.props);
+        })
+        .catch((error) => {});
+    }, 100);
+  };
+
+  removerTelefono = (telefono, idx) => {
+    let celulares = this.state.telefonos.split(',');
+    celulares.splice(idx, 1);
+    this.setState({telefonos: celulares.join(',')});
+    this.props.changeProp('numero_telefono', celulares.join(','));
+  };
+
+  agregarTelefono = () => {
+    let celulares = this.state.telefonos.split(',');
+    if (this.state.num_telefono.length > 0) {
+      celulares.push(this.state.num_telefono);
+      this.setState({telefonos: celulares.join(','), num_telefono: ''});
+      this.props.changeProp('numero_telefono', celulares.join(','));
+    }
   };
 
   render() {
@@ -179,17 +211,45 @@ class ClientSave extends React.Component {
 
             <Validator
               ref={(r) => (this.Validations['nt'] = r)}
-              value={this.props.numero_telefono}
+              value={this.state.telefonos}
               required>
               <Text style={styleInput.label}>Número de teléfono *:</Text>
-              <InputText
-                marginTop={1}
-                value={this.props.numero_telefono}
-                onChangeText={(i) =>
-                  this.props.changeProp('numero_telefono', i)
-                }
-                input={{keyboardType: 'number-pad'}}
-              />
+              <View style={{flexDirection: 'row', marginTop: 8}}>
+                <InputText
+                  marginTop={0}
+                  style={{flex: 1, marginRight: 6}}
+                  value={this.state.num_telefono}
+                  onChangeText={(i) => this.setState({num_telefono: i})}
+                  input={{keyboardType: 'number-pad'}}
+                />
+                <Button title="+" onPress={() => this.agregarTelefono()} />
+              </View>
+              <View style={{marginVertical: MARGIN_VERTICAL}}>
+                {this.state.telefonos.split(',').map((tel, i) => {
+                  if (tel.length > 0) {
+                    return (
+                      <TouchableOpacity
+                        style={{marginVertical: 6}}
+                        onPress={() => this.removerTelefono(tel, i)}>
+                        <Text
+                          style={{
+                            backgroundColor: '#ababab',
+                            paddingVertical: 4,
+                            paddingHorizontal: 8,
+                            borderRadius: CURVA,
+                          }}>
+                          <FontAwesome
+                            size={16}
+                            name="times"
+                            color={'#FFFFFF'}
+                          />{' '}
+                          {tel}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  }
+                })}
+              </View>
             </Validator>
 
             <Text style={styleInput.label}>Email:</Text>
@@ -228,6 +288,7 @@ const mapToState = (state) => {
     loading: state.Client.loading,
     error: state.Client.error,
     success: state.Client.success,
+    loading_client: state.Client.loading_client,
   };
 };
 const mapToActions = (dispatch) => {

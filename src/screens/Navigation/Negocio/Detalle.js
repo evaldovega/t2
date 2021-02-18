@@ -224,8 +224,10 @@ class NegocioDetalle extends React.Component {
                 justifyContent: 'space-between',
                 marginTop: 8,
               }}>
-              <Text style={{fontWeight: 'bold'}}>Metodo de pago:</Text>
-              <Text>{doc.metodo_pago}</Text>
+              <Text style={{fontWeight: 'bold'}}>Método de pago:</Text>
+              <Text style={{textTransform: 'capitalize'}}>
+                {doc.metodo_pago_str}
+              </Text>
             </View>
             <View
               style={{
@@ -234,7 +236,7 @@ class NegocioDetalle extends React.Component {
                 marginTop: 8,
               }}>
               <Text style={{fontWeight: 'bold'}}>Frecuencia de pago:</Text>
-              <Text>Cada {doc.frecuencia_pago} Mes(s)</Text>
+              <Text>Cada {doc.frecuencia_pago} Mes(es)</Text>
             </View>
 
             {this.renderFormularioPlan(doc)}
@@ -244,6 +246,7 @@ class NegocioDetalle extends React.Component {
         {doc && doc.estado_orden == 4 ? (
           <Button
             title="Subsanar"
+            style={{marginBottom: 10, marginHorizontal: MARGIN_HORIZONTAL}}
             onPress={() =>
               this.props.navigation.push('NegocioDiligenciarInformacion', {
                 id: doc.plan,

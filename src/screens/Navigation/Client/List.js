@@ -93,7 +93,7 @@ const ClienteListado = ({navigation, clients, load, trash, loading, route}) => {
               backgroundColor: COLORS.VERDE,
               marginRight: 8,
             }}
-            onPress={() => edit(item.id)}
+            onPress={() => edit(item.id, item)}
           />
           <FAB
             icon="phone"
@@ -171,8 +171,8 @@ const ClienteListado = ({navigation, clients, load, trash, loading, route}) => {
     }
   };
 
-  const edit = (id) => {
-    navigation.push('ClientSave', {id: id});
+  const edit = (id, item) => {
+    navigation.push('ClientSave', {id: id, item: item});
   };
 
   return (

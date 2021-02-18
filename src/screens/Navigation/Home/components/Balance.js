@@ -25,18 +25,22 @@ const Balance = (props) => {
     setCargado(true);
     const fi = moment().startOf('month').format('YYYY-MM-DD');
     const ff = moment().endOf('month').format('YYYY-MM-DD');
-    fetch(`${url}api/usuarios/comisiones/?fi=${fi}&ff=${ff}`, {
+    fetch(`${url}usuarios/comisiones/?fi=${fi}&ff=${ff}`, {
       headers,
     })
       .then((r) => r.json())
       .then((r) => {
-        console.log(r);
-        const t = r.reduce(sum, 0);
+        let t = 0;
+        for (let i = 0; i < r.length; i++) {
+          if (r[i].estado == 'APROBADO') {
+            t = r[i].valor;
+          }
+        }
         setTotal(t);
         setCargado(false);
       })
       .catch((error) => {
-        console.log(error);
+        console.log('err', error);
         setCargado(false);
       });
   };

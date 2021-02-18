@@ -20,6 +20,7 @@ import produce from 'immer';
 
 const initial_state = {
   loading: false,
+  loading_client: false,
   clear: true,
   id: '',
   primer_nombre: '',
@@ -47,6 +48,7 @@ export default Client = (state = initial_state, action) => {
         break;
       case ACTION_CLIENT_CLEAN:
         draft.clear = true;
+        draft.loading_client = true;
         draft.error = '';
         draft.success = '';
         draft.id = '';
@@ -67,6 +69,7 @@ export default Client = (state = initial_state, action) => {
         break;
       case ACTION_CLIENT_LOADED:
         draft.loading = false;
+        draft.loading_client = false;
         draft.id = action.data.id;
         draft.primer_nombre = action.data.primer_nombre;
         draft.segundo_nombre = action.data.segundo_nombre;

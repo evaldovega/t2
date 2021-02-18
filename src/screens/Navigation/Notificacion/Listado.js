@@ -1,6 +1,7 @@
 import React from 'react';
 import ColorfullContainer from 'components/ColorfullContainer';
 import NavBar from 'components/Navbar';
+import moment from 'moment';
 import {
   COLORS,
   SERVER_ADDRESS,
@@ -16,6 +17,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {SimpleLineIcons} from 'react-native-vector-icons/SimpleLineIcons';
 
 class NotificacionListado extends React.Component {
   state = {
@@ -45,7 +47,9 @@ class NotificacionListado extends React.Component {
   detail = (doc) => {
     switch (doc.related_object_type) {
       case 'ordenes':
-        this.props.navigation.push('OrdenDetalle', {id: doc.related_object_id});
+        this.props.navigation.push('NegocioDetalle', {
+          id: doc.related_object_id,
+        });
         break;
     }
   };
@@ -94,9 +98,14 @@ class NotificacionListado extends React.Component {
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}>
-                <Text style={{fontFamily: 'Mont-Regular'}}>
-                  {doc.contenido}
-                </Text>
+                <View>
+                  <Text style={{fontFamily: 'Mont-Regular'}}>
+                    {doc.contenido}
+                  </Text>
+                  <Text style={{fontSize: 11, marginTop: 5, color: '#aaaaaa'}}>
+                    {moment(doc.fecha_creacion).format('dddd hh:mm a')}
+                  </Text>
+                </View>
               </View>
             </TouchableOpacity>
           ))}

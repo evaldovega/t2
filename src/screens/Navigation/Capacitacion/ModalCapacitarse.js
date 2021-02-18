@@ -71,7 +71,9 @@ class ModalCapacitarse extends React.Component {
                   resizeMode: 'contain',
                 }}
               />
-              <Title>¡Hola, {nombre}!</Title>
+              <Title style={{textAlign: 'center', marginBottom: 20}}>
+                ¡Hola, {nombre}!
+              </Title>
               <Paragraph style={{textAlign: 'center'}}>
                 Bienvenido(a) a Servi. Completa el entrenamiento para empezar a
                 vender.
@@ -83,7 +85,7 @@ class ModalCapacitarse extends React.Component {
                 style={{width: '100%'}}
                 source={require('animations/educacion.json')}
               />
-              <Button onPress={this.capacitarme}>Empezar</Button>
+              <Button onPress={this.capacitarme}>Continuar</Button>
             </View>
           </View>
         </View>

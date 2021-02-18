@@ -58,11 +58,20 @@ class ClientProfile extends React.Component {
   };
 
   edit = () => {
-    this.props.navigation.push('ClientSave', {id: this.props.id});
+    this.props.navigation.push('ClientSave', {
+      id: this.props.id,
+      item: this.props,
+    });
   };
 
   wp = (tel) => {
-    Linking.openURL(`whatsapp://send?text=Servi&phone=${tel}`);
+    if (tel.startsWith('+57')) {
+      Linking.openURL(`whatsapp://send?phone=${tel}`);
+    } else if (tel.startsWith('57')) {
+      Linking.openURL(`whatsapp://send?phone=+${tel}`);
+    } else {
+      Linking.openURL(`whatsapp://send?phone=+57${tel}`);
+    }
   };
 
   renderInfoClient = () => {
@@ -110,40 +119,44 @@ class ClientProfile extends React.Component {
           </TouchableOpacity>
 
           <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 16}}>
-            {telefonos.map((tel, i) => (
-              <View
-                key={{i}}
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  margin: 8,
-                }}>
-                <FontAwesome
-                  size={24}
-                  onPress={() => this.wp(tel)}
-                  name="whatsapp"
-                  color={COLORS.PRIMARY_COLOR}
-                />
-                <View
-                  style={{
-                    backgroundColor: COLORS.PRIMARY_COLOR,
-                    borderRadius: CURVA,
-                    padding: 2,
-                    marginHorizontal: 4,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={{color: COLORS.BLANCO}}>{tel}</Text>
-                </View>
-                <Ionicons
-                  size={24}
-                  onPress={() => this.call(tel)}
-                  name="call"
-                  color={COLORS.PRIMARY_COLOR}
-                />
-              </View>
-            ))}
+            {telefonos.map((tel, i) => {
+              if (tel.length > 0) {
+                return (
+                  <View
+                    key={{i}}
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      margin: 8,
+                    }}>
+                    <FontAwesome
+                      size={24}
+                      onPress={() => this.wp(tel)}
+                      name="whatsapp"
+                      color={COLORS.PRIMARY_COLOR}
+                    />
+                    <View
+                      style={{
+                        backgroundColor: COLORS.PRIMARY_COLOR,
+                        borderRadius: CURVA,
+                        padding: 2,
+                        marginHorizontal: 4,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      }}>
+                      <Text style={{color: COLORS.BLANCO}}>{tel}</Text>
+                    </View>
+                    <Ionicons
+                      size={24}
+                      onPress={() => this.call(tel)}
+                      name="call"
+                      color={COLORS.PRIMARY_COLOR}
+                    />
+                  </View>
+                );
+              }
+            })}
           </View>
         </View>
       </View>

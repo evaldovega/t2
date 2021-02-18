@@ -153,8 +153,7 @@ const Finalizar = ({
         throw errores.map((error) => error['0']).join('\n');
       });
 
-      dataToSend.total_pagado =
-        dataToSend.total_pagado * dataToSend.frecuencia_pago;
+      dataToSend.total_pagado = dataToSend.total_pagado; // * dataToSend.frecuencia_pago;
 
       if (metodo_pago == 'financiacion') {
         dataToSend.pasarela_financiacion = pasarela;
@@ -292,23 +291,14 @@ const Finalizar = ({
             />
           </ZoomIn>
 
-          <Select
-            marginTop={1}
-            disabled={orderId ? true : false}
-            placeholder="Seleccione una frecuencia"
-            value={frecuencia}
-            options={FRECUENCIAS}
-            onSelect={(opcion) => cambioDeDatos('frecuencia', opcion.key)}
-          />
-
           <Validator
             value={metodo_pago}
             ref={(r) => (Validaciones['metodo_pago'] = r)}
-            required="Seleccione un metodo de pago">
+            required="Seleccione un método de pago">
             <Select
               marginTop={1}
               value={metodo_pago}
-              placeholder="Metodo pago"
+              placeholder="Método de pago"
               disabled={orderId ? true : false}
               onSelect={(v) => {
                 if (v.key == 'financiacion') {

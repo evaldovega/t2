@@ -5,7 +5,7 @@ import {Text, Animated, easing} from 'react-native';
 const required = {
   presence: {
     allowEmpty: false,
-    message: '^Diligencie éste campo',
+    message: '^Diligencia este campo',
   },
 };
 
@@ -62,19 +62,19 @@ class Validator extends React.PureComponent {
           '^' +
           (this.props.required.length > 0
             ? this.props.required
-            : 'Diligencie éste campo');
+            : 'Diligencia este campo');
       }
       if (this.props.email) {
         _constraints.email = {
           message:
             '^' +
-            (this.props.email.length > 0 ? this.props.email : 'Email invalido'),
+            (this.props.email.length > 0 ? this.props.email : 'Email inválido'),
         };
       }
       if (this.props.url) {
         _constraints.url = {
           message:
-            '^' + (this.props.url.length > 0 ? this.props.url : 'URL invalida'),
+            '^' + (this.props.url.length > 0 ? this.props.url : 'URL inválida'),
         };
       }
     } else {
