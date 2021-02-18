@@ -204,7 +204,7 @@ class Soporte extends React.Component {
           backgroundColor={'transparent'}
           barStyle={'dark-content'}
         />
-        <NavBar {...this.props} back title="Sopore" transparent />
+        <NavBar {...this.props} back title="Soporte" transparent />
         <SafeAreaView style={{flex: 1}}>
           <FlatList
             data={this.state.mensajes}
