@@ -340,6 +340,7 @@ class Actividad extends React.Component {
             ref={this.reproductor}
             height={300}
             play={this.state.reproducir}
+            webViewProps={{androidHardwareAccelerationDisabled: true}}
             videoId={data.enlace_externo.split('?v=')[1]}
             initialPlayerParams={{
               rel: false,

@@ -7,6 +7,7 @@ import {
   SERVER_ADDRESS,
   TITULO_TAM,
   TEXTO_TAM,
+  NOTIMAGE,
 } from 'constants';
 import {connect} from 'react-redux';
 import {
@@ -125,7 +126,7 @@ class PlanesListado extends React.Component {
                   }}>
                   <View>
                     <Image
-                      source={{uri: i.imagen}}
+                      source={{uri: i.imagen || NOTIMAGE}}
                       style={{
                         flex: 1,
                         height: 200,

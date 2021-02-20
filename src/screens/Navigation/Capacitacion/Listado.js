@@ -30,6 +30,7 @@ import {
   MARGIN_HORIZONTAL,
   MARGIN_VERTICAL,
   TITULO_TAM,
+  NOTIMAGE,
 } from 'constants';
 import {connect} from 'react-redux';
 import {capacitacionesCargar} from '../../../redux/actions';
@@ -109,9 +110,10 @@ class CapacitacionListado extends React.Component {
           borderColor: COLORS.SECONDARY_COLOR_LIGHTER,
           borderWidth: 0.3,
         }}>
-        {l.imagen_portada && (
-          <Card.Cover style={{height: 140}} source={{uri: l.imagen_portada}} />
-        )}
+        <Card.Cover
+          style={{height: 140}}
+          source={{uri: l.imagen_portada || NOTIMAGE}}
+        />
         {parseFloat(l.progreso) > 0 && parseFloat(l.progreso) < 100 && (
           <View
             style={{

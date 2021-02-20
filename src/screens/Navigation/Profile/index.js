@@ -15,6 +15,9 @@ import {
   CambiarNombre,
   cambiarFotoPerfil,
   initUsuario,
+  actualizarDatos,
+  cambiarProp,
+  changeProps,
 } from 'redux/actions/Usuario';
 
 import {Avatar} from 'react-native-paper';
@@ -28,7 +31,6 @@ import {
   TITULO_TAM,
 } from 'constants';
 import ProfileIdentificacion from './components/Identificacion';
-import {actualizarDatos, cambiarProp} from 'redux/actions/Usuario';
 
 import Navbar from 'components/Navbar';
 import ColorfullContainer from 'components/ColorfullContainer';
@@ -37,6 +39,7 @@ import InputText from 'components/InputText';
 import InputDateTimerPicker from 'components/DatetimePicker';
 import Validator, {Execute} from 'components/Validator';
 import Usuario from 'redux/reducers/Usuario';
+import {deleteSharedPreference} from 'utils/SharedPreference';
 
 const SeguridadSocial = React.lazy(() =>
   import('./components/SeguridadSocial'),
@@ -50,9 +53,16 @@ function Profile(props) {
     cambiarFotoPerfil,
     actualizarDatos,
     cambiarProp,
+    userChangeProps,
   } = props;
 
   const formulario_datos_personales = {};
+
+  const signOut = async () => {
+    await deleteSharedPreference('auth-token');
+    await deleteSharedPreference('userId');
+    userChangeProps({estadoDeSesion: 0});
+  };
 
   const cambiarFoto = () => {
     console.log('Buscar img');
@@ -244,6 +254,13 @@ function Profile(props) {
               <SeguridadSocial style={{marginTop: 32}} {...props} />
             )}
           </Suspense>
+
+          <Button
+            marginTop={1}
+            onPress={signOut}
+            title="Cerrar sesión"
+            color="rojo"
+          />
         </View>
       </ScrollView>
     </ColorfullContainer>
@@ -273,6 +290,9 @@ const mapTopActions = (dispatch) => {
     },
     initUsuario: () => {
       dispatch(initUsuario());
+    },
+    userChangeProps: (props) => {
+      dispatch(changeProps(props));
     },
   };
 };

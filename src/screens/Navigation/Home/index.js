@@ -75,7 +75,15 @@ const Home = ({User, userChangeProps}) => {
       activeColor: COLORS.PRIMARY_COLOR_DARK_1,
       inactiveColor: COLORS.GRAY,
     },
-    {name: 'Salir', icon: 'close', activeColor: COLORS.ROJO},
+    {
+      name: 'Vender',
+      link: 'Planes',
+      params: {cliente_id: null},
+      methodNav: 'push',
+      icon: 'plus',
+      activeColor: COLORS.BLANCO,
+      inactiveColor: COLORS.GRAY,
+    },
   ];
 
   const [refresh, setRefresh] = useState(null);
@@ -170,7 +178,9 @@ const Home = ({User, userChangeProps}) => {
             }}>
             {modules.map((module) => (
               <TouchableOpacity
-                style={[styles.module]}
+                style={[
+                  module.name == 'Vender' ? styles.moduleVender : styles.module,
+                ]}
                 onPress={() => handlePressModule(module)}>
                 <Icon
                   name={module.icon}
@@ -226,6 +236,17 @@ const styles = StyleSheet.create({
     margin: 1,
     marginVertical: '2%',
     backgroundColor: COLORS.BLANCO,
+    borderRadius: CURVA * 2,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  moduleVender: {
+    width: '30%',
+    padding: 16,
+    margin: 1,
+    marginVertical: '2%',
+    backgroundColor: COLORS.PRIMARY_COLOR,
     borderRadius: CURVA * 2,
     flexDirection: 'column',
     justifyContent: 'center',

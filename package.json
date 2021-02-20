@@ -30,6 +30,7 @@
     "@react-native-community/datetimepicker": "^3.0.2",
     "@react-native-community/google-signin": "^5.0.0",
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-community/netinfo": "^6.0.0",
     "@react-native-firebase/app": "^8.4.6",
     "@react-native-firebase/messaging": "^7.9.1",
     "@react-navigation/bottom-tabs": "^5.11.4",
