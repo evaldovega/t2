@@ -336,11 +336,10 @@ class Actividad extends React.Component {
           ) : null}
 
           <YoutubePlayer
-            webViewStyle={{width: '100%', zIndex: 2}}
             ref={this.reproductor}
-            height={300}
+            height={250}
             play={this.state.reproducir}
-            webViewProps={{androidHardwareAccelerationDisabled: true}}
+            webViewStyle={{opacity: 0.99}}
             videoId={data.enlace_externo.split('?v=')[1]}
             initialPlayerParams={{
               rel: false,
