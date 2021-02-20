@@ -19,6 +19,9 @@ import InputDateTimerPicker from 'components/DatetimePicker'
 import moment from 'moment'
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import Validator, { Execute } from 'components/Validator'
+import {changeProps} from 'redux/actions/Usuario';
+import {connect} from 'react-redux';
+import {setSharedPreference} from 'utils/SharedPreference';
 
 
 class SignUp extends React.Component {
@@ -262,6 +265,7 @@ class SignUp extends React.Component {
             }
         })
     }
+    
 
     /* Modal para selección de genero */
     generoOpts = [
@@ -348,13 +352,32 @@ class SignUp extends React.Component {
         }).then(r => {
             statusCode = r.status
             return r
-        }).then(r => r.json()).then(r => {
+        }).then(r => r.json()).then(async r =>  {
             if (statusCode == 200 || statusCode == 201) {
                 this.setState({ loading: false })
-                setTimeout(() => {
+                fetch(`${SERVER_ADDRESS}api/login/`, {
+                    method: 'POST',
+                    headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({'username': this.state.email, 'password': this.state.password1 }),
+                }).then(r => {
+                    return r.json()
+                }).then(async r => {
+                    const { data, token } = r;
+
+                    await setSharedPreference('userId', '' + data.id);
+                    await setSharedPreference('auth-token', token);
+                    setTimeout(() => {
+                        Alert.alert("¡Te has registrado exitosamente!", "Ya puedes comenzar a vender con Servi")
+                        this.props.userChangeProps({estadoDeSesion: 0});
+                        
+                    }, 400)
+                }).catch(() => {
                     Alert.alert("¡Te has registrado exitosamente!", "Ya puedes comenzar a vender con Servi")
                     this.props.navigation.pop()
-                }, 400)
+                })
             } else if (statusCode == 400) {
                 let mensaje = ""
                 for (const key in r) {
@@ -625,7 +648,15 @@ class SignUp extends React.Component {
     }
 }
 
-export default SignUp;
+const mapToActions = (dispatch) => {
+    return {
+      userChangeProps: (props) => {
+        dispatch(changeProps(props));
+      },
+    };
+};
+
+export default connect(null, mapToActions)(SignUp);
 
 const styles = StyleSheet.create({
     container: {

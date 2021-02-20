@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, ActivityIndicator, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+  Modal,
+} from 'react-native';
 import {getSharedPreference} from 'utils/SharedPreference';
 import {changeProps} from 'redux/actions/Usuario';
 import {connect} from 'react-redux';
@@ -15,6 +21,7 @@ const ValidateSession = ({navigation, userChangeProps}) => {
   const [allowStart, setAllowStart] = useState(false);
   const [loading, setLoading] = useState(false);
   const [indexActive, setIndexActive] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const Validate = async () => {
     setAllowStart(false);
@@ -78,6 +85,7 @@ const ValidateSession = ({navigation, userChangeProps}) => {
               ganancias,
             });
             setAllowStart(true);
+            userChangeProps({estadoDeSesion: 2});
           })
           .catch((error) => {
             setLoading(false);
@@ -90,17 +98,29 @@ const ValidateSession = ({navigation, userChangeProps}) => {
 
   const Loading = () => {
     return (
-      <>
-        <ActivityIndicator size="large" color={COLORS.PRIMARY_COLOR} />
-        {!error && (
-          <Text style={{color: COLORS.PRIMARY_COLOR, fontWeight: 'bold'}}>
-            Validando datos...
-          </Text>
-        )}
-        {error && (
-          <Text style={{color: COLORS.ROJO, fontWeight: 'bold'}}>{error}</Text>
-        )}
-      </>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Modal visible={true} animationType="slide">
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <ActivityIndicator size="large" color={COLORS.PRIMARY_COLOR} />
+            {!error && (
+              <Text
+                style={{
+                  color: COLORS.PRIMARY_COLOR,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                }}>
+                Validando datos...
+              </Text>
+            )}
+            {error && (
+              <Text style={{color: COLORS.ROJO, fontWeight: 'bold'}}>
+                {error}
+              </Text>
+            )}
+          </View>
+        </Modal>
+      </View>
     );
   };
 

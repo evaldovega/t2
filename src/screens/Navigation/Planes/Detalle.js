@@ -7,6 +7,7 @@ import {
   TITULO_TAM,
   MARGIN_VERTICAL,
   MARGIN_HORIZONTAL,
+  NOTIMAGE,
 } from 'constants';
 import {Text, View, StatusBar, Platform} from 'react-native';
 import NumberFormat from 'react-number-format';
@@ -38,7 +39,7 @@ class PlanDetalle extends React.PureComponent {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-        <Cover uri={imagen} style={{height: '25%'}} />
+        <Cover uri={imagen || NOTIMAGE} style={{height: '25%'}} />
         <Navbar
           back
           transparent

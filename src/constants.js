@@ -8,8 +8,7 @@ export const MARGIN_VERTICAL = 10.6;
 export const ALTURA = 52;
 export const CURVA = 8;
 
-export const NOTIMAGE =
-  'https://cima-afrique.org/cima/images/not-available.png';
+export const NOTIMAGE = 'https://app.serviapp.co/static/files/placeholder.png';
 
 export const COLORS = {
   VERDE: '#72D4C2',
