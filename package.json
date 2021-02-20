@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "key": "keytool -genkeypair -v -keystore servi.keystore -alias servi -keyalg RSA -keysize 2048 -validity 10000",
     "clean": "rm -rf android/app/src/main/res/drawable-* && rm -rf ./android/app/src/main/res/raw",
-    "apk": "cd android && ./gradlew clean && ./gradlew bundleRelease",
+    "apk": "cd android && ./gradlew clean && ./gradlew assembleRelease",
     "sha1": "keytool -exportcert -keystore ~/.android/debug.keystore -list -v"
   },
   "husky": {
