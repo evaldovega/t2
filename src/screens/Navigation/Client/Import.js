@@ -83,7 +83,7 @@ class ContactToClient extends PreventDoubleTap {
           primer_apellido: c.familyName,
           segundo_apellido: '',
           foto: c.thumbnailPath,
-          telefonos: c.phoneNumbers.map((t) => t.number).join(','),
+          numero_telefono: c.phoneNumbers.map((t) => t.number).join(','),
           empresa: c.company,
           email: email,
         };
@@ -157,7 +157,7 @@ class ContactToClient extends PreventDoubleTap {
           <Card.Content>
             <Title>{item.nombre}</Title>
             <Caption>
-              {item.telefonos} {item.email}
+              {item.numero_telefono} {item.email}
             </Caption>
           </Card.Content>
         </Card>

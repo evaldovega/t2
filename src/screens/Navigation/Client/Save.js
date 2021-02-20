@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {
   ScrollView,
@@ -21,6 +21,7 @@ import InputText from 'components/InputText';
 import Select from 'components/Select';
 import Validator, {Execute} from 'components/Validator';
 import {CURVA, MARGIN_HORIZONTAL, MARGIN_VERTICAL, COLORS} from 'constants';
+import {useImmer} from 'use-immer';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,112 +30,112 @@ const styles = StyleSheet.create({
   },
 });
 
-class ClientSave extends React.Component {
-  state = {
-    telefonos: '',
-    num_telefono: '',
-  };
-  Validations = {};
+const ClientSave = (props) => {
+  const Validations = {};
+  const [telefono, setTelefono] = useState('');
+  const [telefonos, setTelefonos] = useImmer([]);
+  const [autosave, setAutosave] = useState(false);
 
-  componentDidMount() {
-    this.props.load(this.props.route.params.id);
-    const item = this.props.route.params?.item;
+  const {item} = props.route.params;
+
+  useEffect(() => {
     if (item) {
-      this.props.changeProp('primer_nombre', item.primer_nombre);
-      this.props.changeProp('segundo_nombre', item.segundo_nombre);
-      this.props.changeProp('primer_apellido', item.primer_apellido);
-      this.props.changeProp('segundo_apellido', item.segundo_apellido);
-      this.props.changeProp('numero_telefono', item.numero_telefono);
-      this.props.changeProp('correo_electronico', item.email);
+      if (item.id) {
+        props.changeProp('id', item.id);
+      }
+      props.changeProp('genero', item.genero);
+      props.changeProp('numero_cedula', item.numero_cedula);
+      props.changeProp('primer_nombre', item.primer_nombre);
+      props.changeProp('segundo_nombre', item.segundo_nombre);
+      props.changeProp('primer_apellido', item.primer_apellido);
+      props.changeProp('segundo_apellido', item.segundo_apellido);
+      props.changeProp('correo_electronico', item.email);
+      if (item.numero_telefono) {
+        setTelefonos((draft) => {
+          draft = item.numero_telefono.split(',');
+          return draft;
+        });
+      }
     } else {
-      console.log('No hay valores por defecto');
+      props.changeProp('numero_cedula', '');
+      props.changeProp('genero', '');
+      props.changeProp('primer_nombre', '');
+      props.changeProp('segundo_nombre', '');
+      props.changeProp('primer_apellido', '');
+      props.changeProp('segundo_apellido', '');
+      props.changeProp('correo_electronico', '');
     }
-  }
+  }, []);
 
-  componentDidUpdate(prev) {
-    if (prev.error != this.props.error && this.props.error != '') {
-      Alert.alert('Algo anda mal', this.props.error);
+  useEffect(() => {
+    props.changeProp('numero_telefono', telefonos.join(','));
+  }, [telefonos]);
+
+  useEffect(() => {
+    if (autosave) {
+      console.log('auto save');
+      setAutosave(false);
+      guardar();
     }
+  }, [props.numero_telefono, autosave]);
 
-    if (prev.success != this.props.success && this.props.success != '') {
-      Alert.alert('Buen trabajo', this.props.success);
-      this.props.navigation.pop();
-    }
-
-    if (prev.loading_client == true && this.props.loading_client == false) {
-      this.setState({telefonos: this.props.numero_telefono});
-    }
-  }
-
-  guardar = () => {
-    let totalTelefonos = this.state.telefonos;
-    let campoTelefono = this.state.num_telefono;
-    if (totalTelefonos.replace(',', '').trim().length == 0) {
-      this.setState({telefonos: campoTelefono});
-    }
-
+  const guardar = () => {
     setTimeout(() => {
-      Execute(this.Validations)
+      Execute(Validations)
         .then(() => {
-          this.props.save(this.props);
+          props.save(props, () => {
+            props.navigation.pop();
+          });
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error);
+          if (telefono.length) {
+            agregarTelefono();
+            setAutosave(true);
+          }
+        });
     }, 100);
   };
 
-  removerTelefono = (telefono, idx) => {
-    let celulares = this.state.telefonos.split(',');
-    celulares.splice(idx, 1);
-    this.setState({telefonos: celulares.join(',')});
-    this.props.changeProp('numero_telefono', celulares.join(','));
+  const removerTelefono = (idx) => {
+    setTelefonos((draft) => {
+      draft.splice(idx, 1);
+      return draft;
+    });
   };
 
-  agregarTelefono = () => {
-    let celulares = this.state.telefonos.split(',');
-    if (this.state.num_telefono.length > 0) {
-      celulares.push(this.state.num_telefono);
-      this.setState({telefonos: celulares.join(','), num_telefono: ''});
-      this.props.changeProp('numero_telefono', celulares.join(','));
+  const agregarTelefono = () => {
+    if (telefono.length > 0) {
+      setTelefonos((draft) => {
+        draft.push(telefono);
+        return draft;
+      });
+      setTelefono('');
     }
   };
 
-  render() {
-    return (
-      <ColorfullContainer style={styles.container}>
-        <Loader loading={this.props.loading} />
-        <Navbar {...this.props} transparent title="Guardar cliente" back />
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View
-            style={{
-              marginHorizontal: MARGIN_HORIZONTAL,
-              marginVertical: MARGIN_VERTICAL,
-              backgroundColor: 'rgba(255,255,255,.5)',
-              borderRadius: CURVA,
-              padding: MARGIN_HORIZONTAL,
-            }}>
-            <Text style={styleInput.label}>Primer nombre *:</Text>
-            <Validator
-              ref={(r) => (this.Validations['pn'] = r)}
-              value={this.props.primer_nombre}
-              required>
-              <InputText
-                marginTop={1}
-                value={this.props.primer_nombre}
-                onChangeText={(i) => this.props.changeProp('primer_nombre', i)}
-                input={{
-                  keyboardType:
-                    Platform.OS === 'ios'
-                      ? 'ascii-capable'
-                      : 'textPersonName|textCapWords',
-                }}
-              />
-            </Validator>
-
-            <Text style={styleInput.label}>Segundo nombre:</Text>
+  return (
+    <ColorfullContainer style={styles.container}>
+      <Loader loading={props.loading} />
+      <Navbar {...props} transparent title="Guardar cliente" back />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View
+          style={{
+            marginHorizontal: MARGIN_HORIZONTAL,
+            marginVertical: MARGIN_VERTICAL,
+            backgroundColor: 'rgba(255,255,255,.5)',
+            borderRadius: CURVA,
+            padding: MARGIN_HORIZONTAL,
+          }}>
+          <Text style={styleInput.label}>Primer nombre *:</Text>
+          <Validator
+            ref={(r) => (Validations['pn'] = r)}
+            value={props.primer_nombre}
+            required>
             <InputText
               marginTop={1}
-              value={this.props.segundo_nombre}
-              onChangeText={(i) => this.props.changeProp('segundo_nombre', i)}
+              value={props.primer_nombre}
+              onChangeText={(i) => props.changeProp('primer_nombre', i)}
               input={{
                 keyboardType:
                   Platform.OS === 'ios'
@@ -142,32 +143,30 @@ class ClientSave extends React.Component {
                     : 'textPersonName|textCapWords',
               }}
             />
+          </Validator>
 
-            <Validator
-              ref={(r) => (this.Validations['pa'] = r)}
-              value={this.props.primer_apellido}
-              required>
-              <Text style={styleInput.label}>Primer apellido *:</Text>
-              <InputText
-                marginTop={1}
-                value={this.props.primer_apellido}
-                onChangeText={(i) =>
-                  this.props.changeProp('primer_apellido', i)
-                }
-                input={{
-                  keyboardType:
-                    Platform.OS === 'ios'
-                      ? 'ascii-capable'
-                      : 'textPersonName|textCapWords',
-                }}
-              />
-            </Validator>
+          <Text style={styleInput.label}>Segundo nombre:</Text>
+          <InputText
+            marginTop={1}
+            value={props.segundo_nombre}
+            onChangeText={(i) => props.changeProp('segundo_nombre', i)}
+            input={{
+              keyboardType:
+                Platform.OS === 'ios'
+                  ? 'ascii-capable'
+                  : 'textPersonName|textCapWords',
+            }}
+          />
 
-            <Text style={styleInput.label}>Segundo apellido:</Text>
+          <Validator
+            ref={(r) => (Validations['pa'] = r)}
+            value={props.primer_apellido}
+            required>
+            <Text style={styleInput.label}>Primer apellido *:</Text>
             <InputText
               marginTop={1}
-              value={this.props.segundo_apellido}
-              onChangeText={(i) => this.props.changeProp('segundo_apellido', i)}
+              value={props.primer_apellido}
+              onChangeText={(i) => props.changeProp('primer_apellido', i)}
               input={{
                 keyboardType:
                   Platform.OS === 'ios'
@@ -175,104 +174,108 @@ class ClientSave extends React.Component {
                     : 'textPersonName|textCapWords',
               }}
             />
+          </Validator>
 
-            <Validator
-              ref={(r) => (this.Validations['nd'] = r)}
-              value={this.props.numero_cedula}
-              required>
-              <Text style={styleInput.label}>Número de documento *:</Text>
+          <Text style={styleInput.label}>Segundo apellido:</Text>
+          <InputText
+            marginTop={1}
+            value={props.segundo_apellido}
+            onChangeText={(i) => props.changeProp('segundo_apellido', i)}
+            input={{
+              keyboardType:
+                Platform.OS === 'ios'
+                  ? 'ascii-capable'
+                  : 'textPersonName|textCapWords',
+            }}
+          />
+
+          <Validator
+            ref={(r) => (Validations['nd'] = r)}
+            value={props.numero_cedula}
+            required>
+            <Text style={styleInput.label}>Número de documento *:</Text>
+            <InputText
+              marginTop={1}
+              value={props.numero_cedula}
+              onChangeText={(i) => props.changeProp('numero_cedula', i)}
+              input={{keyboardType: 'number-pad'}}
+            />
+          </Validator>
+
+          <Text style={styleInput.label}>Género:</Text>
+          <Select
+            value={props.genero}
+            onSelect={(item) => props.changeProp('genero', item.key)}
+            options={[
+              {
+                key: 'masculino',
+                label: 'Masculino',
+              },
+              {
+                key: 'femenino',
+                label: 'Femenino',
+              },
+              {
+                key: 'otro',
+                label: 'Otro',
+              },
+            ]}
+          />
+
+          <Validator
+            ref={(r) => (Validations['tel'] = r)}
+            value={props.numero_telefono}
+            required>
+            <Text style={styleInput.label}>Número de teléfono *:</Text>
+            <View style={{flexDirection: 'row', marginTop: 8}}>
               <InputText
-                marginTop={1}
-                value={this.props.numero_cedula}
-                onChangeText={(i) => this.props.changeProp('numero_cedula', i)}
+                marginTop={0}
+                style={{flex: 1, marginRight: 6}}
+                value={telefono}
+                onChangeText={(i) => setTelefono(i)}
                 input={{keyboardType: 'number-pad'}}
               />
-            </Validator>
+              <Button title="+" onPress={() => agregarTelefono()} />
+            </View>
+            <View style={{marginVertical: MARGIN_VERTICAL}}>
+              {telefonos.map((tel, i) => {
+                if (tel.length > 0) {
+                  return (
+                    <TouchableOpacity
+                      key={i}
+                      style={{marginVertical: 6}}
+                      onPress={() => removerTelefono(i)}>
+                      <Text
+                        style={{
+                          backgroundColor: '#ababab',
+                          paddingVertical: 4,
+                          paddingHorizontal: 8,
+                          borderRadius: CURVA,
+                        }}>
+                        <FontAwesome size={16} name="times" color={'#FFFFFF'} />{' '}
+                        {tel}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }
+              })}
+            </View>
+          </Validator>
 
-            <Text style={styleInput.label}>Género:</Text>
-            <Select
-              value={this.props.genero}
-              onSelect={(item) => this.props.changeProp('genero', item.key)}
-              options={[
-                {
-                  key: 'masculino',
-                  label: 'Masculino',
-                },
-                {
-                  key: 'femenino',
-                  label: 'Femenino',
-                },
-                {
-                  key: 'otro',
-                  label: 'Otro',
-                },
-              ]}
-            />
+          <Text style={styleInput.label}>Email:</Text>
+          <InputText
+            marginTop={1}
+            value={props.correo_electronico}
+            onChangeText={(i) => props.changeProp('correo_electronico', i)}
+            input={{keyboardType: 'email-address'}}
+          />
 
-            <Validator
-              ref={(r) => (this.Validations['nt'] = r)}
-              value={this.state.telefonos}
-              required>
-              <Text style={styleInput.label}>Número de teléfono *:</Text>
-              <View style={{flexDirection: 'row', marginTop: 8}}>
-                <InputText
-                  marginTop={0}
-                  style={{flex: 1, marginRight: 6}}
-                  value={this.state.num_telefono}
-                  onChangeText={(i) => this.setState({num_telefono: i})}
-                  input={{keyboardType: 'number-pad'}}
-                />
-                <Button title="+" onPress={() => this.agregarTelefono()} />
-              </View>
-              <View style={{marginVertical: MARGIN_VERTICAL}}>
-                {this.state.telefonos.split(',').map((tel, i) => {
-                  if (tel.length > 0) {
-                    return (
-                      <TouchableOpacity
-                        style={{marginVertical: 6}}
-                        onPress={() => this.removerTelefono(tel, i)}>
-                        <Text
-                          style={{
-                            backgroundColor: '#ababab',
-                            paddingVertical: 4,
-                            paddingHorizontal: 8,
-                            borderRadius: CURVA,
-                          }}>
-                          <FontAwesome
-                            size={16}
-                            name="times"
-                            color={'#FFFFFF'}
-                          />{' '}
-                          {tel}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  }
-                })}
-              </View>
-            </Validator>
-
-            <Text style={styleInput.label}>Email:</Text>
-            <InputText
-              marginTop={1}
-              value={this.props.correo_electronico}
-              onChangeText={(i) =>
-                this.props.changeProp('correo_electronico', i)
-              }
-              input={{keyboardType: 'email-address'}}
-            />
-
-            <Button
-              marginTop={2}
-              onPress={() => this.guardar()}
-              title="Guardar"
-            />
-          </View>
-        </ScrollView>
-      </ColorfullContainer>
-    );
-  }
-}
+          <Button marginTop={2} onPress={() => guardar()} title="Guardar" />
+        </View>
+      </ScrollView>
+    </ColorfullContainer>
+  );
+};
 
 const mapToState = (state) => {
   return {
@@ -291,6 +294,7 @@ const mapToState = (state) => {
     loading_client: state.Client.loading_client,
   };
 };
+
 const mapToActions = (dispatch) => {
   return {
     load: (id) => {
@@ -299,8 +303,8 @@ const mapToActions = (dispatch) => {
     changeProp: (prop, value) => {
       dispatch(changeProp(prop, value));
     },
-    save: (props) => {
-      dispatch(save(props));
+    save: (props, callback) => {
+      dispatch(save(props, callback));
     },
   };
 };

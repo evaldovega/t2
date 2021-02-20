@@ -26,6 +26,7 @@ import {
 } from '../Constantes';
 
 import {SERVER_ADDRESS} from '../../constants';
+import {useCallback} from 'react';
 
 export const loadClients = () => {
   return async (dispatch, getState) => {
@@ -86,7 +87,7 @@ export const changeProp = (prop, value) => {
   };
 };
 
-export const save = (props) => {
+export const save = (props, callback) => {
   return async (dispatch, getState) => {
     dispatch({type: ACTION_CLIENT_SAVEING});
 
@@ -122,6 +123,7 @@ export const save = (props) => {
         } else {
           dispatch({type: ACTION_CLIENTS_ADD, item: r});
         }
+        callback();
       })
       .catch((error) => {
         console.log(error);
