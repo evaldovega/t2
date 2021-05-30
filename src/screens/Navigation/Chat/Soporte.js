@@ -8,17 +8,16 @@ import {
   TextInput,
   Linking,
 } from 'react-native';
-import {Text, FAB, List, Colors, Card, Caption} from 'react-native-paper';
-import {styleHeader, styleInput, styleButton, styleText} from 'styles';
+import {Text, FAB, Colors, Card, Caption} from 'react-native-paper';
 import {COLORS, SOCKET_ADDRESS, SERVER_ADDRESS} from 'constants';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 import {connect} from 'react-redux';
-import RNFetchBlob from 'rn-fetch-blob';
+//import RNFetchBlob from 'rn-fetch-blob';
 import ColorfullContainer from 'components/ColorfullContainer';
 import NavBar from 'components/Navbar';
 
 const Sound = require('react-native-sound');
-const {fs} = RNFetchBlob;
+//const {fs} = RNFetchBlob;
 Sound.setCategory('Playback');
 
 const styles = StyleSheet.create({
@@ -95,7 +94,6 @@ class Soporte extends React.Component {
   };
 
   componentDidMount() {
-    console.log('Ruta ', fs.dirs.MainBundleDir);
     this.msn = new Sound(require('../../../sms.mp3'), (error) => {
       if (error) {
         console.log('failed to load the sound', error);
@@ -199,7 +197,7 @@ class Soporte extends React.Component {
     return (
       <ColorfullContainer
         style={{flex: 1, flexDirection: 'column', backgroundColor: '#ffff'}}>
-        <StatusBar
+        {/*<StatusBar
           translucent={true}
           backgroundColor={'transparent'}
           barStyle={'dark-content'}
@@ -258,6 +256,7 @@ class Soporte extends React.Component {
             )}
           </Card.Content>
         </Card>
+                  */}
       </ColorfullContainer>
     );
   }

@@ -9,13 +9,14 @@ import {
   MARGIN_HORIZONTAL,
   NOTIMAGE,
 } from 'constants';
-import {Text, View, StatusBar, Platform} from 'react-native';
+import {Text, View, StatusBar, Platform, Dimensions} from 'react-native';
 import NumberFormat from 'react-number-format';
 import WebView from 'react-native-webview';
 import ZoomIn from 'components/ZoomIn';
 
 import Cover from 'components/Cover';
 
+const height_cover = Dimensions.get('window').height * 0.25;
 class PlanDetalle extends React.PureComponent {
   componentDidMount() {}
   componentWillUnmount() {}
@@ -39,7 +40,7 @@ class PlanDetalle extends React.PureComponent {
           backgroundColor={'transparent'}
           barStyle={'light-content'}
         />
-        <Cover uri={imagen || NOTIMAGE} style={{height: '25%'}} />
+        <Cover uri={imagen || NOTIMAGE} style={{height: height_cover}} />
         <Navbar
           back
           transparent

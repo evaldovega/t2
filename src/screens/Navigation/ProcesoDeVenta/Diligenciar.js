@@ -29,6 +29,7 @@ import Finalizar from './components/Finalizar';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {useImmer} from 'use-immer';
 import ColorfullContainer from 'components/ColorfullContainer';
+import ModalInputPin from './components/Finalizar/ModalInputPin';
 
 const Tab = createBottomTabNavigator();
 
@@ -171,6 +172,7 @@ const NegocioDiligenciarInformacion = ({navigation, route}) => {
         backgroundColor={'transparent'}
         barStyle={'dark-content'}
       />
+      <ModalInputPin customer={{}} cancel={null} onConfirm={null} />
       <View style={{flex: 1}}>
         <Loader loading={cargando} message={msn} />
         <StatusBar

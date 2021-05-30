@@ -1,11 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {Modal, View, ActivityIndicator, Alert, Text} from 'react-native';
+import {
+  Modal,
+  View,
+  ActivityIndicator,
+  Alert,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import Validator, {Execute} from 'components/Validator';
 import Button from 'components/Button';
 import InputText from 'components/InputText';
 import {fetchConfig} from 'utils/Fetch';
 import {COLORS} from 'constants';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import SvgClose from 'svgs/forgotPass/SvgClose';
 
 const ModalInputPin = ({customer, cancel, onConfirm}) => {
   const [loading, setLoading] = useState(false);
@@ -121,7 +128,7 @@ const ModalInputPin = ({customer, cancel, onConfirm}) => {
 
   return (
     <Modal
-      animationType="slide"
+      animationType={'fade'}
       transparent={true}
       visible={true}
       onRequestClose={() => {}}>
@@ -148,13 +155,19 @@ const ModalInputPin = ({customer, cancel, onConfirm}) => {
                   alignItems: 'center',
                   marginBottom: 24,
                 }}>
-                <Text style={{fontWeight: 'bold'}}>Validar cliente</Text>
-                <Icon
-                  name="close"
-                  color={COLORS.ROJO}
-                  size={32}
-                  onPress={() => cancel(false)}
-                />
+                <TouchableOpacity onPress={() => cancel(false)}>
+                  <SvgClose />
+                </TouchableOpacity>
+
+                <Text
+                  style={{
+                    fontSize: 14,
+                    textAlign: 'center',
+                    flex: 1,
+                    fontFamily: 'Mont-Bold',
+                  }}>
+                  Validar cliente
+                </Text>
               </View>
               <Validator
                 value={pin}

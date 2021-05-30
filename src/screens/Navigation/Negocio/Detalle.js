@@ -236,7 +236,7 @@ class NegocioDetalle extends React.Component {
                 marginTop: 8,
               }}>
               <Text style={{fontWeight: 'bold'}}>Frecuencia de pago:</Text>
-              <Text>Cada {doc.frecuencia_pago} Mes(es)</Text>
+              <Text>{doc.frecuencia_pago}</Text>
             </View>
 
             {this.renderFormularioPlan(doc)}

@@ -19,7 +19,7 @@ function App({estadoDeSesion}) {
 
   useEffect(() => {
     console.log('App user session state ', estadoDeSesion);
-  });
+  }, [estadoDeSesion]);
 
   const unsubscribe = NetInfo.addEventListener((state) => {
     if (conexion != state.isConnected) {

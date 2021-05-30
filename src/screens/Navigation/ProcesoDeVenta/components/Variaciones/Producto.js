@@ -3,7 +3,6 @@ import {View, Text, ScrollView, Switch} from 'react-native';
 import {MARGIN_HORIZONTAL, COLORS, TITULO_TAM} from 'constants';
 import {useImmer} from 'use-immer';
 import Variacion from './Variacion';
-import Variaciones from '.';
 
 const Producto = React.forwardRef(({data, datosPrecargados, orderId}, ref) => {
   const {id, titulo, requerido, variaciones} = data;

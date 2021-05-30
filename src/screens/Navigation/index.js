@@ -5,11 +5,11 @@ import {fetchConfig} from 'utils/Fetch';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import messaging from '@react-native-firebase/messaging';
 
 import Home from 'screens/Navigation/Home';
+
 import Profile from 'screens/Navigation/Profile';
 
 import MetaListado from 'screens/Navigation/Meta/Listado';
@@ -43,7 +43,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const optionNavigator = {
   headerShown: false,
-  gesturesEnabled: true,
+  gesturesEnabled: false,
 };
 
 const tabs = {
@@ -150,7 +150,6 @@ function Navigation() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Tabs" options={optionNavigator} component={Tabs} />
-
         <Stack.Screen
           name="Capacitaciones"
           options={optionNavigator}
